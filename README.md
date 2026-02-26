@@ -10,7 +10,7 @@
 
 <br>
 
-Water finds every crack — so does Seep. A Windows privilege escalation enumeration framework that identifies misconfigurations, credential exposures, and escalation paths across **16 enumeration checks** with **97 tools** in 7 categories, MITRE ATT&CK-mapped recommendations, and single-file HTML reports — all from a fileless agent. Hardened server with upload size limits, decompression bomb protection, XSS-safe HTML, TLS path confinement, and security headers.
+Water finds every crack — so does Seep. A Windows privilege escalation enumeration framework that identifies misconfigurations, credential exposures, and escalation paths across **16 enumeration checks** with **93 tools** in 7 categories, MITRE ATT&CK-mapped recommendations, and single-file HTML reports — all from a fileless agent. Hardened server with upload size limits, decompression bomb protection, XSS-safe HTML, TLS path confinement, and security headers.
 
 </div>
 
@@ -47,7 +47,7 @@ Token privileges, unquoted service paths, saved credentials, autoruns, scheduled
 </td>
 <td width="50%">
 
-### 97-Tool Catalog
+### 93-Tool Catalog
 Organized across 7 categories (Enumeration, Credentials, TokenAbuse, AD, Tunneling, Impacket, Shells) with SHA256 integrity verification and self-hosted distribution via GitHub Releases.
 
 </td>
@@ -319,17 +319,17 @@ seep compose --obfuscate --output obf_agent.ps1
 
 ## Tool Catalog
 
-97 tools organized across 7 categories, self-hosted via GitHub Releases:
+93 tools organized across 7 categories, self-hosted via GitHub Releases:
 
 | Category | Count | Representative Tools |
 |----------|:-----:|---------------------|
-| **Enumeration** | 17 | WinPEAS, SharpUp, Seatbelt, PrivescCheck, Watson, accesschk |
+| **Enumeration** | 27 | WinPEAS, SharpUp, Seatbelt, Watson, accesschk, pspy |
 | **Credentials** | 12 | Mimikatz, LaZagne, SharpDPAPI, SharpChrome, Rubeus, Snaffler |
-| **TokenAbuse** | 14 | PrintSpoofer, GodPotato, JuicyPotato, SweetPotato, CoercedPotato |
-| **AD** | 14 | SharpHound, RustHound, Certify, Whisker, PowerView, Kerbrute |
-| **Tunneling** | 8 | Chisel, Ligolo-ng, socat, netcat |
-| **Impacket** | 17 | secretsdump, GetUserSPNs, psexec, wmiexec, ntlmrelayx |
-| **Shells** | 15 | Nishang, PHP shells, netcat variants |
+| **TokenAbuse** | 10 | PrintSpoofer, GodPotato, JuicyPotato, SweetPotato, RoguePotato |
+| **AD** | 16 | SharpHound, Certify, Whisker, PowerView, Kerbrute, KrbRelayUp |
+| **Tunneling** | 9 | Chisel, Ligolo-ng, socat, netcat |
+| **Impacket** | 18 | secretsdump, GetUserSPNs, psexec, wmiexec, ntlmrelayx |
+| **Shells** | 7 | Nishang, PHP shells, netcat variants |
 
 ### Self-Hosted Distribution
 
@@ -374,7 +374,7 @@ seep/
 │   │   │   └── agent_wrapper.ps1   # Invoke-Seep entry point
 │   │   └── composer.py         # Assembles checks into single .ps1
 │   ├── catalog/
-│   │   ├── tools.yaml          # 97 tool definitions (SHA256, categories, MITRE triggers)
+│   │   ├── tools.yaml          # 93 tool definitions (SHA256, categories, MITRE triggers)
 │   │   ├── schemas.py          # ToolEntry, ToolCatalog, CategoryDef
 │   │   ├── loader.py           # YAML loader with validation
 │   │   └── manager.py          # Download, verify, symlinks, update check
@@ -441,7 +441,7 @@ No framework. No Docker. No build step. Just a pip-installable CLI.
 | Feature | Description |
 |---------|-------------|
 | **16 enumeration checks** | Modular PowerShell scripts with metadata headers, composable |
-| **97-tool catalog** | YAML-defined with SHA256, categories, upstream URLs, license tracking |
+| **93-tool catalog** | YAML-defined with SHA256, categories, upstream URLs, license tracking |
 | **Severity system** | CRITICAL, HIGH, MEDIUM, LOW, INFO — per finding and per recommendation |
 | **MITRE ATT&CK mapping** | Every recommendation links to a technique (T1134.001, T1574.009, etc.) |
 | **Fileless agent** | IEX cradle, in-memory GZip compression, HTTP upload — zero disk footprint |

@@ -137,12 +137,12 @@
     <text x="180" y="18" font-family="'SF Mono','Fira Code','JetBrains Mono',Consolas,monospace"
           font-size="11" fill="#cdd6f4">16 checks</text>
 
-    <!-- Pill 3: 97 tools -->
+    <!-- Pill 3: 93 tools -->
     <rect x="280" y="0" width="100" height="28" rx="14" fill="#313244"/>
     <rect x="280" y="0" width="100" height="28" rx="14" fill="none" stroke="#45475a" stroke-width="0.5"/>
     <circle cx="298" cy="14" r="4" fill="#89b4fa"/>
     <text x="310" y="18" font-family="'SF Mono','Fira Code','JetBrains Mono',Consolas,monospace"
-          font-size="11" fill="#cdd6f4">97 tools</text>
+          font-size="11" fill="#cdd6f4">93 tools</text>
 
     <!-- Pill 4: MITRE ATT&CK -->
     <rect x="400" y="0" width="130" height="28" rx="14" fill="#313244"/>
