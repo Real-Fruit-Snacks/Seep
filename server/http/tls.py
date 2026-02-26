@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import random
+import secrets
 import re
 import ssl
 import subprocess
@@ -32,7 +32,7 @@ _DEFAULT_CN_POOL = [
 
 def _random_cn() -> str:
     """Pick a plausible random CN from the pool."""
-    return random.choice(_DEFAULT_CN_POOL)
+    return secrets.choice(_DEFAULT_CN_POOL)
 
 
 def generate_self_signed_cert(

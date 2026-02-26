@@ -32,6 +32,9 @@ docs/AGENTS.md
 *.key
 *.crt
 
+# Linter cache
+.ruff_cache/
+
 # IDE
 .vscode/
 .idea/

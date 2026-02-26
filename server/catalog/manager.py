@@ -161,8 +161,8 @@ class CatalogManager:
         if progress_callback is not None:
             try:
                 progress_callback(tool.name, size_bytes)
-            except Exception:
-                pass
+            except Exception as exc:
+                self._print(f"  [warn] progress callback error for {tool.name}: {exc}")
 
         return DownloadResult(
             tool_name=tool.name,

@@ -8,7 +8,14 @@ from datetime import datetime, timezone
 from server.results.parser import AgentResults, Finding
 from server.report.recommendations import MatchedRecommendation, RecommendationEngine
 
-_SEEP_VERSION = "2.0.0"
+def _get_seep_version() -> str:
+    try:
+        from importlib.metadata import version, PackageNotFoundError
+        return version("seep")
+    except PackageNotFoundError:
+        return "2.0.0"
+
+_SEEP_VERSION = _get_seep_version()
 
 _SEVERITY_ORDER = ["critical", "high", "medium", "low", "info", "error"]
 

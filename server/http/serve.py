@@ -75,10 +75,10 @@ def get_local_ips() -> list[str]:
                     ip = socket.inet_ntoa(raw_ip)
                     if ip and not ip.startswith("127."):
                         ips[iface] = ip
-                except Exception:
+                except (OSError, ValueError):
                     pass
                 offset += 40
-    except Exception:
+    except OSError:
         pass
 
     if not ips:
@@ -87,7 +87,7 @@ def get_local_ips() -> list[str]:
             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
                 s.connect(("8.8.8.8", 80))
                 return [s.getsockname()[0]]
-        except Exception:
+        except OSError:
             return ["127.0.0.1"]
 
     def sort_key(item: tuple[str, str]) -> int:
@@ -229,6 +229,8 @@ class SeepHTTPHandler(BaseHTTPRequestHandler):
     server_version = "Microsoft-IIS/10.0"
     sys_version = ""
 
+    # NOTE: config and composer must be injected via create_handler() factory.
+    # Do not instantiate SeepHTTPHandler directly.
     config: ServerConfig
     composer: AgentComposer
     _agent_cache: str | None = None
@@ -313,8 +315,11 @@ class SeepHTTPHandler(BaseHTTPRequestHandler):
             return path
         if path == prefix or path.startswith(prefix + "/"):
             return path[len(prefix):] or "/"
-        # Root path without prefix is always accessible (benign page)
-        if path.rstrip("/") in ("", "/", "/index", "/index.html"):
+        # When a url_prefix is configured, only bare root "/" shows the benign page.
+        # /index and /index.html without prefix return 404 to avoid revealing the server.
+        if not prefix and path.rstrip("/") in ("", "/", "/index", "/index.html"):
+            return path
+        if prefix and path.rstrip("/") in ("", "/"):
             return path
         return None
 
@@ -464,6 +469,8 @@ class SeepHTTPHandler(BaseHTTPRequestHandler):
             else:
                 tools_count = sum(1 for _ in tools_dir.rglob("*") if _.is_file())
 
+        # SAFETY: checks_table and results_table contain pre-built HTML.
+        # All values within them MUST be escaped via _html_escape() before insertion.
         html = _DASHBOARD_HTML.format(
             primary_ip=_html_escape(primary_ip),
             http_port=self.config.http_port,
@@ -679,8 +686,9 @@ class SeepHTTPHandler(BaseHTTPRequestHandler):
                 )
                 return
             except Exception as exc:
+                self.log_error("AES decryption failed: %s", exc)
                 self._json_response(
-                    400, {"status": "error", "message": f"AES decryption failed: {exc}"}
+                    400, {"status": "error", "message": "Decryption failed"}
                 )
                 return
 
@@ -778,6 +786,8 @@ class SeepHTTPHandler(BaseHTTPRequestHandler):
             with zipfile.ZipFile(BytesIO(raw)) as zf:
                 # Prefer explicit results.json, else first .json found
                 names = zf.namelist()
+                # Reject zip entries with path traversal or absolute paths
+                names = [n for n in names if '..' not in n and not n.startswith('/')]
                 target = None
                 for name in names:
                     if (
@@ -939,6 +949,7 @@ def start_server(config: ServerConfig) -> None:
     handler_class = create_handler(config, composer)
 
     server = HTTPServer((config.bind_address, config.http_port), handler_class)
+    server.timeout = 30  # Per-request timeout (seconds)
 
     if config.tls.enabled:
         from server.http.tls import wrap_server_tls

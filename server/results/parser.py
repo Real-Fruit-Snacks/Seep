@@ -195,6 +195,8 @@ class ResultsParser:
             buf = BytesIO(data)
             with zipfile.ZipFile(buf, "r") as zf:
                 names = zf.namelist()
+                # Reject zip entries with path traversal or absolute paths
+                names = [n for n in names if '..' not in n and not n.startswith('/')]
 
                 # Look for results.json first (exact match or any path ending with it)
                 target = None

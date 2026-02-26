@@ -13,10 +13,10 @@ from pathlib import Path
 def _get_version() -> str:
     """Return the package version from metadata, with fallback."""
     try:
-        from importlib.metadata import version
+        from importlib.metadata import version, PackageNotFoundError
 
         return version("seep")
-    except Exception:
+    except PackageNotFoundError:
         return "2.0.0"
 
 # ---------------------------------------------------------------------------

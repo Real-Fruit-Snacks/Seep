@@ -10,7 +10,7 @@
 
 <br>
 
-Water finds every crack — so does Seep. A Windows privilege escalation enumeration framework that identifies misconfigurations, credential exposures, and escalation paths across **16 enumeration checks** with **93 tools** in 7 categories, MITRE ATT&CK-mapped recommendations, and single-file HTML reports — all from a fileless agent. Hardened server with upload size limits, decompression bomb protection, XSS-safe HTML, TLS path confinement, and security headers.
+Water finds every crack — so does Seep. A Windows privilege escalation enumeration framework that identifies misconfigurations, credential exposures, and escalation paths across **16 enumeration checks** with **93 tools** in 7 categories, MITRE ATT&CK-mapped recommendations, and single-file HTML reports — all from a fileless agent. Hardened server with upload size limits, decompression bomb protection, XSS-safe HTML, TLS path confinement, zip traversal protection, request timeouts, and security headers.
 
 </div>
 
@@ -430,6 +430,7 @@ report.html (self-contained, dark theme)           │
 | **Testing** | pytest (391 tests) |
 | **Linting** | ruff (E, F, W rules) |
 | **Encryption** | AES-256-CBC via `cryptography` (agent→server) |
+| **CSPRNG** | `secrets` module for identifier randomization and TLS CN selection |
 | **Evasion** | AMSI, ETW, Script Block Logging bypasses |
 
 No framework. No Docker. No build step. Just `pip install` with two dependencies (`pyyaml`, `cryptography`).
@@ -457,21 +458,21 @@ No framework. No Docker. No build step. Just `pip install` with two dependencies
 | **Integrity verification** | `seep catalog verify` checks every tool against catalog SHA256 |
 | **Update checking** | `seep catalog update` queries GitHub API for newer releases |
 | **Symlink organization** | Tools organized into `all/`, `categories/{name}/` via relative symlinks |
-| **Security hardened** | Path traversal guards, XSS escaping, CSP headers, input validation |
+| **Security hardened** | Path traversal guards, zip entry validation, XSS escaping, CSP headers, request timeouts, input validation |
 | **No external deps at runtime** | Reports have zero CDN calls, agent uses only PowerShell builtins |
 | **AMSI bypass** | Reflection-based AMSI patch in cradle and agent — obfuscated format strings |
 | **ETW bypass** | Disables `PSEtwLogProvider.etwEnabled` to prevent telemetry |
 | **Script Block Logging bypass** | Patches `cachedGroupPolicySettings` to disable SBL |
 | **AES-256-CBC encryption** | Results encrypted with SHA256(auth_token) as key, IV prepended |
 | **Server header spoofing** | HTTP `Server` header reports `Microsoft-IIS/10.0` |
-| **Identifier randomization** | `--obfuscate` randomizes all function names, variables, headers, and check prefixes |
+| **Identifier randomization** | `--obfuscate` uses CSPRNG (`secrets`) to randomize all function names, variables, headers, and check prefixes |
 | **Auth-gated endpoints** | All sensitive endpoints require token auth, return 404 (not 401) on failure |
 | **Benign index page** | Unauthenticated visitors see generic "It works!" — no C2 self-identification |
 | **URL prefix** | Configurable path prefix for endpoint randomization (e.g. `/app`) |
 | **CLM detection** | Agent warns and exits gracefully if Constrained Language Mode is active |
 | **Random TLS CN** | Self-signed cert uses randomized Common Name from plausible hostname pool |
 | **Auto-invoke** | Agent self-executes when auth token is embedded — cradle needs no explicit function call |
-| **Base64 token encoding** | Auth token stored as Base64 in composed agent, decoded at runtime |
+| **Base64 token encoding** | Auth token stored as Base64 in composed agent for cosmetic obfuscation, decoded at runtime |
 
 ---
 
@@ -487,10 +488,12 @@ No framework. No Docker. No build step. Just `pip install` with two dependencies
 | **Network (server)** | Auth-gated endpoints | All sensitive routes return 404 without valid token (not 401/403) |
 | **Network (server)** | URL prefix | Configurable path prefix (e.g. `/app`) to avoid default path fingerprinting |
 | **Network (server)** | Random TLS CN | Self-signed cert uses hostname from plausible pool (mail.local, srv01.corp.local, etc.) |
+| **Network (server)** | Request timeouts | 30-second per-request timeout prevents slow-loris denial of service |
 | **Network (transport)** | AES-256-CBC encryption | Results encrypted with `SHA256(auth_token)` key, IV prepended, then GZip compressed |
-| **Agent identity** | Identifier randomization | `--obfuscate` randomizes all function names, variables, HTTP headers, check prefixes |
+| **Agent identity** | Identifier randomization | `--obfuscate` uses CSPRNG to randomize all function names, variables, HTTP headers, check prefixes |
 | **Agent identity** | Comment stripping | `--strip-comments` removes all PowerShell comments from composed agent |
-| **Agent identity** | Base64 token encoding | Auth token stored as Base64 in agent, decoded at runtime |
+| **Agent identity** | Base64 token encoding | Auth token stored as Base64 in agent for cosmetic obfuscation (not encryption), decoded at runtime |
+| **Upload security** | Zip entry validation | ZIP uploads reject entries with path traversal (.. or absolute paths) |
 | **Disk artifacts** | Fileless by default | IEX cradle, in-memory execution, no disk writes |
 | **Disk artifacts** | Cleanup on disk cradles | certutil/curl cradles use `s.ps1` temp name and auto-delete with `Remove-Item` |
 | **Detection surface** | Selective checks | `--checks` / `--exclude` to run only what you need |

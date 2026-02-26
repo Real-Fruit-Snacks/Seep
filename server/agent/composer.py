@@ -1,8 +1,8 @@
 """Agent composer - assembles check modules into a single PowerShell agent."""
 
 from __future__ import annotations
-import random
 import re
+import secrets
 import string
 from dataclasses import dataclass
 from pathlib import Path
@@ -137,7 +137,7 @@ class AgentComposer:
 
         # 4. agent_wrapper.ps1 — strip its own #Requires line
         wrapper_body = self._remove_leading_requires(wrapper_content)
-        # Inject auth token variable if configured (base64-encoded to avoid plaintext in agent)
+        # Inject auth token variable if configured (base64-encoded for cosmetic obfuscation only — this is NOT encryption and is trivially reversible)
         if auth_token:
             import base64
             b64 = base64.b64encode(auth_token.encode("utf-8")).decode("ascii")
@@ -279,7 +279,7 @@ class AgentComposer:
     def _sanitize_ps_value(self, value: str) -> str:
         """Sanitize a value for use in a PowerShell command string."""
         # Remove characters that could break out of the command context
-        return re.sub(r'[;`$(){}|&<>"\']', "", str(value))
+        return re.sub(r'[;\x60$(){}|&<>"\'\n\r\x00]', "", str(value))
 
     def _parse_metadata(self, file_path: Path) -> CheckMetadata | None:
         """Parse metadata comment header from a single check module."""
@@ -423,7 +423,7 @@ class AgentComposer:
     def _random_name(prefix: str = "", length: int = 8) -> str:
         """Generate a random identifier like 'xK4mQ2nR'."""
         chars = string.ascii_letters
-        body = "".join(random.choices(chars, k=length))
+        body = "".join(secrets.choice(chars) for _ in range(length))
         return f"{prefix}{body}"
 
     def _randomize_identifiers(self, content: str) -> str:
@@ -475,7 +475,7 @@ class AgentComposer:
             ("X-Seep-Token", hdr_token),
             # Output directory
             (".\\SeepOutput", output_dir),
-            ("SeepOutput", output_dir.lstrip(".\\")),
+            ("SeepOutput", output_dir.removeprefix(".\\")),
         ]
 
         for old, new in replacements:
