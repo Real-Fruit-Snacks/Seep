@@ -1,0 +1,150 @@
+{
+    "meta": {
+        "agent_version": "2.0.0",
+        "timestamp": "2026-02-24T15:30:00Z",
+        "hostname": "WORKSTATION01",
+        "domain": "CORP.LOCAL",
+        "username": "CORP\\svc_web",
+        "is_admin": false,
+        "is_domain_joined": true,
+        "os_version": "10.0.19045",
+        "os_name": "Microsoft Windows 10 Pro",
+        "ps_version": "5.1.19041.1",
+        "architecture": "AMD64",
+        "execution_mode": "fileless",
+        "checks_run": ["system_info", "user_privileges", "network", "quick_wins", "services"],
+        "total_duration_seconds": 23.5
+    },
+    "findings": [
+        {
+            "check_id": "user_privileges",
+            "finding_id": "se_impersonate_enabled",
+            "severity": "critical",
+            "title": "SeImpersonatePrivilege Enabled — Token Impersonation Possible",
+            "description": "The current user holds SeImpersonatePrivilege. This privilege allows impersonating any token obtained via COM or named pipe, enabling privilege escalation to SYSTEM via potato-style exploits.",
+            "evidence": "Privilege: SeImpersonatePrivilege  State: Enabled\nPrivilege: SeChangeNotifyPrivilege  State: Enabled\nPrivilege: SeIncreaseWorkingSetPrivilege  State: Enabled\n\nwhoami /priv output:\nSE_PRIVILEGE_ENABLED  SeImpersonatePrivilege",
+            "remediation": "Remove SeImpersonatePrivilege from service accounts unless strictly required. Use Group Managed Service Accounts (gMSA) and apply least-privilege service configurations.",
+            "tags": ["token-abuse", "privilege-escalation", "local"],
+            "tool_hint": ["GodPotato", "PrintSpoofer", "JuicyPotato"],
+            "timestamp": "2026-02-24T15:30:04Z"
+        },
+        {
+            "check_id": "quick_wins",
+            "finding_id": "autologon_credentials",
+            "severity": "critical",
+            "title": "AutoLogon Credentials Found in Registry",
+            "description": "Plaintext credentials stored in HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon for automatic logon. These credentials are readable by any local user and often belong to a privileged account.",
+            "evidence": "Registry path: HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\nDefaultUserName : CORP\\administrator\nDefaultPassword : W3lcome2Corp!\nDefaultDomainName : CORP.LOCAL\nAutoAdminLogon : 1",
+            "remediation": "Disable AutoLogon (set AutoAdminLogon to 0) and remove stored credentials. Use a screensaver with password lock instead. Rotate the exposed account password immediately.",
+            "tags": ["credentials", "registry", "plaintext"],
+            "tool_hint": ["reg query", "Mimikatz"],
+            "timestamp": "2026-02-24T15:30:07Z"
+        },
+        {
+            "check_id": "services",
+            "finding_id": "unquoted_service_path",
+            "severity": "high",
+            "title": "Unquoted Service Binary Path with Writable Intermediate Directory",
+            "description": "The service 'CorpMonitor' has an unquoted binary path containing spaces. Windows will attempt to execute intermediate path segments, allowing a low-privilege user to plant a binary at a writable location that executes as SYSTEM.",
+            "evidence": "Service Name  : CorpMonitor\nDisplay Name  : Corp Monitoring Agent\nStart Type    : Automatic\nBinary Path   : C:\\Program Files\\Corp Software\\Monitoring\\bin\\CorpAgent.exe\nRun As        : LocalSystem\n\nWritable directory found: C:\\Program Files\\Corp Software\\\nCacls output: CORP\\Domain Users:(OI)(CI)(W)",
+            "remediation": "Wrap the binary path in double quotes in the service configuration: sc config CorpMonitor binpath= \"\\\"C:\\Program Files\\Corp Software\\Monitoring\\bin\\CorpAgent.exe\\\"\". Remove write permissions from non-admin users on service directories.",
+            "tags": ["services", "unquoted-path", "privilege-escalation"],
+            "tool_hint": ["PowerUp", "SharpUp"],
+            "timestamp": "2026-02-24T15:30:12Z"
+        },
+        {
+            "check_id": "quick_wins",
+            "finding_id": "saved_credentials_cmdkey",
+            "severity": "high",
+            "title": "Saved Windows Credentials Found via cmdkey",
+            "description": "The Windows Credential Manager contains saved credentials accessible to the current user. These can be used with runas /savecred to execute commands as the stored account without knowing the password.",
+            "evidence": "cmdkey /list output:\nCurrently stored credentials:\n  Target: Domain:interactive=CORP\\backupadmin\n  Type: Domain Password\n  User: CORP\\backupadmin\n  Local machine persistence\n\n  Target: MicrosoftOffice16_Data:SSPI:svc_sharepoint@corp.local\n  Type: Domain Extended\n  User: svc_sharepoint@corp.local",
+            "remediation": "Remove stored credentials with 'cmdkey /delete:Target'. Educate users not to save administrative credentials. Implement Privileged Access Workstations (PAW) for admin tasks.",
+            "tags": ["credentials", "windows-credential-manager", "lateral-movement"],
+            "tool_hint": ["runas /savecred", "Mimikatz dpapi"],
+            "timestamp": "2026-02-24T15:30:08Z"
+        },
+        {
+            "check_id": "scheduled_tasks",
+            "finding_id": "privileged_scheduled_task",
+            "severity": "medium",
+            "title": "Scheduled Task Running as SYSTEM with Writable Script",
+            "description": "A scheduled task executes a PowerShell script as SYSTEM, and the script file is writable by the current user. Replacing the script content allows arbitrary code execution as SYSTEM.",
+            "evidence": "Task Name     : \\Corp\\DailyMaintenance\nRun As        : SYSTEM\nTrigger       : Daily at 02:00\nAction        : powershell.exe -ExecutionPolicy Bypass -File \"C:\\Scripts\\maintenance.ps1\"\n\nFile permissions on C:\\Scripts\\maintenance.ps1:\nCORP\\Domain Users:(W)\nCORP\\svc_web:(F)\nBUILTIN\\Administrators:(F)",
+            "remediation": "Restrict write access on scheduled task scripts to administrators only. Use 'icacls C:\\Scripts\\maintenance.ps1 /inheritance:r /grant Administrators:F /grant SYSTEM:F' to lock down permissions.",
+            "tags": ["scheduled-tasks", "privilege-escalation", "writable-file"],
+            "tool_hint": ["PowerUp", "accesschk"],
+            "timestamp": "2026-02-24T15:30:15Z"
+        },
+        {
+            "check_id": "autoruns",
+            "finding_id": "writable_autorun",
+            "severity": "medium",
+            "title": "Writable Autorun Entry in HKCU Run Key",
+            "description": "A registry Run key entry points to a directory writable by the current user. While HKCU only provides user-level persistence, the referenced binary directory is also accessible to other users and may be leveraged for lateral movement.",
+            "evidence": "Registry Key : HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\nValue Name   : CorpUpdater\nValue Data   : C:\\Users\\Public\\CorpApps\\updater.exe\n\nDirectory permissions on C:\\Users\\Public\\CorpApps\\:\nBUILTIN\\Users:(OI)(CI)(F)\nNT AUTHORITY\\SYSTEM:(OI)(CI)(F)\nBUILTIN\\Administrators:(OI)(CI)(F)\n\nFile does not currently exist — hijack opportunity",
+            "remediation": "Remove the autorun entry or replace it with a properly secured path. Ensure public directories do not contain auto-executed binaries.",
+            "tags": ["autoruns", "persistence", "registry"],
+            "tool_hint": ["Autoruns", "PowerUp"],
+            "timestamp": "2026-02-24T15:30:16Z"
+        },
+        {
+            "check_id": "system_info",
+            "finding_id": "system_info_raw",
+            "severity": "info",
+            "title": "System Information Collected",
+            "description": "General system enumeration data collected for analysis.",
+            "evidence": "Hostname      : WORKSTATION01\nDomain        : CORP.LOCAL\nOS            : Microsoft Windows 10 Pro (10.0.19045 Build 19045)\nArchitecture  : AMD64\nCPU           : Intel(R) Core(TM) i7-10700 CPU @ 2.90GHz\nRAM           : 16 GB\nLogon Server  : \\\\DC01\nUptime        : 3 days, 14 hours, 22 minutes\nCurrent User  : CORP\\svc_web\nUser SID      : S-1-5-21-3842939050-3880317879-2865463114-1105",
+            "remediation": "",
+            "tags": ["enumeration", "system-info"],
+            "tool_hint": [],
+            "timestamp": "2026-02-24T15:30:01Z"
+        },
+        {
+            "check_id": "network",
+            "finding_id": "network_config_raw",
+            "severity": "info",
+            "title": "Network Configuration Collected",
+            "description": "Network interfaces, open ports, and active connections enumerated.",
+            "evidence": "Active Interfaces:\n  Ethernet0 : 10.10.14.22/24  GW: 10.10.14.1\n  Loopback  : 127.0.0.1/8\n\nListening Ports (TCP):\n  0.0.0.0:80    PID 4   (System - IIS)\n  0.0.0.0:135   PID 872  (RpcSs)\n  0.0.0.0:445   PID 4   (System - SMB)\n  0.0.0.0:3389  PID 1024 (TermService)\n  0.0.0.0:5985  PID 4   (System - WinRM)\n  127.0.0.1:1434 PID 2048 (MSSQL$SQLEXPRESS)\n\nActive Connections:\n  10.10.14.22:52341 -> 10.10.14.1:443  ESTABLISHED (chrome.exe PID 3344)\n  10.10.14.22:52398 -> 10.10.14.100:445 ESTABLISHED (System PID 4)",
+            "remediation": "",
+            "tags": ["enumeration", "network"],
+            "tool_hint": [],
+            "timestamp": "2026-02-24T15:30:06Z"
+        },
+        {
+            "check_id": "patches",
+            "finding_id": "patches_raw",
+            "severity": "info",
+            "title": "Installed Patches Collected",
+            "description": "Windows Update history collected for patch gap analysis.",
+            "evidence": "Last 5 installed patches:\nKB5022282  Installed: 2026-01-11  2026-01 Cumulative Update for Windows 10 Version 21H2\nKB5020953  Installed: 2025-12-14  2025-12 Cumulative Update for Windows 10 Version 21H2\nKB5019959  Installed: 2025-11-09  2025-11 Cumulative Update for Windows 10 Version 21H2\nKB5018410  Installed: 2025-10-12  2025-10 Cumulative Update for Windows 10 Version 21H2\nKB5017308  Installed: 2025-09-14  2025-09 Cumulative Update for Windows 10 Version 21H2\n\nNote: 44 days since last patch. No patches installed in February 2026.",
+            "remediation": "",
+            "tags": ["enumeration", "patches"],
+            "tool_hint": ["Watson", "Seatbelt"],
+            "timestamp": "2026-02-24T15:30:09Z"
+        },
+        {
+            "check_id": "processes",
+            "finding_id": "processes_raw",
+            "severity": "info",
+            "title": "Running Processes Collected",
+            "description": "Process list enumerated for analysis of running services and potential injection targets.",
+            "evidence": "PID   PPID  Name                    User                    Path\n4     0     System                  NT AUTHORITY\\SYSTEM\n488   4     smss.exe                NT AUTHORITY\\SYSTEM     C:\\Windows\\System32\\smss.exe\n600   592   csrss.exe               NT AUTHORITY\\SYSTEM     C:\\Windows\\System32\\csrss.exe\n872   856   services.exe            NT AUTHORITY\\SYSTEM     C:\\Windows\\System32\\services.exe\n880   856   lsass.exe               NT AUTHORITY\\SYSTEM     C:\\Windows\\System32\\lsass.exe\n1024  872   svchost.exe             NT AUTHORITY\\SYSTEM     C:\\Windows\\System32\\svchost.exe\n1340  872   CorpAgent.exe           NT AUTHORITY\\SYSTEM     C:\\Program Files\\Corp Software\\Monitoring\\bin\\CorpAgent.exe\n2048  872   sqlservr.exe            NT SERVICE\\MSSQL$SQLEXPRESS  C:\\Program Files\\Microsoft SQL Server\\MSSQL15.SQLEXPRESS\\MSSQL\\Binn\\sqlservr.exe\n3200  872   w3wp.exe                IIS APPPOOL\\DefaultAppPool  C:\\Windows\\System32\\inetsrv\\w3wp.exe\n3344  3200  chrome.exe              CORP\\svc_web            C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+            "remediation": "",
+            "tags": ["enumeration", "processes"],
+            "tool_hint": [],
+            "timestamp": "2026-02-24T15:30:18Z"
+        }
+    ],
+    "summary": {
+        "total_findings": 10,
+        "by_severity": {
+            "critical": 2,
+            "high": 2,
+            "medium": 2,
+            "info": 4
+        },
+        "by_category": {}
+    }
+}

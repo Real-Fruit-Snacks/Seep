@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="280" viewBox="0 0 800 280">
+  <defs>
+    <!-- Catppuccin Mocha background: crust → base → mantle -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#11111b"/>
+      <stop offset="50%" style="stop-color:#1e1e2e"/>
+      <stop offset="100%" style="stop-color:#181825"/>
+    </linearGradient>
+
+    <!-- Title gradient: teal → sapphire → blue → mauve (water flow) -->
+    <linearGradient id="title-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#94e2d5"/>
+      <stop offset="35%" style="stop-color:#74c7ec"/>
+      <stop offset="65%" style="stop-color:#89b4fa"/>
+      <stop offset="100%" style="stop-color:#cba6f7"/>
+    </linearGradient>
+
+    <!-- Wave gradients — subtle water pooling at bottom -->
+    <linearGradient id="wave1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#94e2d5;stop-opacity:0.10"/>
+      <stop offset="100%" style="stop-color:#89b4fa;stop-opacity:0.05"/>
+    </linearGradient>
+    <linearGradient id="wave2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#74c7ec;stop-opacity:0.08"/>
+      <stop offset="100%" style="stop-color:#94e2d5;stop-opacity:0.04"/>
+    </linearGradient>
+
+    <!-- Accent line beneath title -->
+    <linearGradient id="accent-line" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#94e2d5;stop-opacity:0"/>
+      <stop offset="20%" style="stop-color:#94e2d5"/>
+      <stop offset="50%" style="stop-color:#74c7ec"/>
+      <stop offset="80%" style="stop-color:#cba6f7"/>
+      <stop offset="100%" style="stop-color:#cba6f7;stop-opacity:0"/>
+    </linearGradient>
+
+    <!-- Crack seep gradient — vertical water flow -->
+    <linearGradient id="seep-flow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#94e2d5;stop-opacity:0"/>
+      <stop offset="25%" style="stop-color:#94e2d5;stop-opacity:0.6"/>
+      <stop offset="50%" style="stop-color:#74c7ec;stop-opacity:0.5"/>
+      <stop offset="75%" style="stop-color:#89b4fa;stop-opacity:0.4"/>
+      <stop offset="100%" style="stop-color:#89b4fa;stop-opacity:0"/>
+    </linearGradient>
+
+    <!-- Glow filter -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Subtle crack glow -->
+    <filter id="crack-glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="280" rx="12" fill="url(#bg)"/>
+  <rect width="800" height="280" rx="12" fill="none" stroke="#313244" stroke-width="1"/>
+
+  <!-- Wave shapes — water pooling at bottom -->
+  <path d="M0,210 Q150,185 300,200 T600,188 T800,195 L800,280 L0,280 Z" fill="url(#wave1)"/>
+  <path d="M0,235 Q200,210 400,225 T700,215 T800,220 L800,280 L0,280 Z" fill="url(#wave2)"/>
+
+  <!-- Decorative particles — top right cluster -->
+  <g opacity="0.08">
+    <circle cx="680" cy="48" r="1.5" fill="#94e2d5"/>
+    <circle cx="700" cy="42" r="1" fill="#74c7ec"/>
+    <circle cx="720" cy="52" r="1.5" fill="#89b4fa"/>
+    <circle cx="695" cy="62" r="1" fill="#cba6f7"/>
+    <circle cx="715" cy="36" r="1" fill="#94e2d5"/>
+    <circle cx="735" cy="46" r="1.5" fill="#74c7ec"/>
+    <circle cx="660" cy="56" r="1" fill="#89b4fa"/>
+    <circle cx="740" cy="60" r="1" fill="#b4befe"/>
+    <circle cx="670" cy="38" r="1.5" fill="#94e2d5"/>
+    <circle cx="750" cy="40" r="1" fill="#74c7ec"/>
+  </g>
+
+  <!-- Decorative particles — bottom left cluster -->
+  <g opacity="0.08">
+    <circle cx="90" cy="210" r="1.5" fill="#89b4fa"/>
+    <circle cx="70" cy="220" r="1" fill="#94e2d5"/>
+    <circle cx="110" cy="225" r="1.5" fill="#74c7ec"/>
+    <circle cx="85" cy="235" r="1" fill="#cba6f7"/>
+    <circle cx="55" cy="215" r="1" fill="#89b4fa"/>
+    <circle cx="120" cy="215" r="1" fill="#94e2d5"/>
+  </g>
+
+  <!-- Crack — subtle vertical fissure through the center of the title -->
+  <path d="M401,52 L399,68 L402,82 L398,96 L401,108 L399,120 L402,134 L398,148"
+        stroke="#94e2d5" stroke-width="0.8" fill="none" opacity="0.25" filter="url(#crack-glow)"/>
+  <!-- Crack body — very subtle filled shape -->
+  <path d="M400,58 L398,75 L401,90 L399,108 L401,122 L399,138 L401,148
+           L402,138 L400,122 L402,108 L400,90 L402,75 L400,58 Z"
+        fill="url(#seep-flow)" opacity="0.3"/>
+  <!-- Right micro-branch -->
+  <path d="M401,108 L410,118 L408,130"
+        stroke="#74c7ec" stroke-width="0.5" fill="none" opacity="0.18"/>
+  <!-- Left micro-branch -->
+  <path d="M399,90 L391,98 L393,110"
+        stroke="#89b4fa" stroke-width="0.5" fill="none" opacity="0.15"/>
+
+  <!-- Title text -->
+  <text x="400" y="130" font-family="'SF Mono','Fira Code','JetBrains Mono','Cascadia Code',Consolas,monospace"
+        font-size="72" font-weight="bold" fill="url(#title-grad)" text-anchor="middle"
+        letter-spacing="12" filter="url(#glow)">SEEP</text>
+
+  <!-- Accent line -->
+  <rect x="220" y="148" width="360" height="2" rx="1" fill="url(#accent-line)"/>
+
+  <!-- Tagline -->
+  <text x="400" y="180" font-family="'SF Mono','Fira Code','JetBrains Mono','Cascadia Code',Consolas,monospace"
+        font-size="14" fill="#a6adc8" text-anchor="middle"
+        letter-spacing="4">WATER FINDS EVERY CRACK</text>
+
+  <!-- Feature pills -->
+  <g transform="translate(108, 200)">
+    <!-- Pill 1: fileless agent -->
+    <rect x="0" y="0" width="130" height="28" rx="14" fill="#313244"/>
+    <rect x="0" y="0" width="130" height="28" rx="14" fill="none" stroke="#45475a" stroke-width="0.5"/>
+    <circle cx="18" cy="14" r="4" fill="#94e2d5"/>
+    <text x="30" y="18" font-family="'SF Mono','Fira Code','JetBrains Mono',Consolas,monospace"
+          font-size="11" fill="#cdd6f4">fileless agent</text>
+
+    <!-- Pill 2: 16 checks -->
+    <rect x="150" y="0" width="110" height="28" rx="14" fill="#313244"/>
+    <rect x="150" y="0" width="110" height="28" rx="14" fill="none" stroke="#45475a" stroke-width="0.5"/>
+    <circle cx="168" cy="14" r="4" fill="#74c7ec"/>
+    <text x="180" y="18" font-family="'SF Mono','Fira Code','JetBrains Mono',Consolas,monospace"
+          font-size="11" fill="#cdd6f4">16 checks</text>
+
+    <!-- Pill 3: 97 tools -->
+    <rect x="280" y="0" width="100" height="28" rx="14" fill="#313244"/>
+    <rect x="280" y="0" width="100" height="28" rx="14" fill="none" stroke="#45475a" stroke-width="0.5"/>
+    <circle cx="298" cy="14" r="4" fill="#89b4fa"/>
+    <text x="310" y="18" font-family="'SF Mono','Fira Code','JetBrains Mono',Consolas,monospace"
+          font-size="11" fill="#cdd6f4">97 tools</text>
+
+    <!-- Pill 4: MITRE ATT&CK -->
+    <rect x="400" y="0" width="130" height="28" rx="14" fill="#313244"/>
+    <rect x="400" y="0" width="130" height="28" rx="14" fill="none" stroke="#45475a" stroke-width="0.5"/>
+    <circle cx="418" cy="14" r="4" fill="#cba6f7"/>
+    <text x="430" y="18" font-family="'SF Mono','Fira Code','JetBrains Mono',Consolas,monospace"
+          font-size="11" fill="#cdd6f4">MITRE ATT&amp;CK</text>
+  </g>
+</svg>
