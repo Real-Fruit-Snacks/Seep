@@ -1,10 +1,27 @@
 """Seep server configuration."""
 
 from __future__ import annotations
+import re
 import secrets
 from dataclasses import dataclass, field
 from pathlib import Path
 import yaml
+
+
+def _validate_url_prefix(value: str) -> str:
+    """Validate and normalize the URL prefix."""
+    if not value:
+        return ""
+    # Ensure it starts with /
+    if not value.startswith("/"):
+        value = "/" + value
+    # Strip trailing slash
+    value = value.rstrip("/")
+    if not re.match(r"^/[a-zA-Z0-9/_-]+$", value):
+        raise ValueError(f"url_prefix must contain only alphanumeric, /, -, _ characters, got: {value!r}")
+    if ".." in value:
+        raise ValueError(f"url_prefix must not contain path traversal: {value!r}")
+    return value
 
 
 def _validate_port(value: int, name: str) -> int:
@@ -52,6 +69,7 @@ class ServerConfig:
     upload_port: int = 8000
     bind_address: str = "0.0.0.0"
     auth_token: str = ""
+    url_prefix: str = ""  # e.g. "/app" — prepended to all endpoints for path randomization
     tls: TlsConfig = field(default_factory=TlsConfig)
     agent: AgentConfig = field(default_factory=AgentConfig)
     catalog: CatalogConfig = field(default_factory=CatalogConfig)
@@ -81,6 +99,7 @@ class ServerConfig:
             upload_port=_validate_port(server.get("upload_port", 8000), "upload_port"),
             bind_address=server.get("bind_address", "0.0.0.0"),
             auth_token=server.get("auth_token", ""),
+            url_prefix=_validate_url_prefix(server.get("url_prefix", "")),
             tls=TlsConfig(
                 enabled=tls_raw.get("enabled", False),
                 cert_path=tls_raw.get("cert_path", "certs/seep.crt"),
@@ -113,6 +132,7 @@ class ServerConfig:
                 "upload_port": self.upload_port,
                 "bind_address": self.bind_address,
                 "auth_token": self.auth_token,
+                "url_prefix": self.url_prefix,
                 "tls": {
                     "enabled": self.tls.enabled,
                     "cert_path": self.tls.cert_path,

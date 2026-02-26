@@ -41,3 +41,23 @@ docs/AGENTS.md
 # OS
 .DS_Store
 Thumbs.db
+
+# Workspace directories (generated at runtime)
+seep-workspace/
+*-workspace/
+
+# Composed agents (generated, may contain tokens)
+agents/*.ps1
+
+# Runtime results and reports (contain engagement data)
+results/
+reports/
+
+# OPSEC tracking (contains security-sensitive details)
+OPSEC_ISSUES.md
+
+# Log files
+*.log
+
+# Temporary test workspaces
+/tmp/

@@ -15,7 +15,7 @@ from pathlib import Path
 
 from .schemas import ToolCatalog, ToolEntry
 
-_USER_AGENT = "seep-catalog-manager/1.0 (github.com/Real-Fruit-Snacks/Seep)"
+_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
 _CONNECT_TIMEOUT = 30
 _READ_TIMEOUT = 120
 

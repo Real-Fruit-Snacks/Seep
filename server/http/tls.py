@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import random
 import re
 import ssl
 import subprocess
@@ -16,11 +17,28 @@ _RED = "\033[31m"
 _DIM = "\033[2m"
 _RESET = "\033[0m"
 
+# Plausible hostnames for self-signed certs (blend with common internal services)
+_DEFAULT_CN_POOL = [
+    "localhost",
+    "mail.local",
+    "intranet.local",
+    "srv01.corp.local",
+    "web01.internal",
+    "app-server",
+    "exchange.local",
+    "fileserver.internal",
+]
+
+
+def _random_cn() -> str:
+    """Pick a plausible random CN from the pool."""
+    return random.choice(_DEFAULT_CN_POOL)
+
 
 def generate_self_signed_cert(
     cert_path: Path,
     key_path: Path,
-    hostname: str = "seep-server",
+    hostname: str = "",
 ) -> None:
     """Generate a self-signed TLS certificate using openssl.
 
@@ -29,6 +47,9 @@ def generate_self_signed_cert(
         key_path:  Destination path for the private key.
         hostname:  CN value embedded in the certificate.
     """
+    if not hostname:
+        hostname = _random_cn()
+
     if not re.match(r"^[a-zA-Z0-9._-]+$", hostname):
         raise ValueError(f"Invalid hostname: {hostname!r}")
 

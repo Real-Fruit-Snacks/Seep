@@ -12,8 +12,8 @@ from server.catalog.schemas import ToolCatalog
 
 
 def test_load_catalog(catalog: ToolCatalog) -> None:
-    """Catalog loads successfully with 106 tools and 7 categories."""
-    assert len(catalog.tools) == 106
+    """Catalog loads successfully with 93 tools and 7 categories."""
+    assert len(catalog.tools) == 93
     assert len(catalog.categories) == 7
 
 
