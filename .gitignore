@@ -15,7 +15,8 @@ dist/
 venv/
 env/
 
-
+# Tool staging (downloaded binaries)
+staging/
 
 # oh-my-claudecode state
 .omc/
