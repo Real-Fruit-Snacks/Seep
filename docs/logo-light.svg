@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="seep-flow-lt" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0d9488"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Layer 1 — top barrier -->
+  <rect x="12" y="24" width="32" height="2" rx="1" fill="#9ca3af"/>
+  <rect x="52" y="24" width="56" height="2" rx="1" fill="#9ca3af"/>
+
+  <!-- Layer 2 — middle barrier -->
+  <rect x="12" y="52" width="50" height="2" rx="1" fill="#9ca3af"/>
+  <rect x="70" y="52" width="38" height="2" rx="1" fill="#9ca3af"/>
+
+  <!-- Layer 3 — bottom barrier -->
+  <rect x="12" y="80" width="22" height="2" rx="1" fill="#9ca3af"/>
+  <rect x="42" y="80" width="66" height="2" rx="1" fill="#9ca3af"/>
+
+  <!-- Entry point -->
+  <circle cx="48" cy="14" r="3" fill="#0d9488"/>
+
+  <!-- Fluid path -->
+  <path d="M48,17 L48,24 L48,26 L66,26 L66,52 L66,54 L38,54 L38,80 L38,82 L38,96"
+        stroke="url(#seep-flow-lt)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Droplets -->
+  <circle cx="30" cy="100" r="2" fill="#16a34a"/>
+  <circle cx="38" cy="104" r="2" fill="#16a34a"/>
+  <circle cx="46" cy="101" r="2" fill="#16a34a"/>
+  <circle cx="54" cy="106" r="2" fill="#16a34a"/>
+</svg>

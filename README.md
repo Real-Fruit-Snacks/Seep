@@ -1,39 +1,31 @@
 <div align="center">
 
-<img src="docs/banner.svg" alt="Seep" width="800">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/logo.svg">
+  <source media="(prefers-color-scheme: light)" srcset="docs/logo-light.svg">
+  <img src="docs/logo.svg" alt="Seep" width="80">
+</picture>
 
 <br>
 
-[![Python](https://img.shields.io/badge/Python-3.9%2B-green.svg)](https://www.python.org/downloads/)
-[![PowerShell](https://img.shields.io/badge/PowerShell-3.0%2B-blue.svg)](https://docs.microsoft.com/en-us/powershell/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+<img src="docs/banner.svg" alt="Seep — Windows Privesc Enumeration" width="800">
+
+<br><br>
+
+[![Python](https://img.shields.io/badge/Python-3.9%2B-a6e3a1?style=flat-square&logo=python&logoColor=a6e3a1)](https://www.python.org/downloads/)
+[![PowerShell](https://img.shields.io/badge/PowerShell-3.0%2B-94e2d5?style=flat-square&logo=powershell&logoColor=94e2d5)](https://docs.microsoft.com/en-us/powershell/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-94e2d5?style=flat-square)](LICENSE)
+[![Tests](https://img.shields.io/badge/Tests-391_passing-a6e3a1?style=flat-square)](tests/)
 
 <br>
 
-Water finds every crack — so does Seep. A Windows privilege escalation enumeration framework that identifies misconfigurations, credential exposures, and escalation paths across **16 enumeration checks** with **93 tools** in 7 categories, MITRE ATT&CK-mapped recommendations, and single-file HTML reports — all from a fileless agent. Hardened server with upload size limits, decompression bomb protection, XSS-safe HTML, TLS path confinement, zip traversal protection, request timeouts, and security headers.
+**Water finds every crack &mdash; so does Seep.** A Windows privilege escalation enumeration framework that identifies misconfigurations, credential exposures, and escalation paths across **16 enumeration checks** with **97 tools** in 7 categories, MITRE ATT&CK-mapped recommendations, and single-file HTML reports &mdash; all from a fileless agent.
+
+[Quick Start](#quick-start) &bull; [Agent Checks](#agent-checks) &bull; [Tool Catalog](#tool-catalog) &bull; [Architecture](#architecture) &bull; [OPSEC](#opsec) &bull; [Docs](https://real-fruit-snacks.github.io/Seep/)
 
 </div>
 
 <br>
-
-## Table of Contents
-
-- [Highlights](#highlights)
-- [Quick Start](#quick-start)
-- [Usage](#usage)
-- [Command Reference](#command-reference)
-- [Agent Checks](#agent-checks)
-- [Tool Catalog](#tool-catalog)
-- [Architecture](#architecture)
-- [Tech Stack](#tech-stack)
-- [Features](#features)
-- [OPSEC](#opsec)
-- [Report Output](#report-output)
-- [Development](#development)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-
----
 
 ## Highlights
 
@@ -42,12 +34,12 @@ Water finds every crack — so does Seep. A Windows privilege escalation enumera
 <td width="50%">
 
 ### 16 Enumeration Checks
-Token privileges, unquoted service paths, saved credentials, autoruns, scheduled tasks, registry secrets, DLL hijack candidates, web configs — all producing structured JSON findings with severity ratings.
+Token privileges, unquoted service paths, saved credentials, autoruns, scheduled tasks, registry secrets, DLL hijack candidates, web configs &mdash; all producing structured JSON findings with severity ratings.
 
 </td>
 <td width="50%">
 
-### 93-Tool Catalog
+### 97-Tool Catalog
 Organized across 7 categories (Enumeration, Credentials, TokenAbuse, AD, Tunneling, Impacket, Shells) with SHA256 integrity verification and self-hosted distribution via GitHub Releases.
 
 </td>
@@ -56,7 +48,7 @@ Organized across 7 categories (Enumeration, Credentials, TokenAbuse, AD, Tunneli
 <td width="50%">
 
 ### MITRE ATT&CK Recommendations
-Every finding maps to ATT&CK techniques with actionable exploitation guidance — tool suggestions, example commands, and risk ratings sorted by severity.
+Every finding maps to ATT&CK techniques with actionable exploitation guidance &mdash; tool suggestions, example commands, and risk ratings sorted by severity.
 
 </td>
 <td width="50%">
@@ -70,13 +62,13 @@ Agent runs entirely in memory via IEX cradle. Results are AES-256-CBC encrypted,
 <td width="50%">
 
 ### Single-File HTML Reports
-Dark-themed, self-contained HTML — no CDN, no external requests. Executive summary, per-finding detail with evidence, remediation guidance, and recommended tools.
+Dark-themed, self-contained HTML &mdash; no CDN, no external requests. Executive summary, per-finding detail with evidence, remediation guidance, and recommended tools.
 
 </td>
 <td width="50%">
 
 ### Modular Agent Composer
-Cherry-pick checks with `--checks` / `--exclude`. Apply identifier randomization with `--obfuscate` — function names, variables, HTTP headers, and check prefixes are all randomized. The composer assembles a single `.ps1` from 16 independent modules.
+Cherry-pick checks with `--checks` / `--exclude`. Apply identifier randomization with `--obfuscate` &mdash; function names, variables, HTTP headers, and check prefixes are all randomized. The composer assembles a single `.ps1` from 16 independent modules.
 
 </td>
 </tr>
@@ -286,7 +278,7 @@ seep compose --obfuscate --output obf_agent.ps1
 | # | Check ID | Description | OPSEC |
 |:-:|----------|-------------|:-----:|
 | 1 | `system_info` | User context, groups, privileges, local accounts, environment | Low |
-| 2 | `user_privileges` | Token privileges — flags SeImpersonate, SeAssignPrimaryToken | Low |
+| 2 | `user_privileges` | Token privileges &mdash; flags SeImpersonate, SeAssignPrimaryToken | Low |
 | 3 | `network` | Interfaces, open ports, active connections, routing, firewall | Low |
 | 4 | `patches` | Installed KB patches, patch gap analysis | Low |
 | 5 | `quick_wins` | PS history, saved credentials (cmdkey), autologon registry | Low |
@@ -308,7 +300,7 @@ seep compose --obfuscate --output obf_agent.ps1
 |---------|:--------:|---------|
 | SeImpersonatePrivilege | CRITICAL | Token abuse path to SYSTEM via potato exploits |
 | AutoLogon Credentials | CRITICAL | Plaintext password in Winlogon registry |
-| AlwaysInstallElevated | CRITICAL | MSI escalation — install as SYSTEM |
+| AlwaysInstallElevated | CRITICAL | MSI escalation &mdash; install as SYSTEM |
 | Unquoted Service Path | HIGH | Binary planting in writable intermediate directory |
 | Saved Credentials | HIGH | cmdkey entries usable with `runas /savecred` |
 
@@ -316,7 +308,7 @@ seep compose --obfuscate --output obf_agent.ps1
 
 ## Tool Catalog
 
-93 tools organized across 7 categories, self-hosted via GitHub Releases:
+97 tools organized across 7 categories, self-hosted via GitHub Releases:
 
 | Category | Count | Representative Tools |
 |----------|:-----:|---------------------|
@@ -326,11 +318,11 @@ seep compose --obfuscate --output obf_agent.ps1
 | **AD** | 16 | SharpHound, Certify, Whisker, PowerView, Kerbrute, KrbRelayUp |
 | **Tunneling** | 9 | Chisel, Ligolo-ng, socat, netcat |
 | **Impacket** | 18 | secretsdump, GetUserSPNs, psexec, wmiexec, ntlmrelayx |
-| **Shells** | 7 | Nishang, PHP shells, netcat variants |
+| **Shells** | 5 | Nishang, PHP shells, netcat variants |
 
 ### Self-Hosted Distribution
 
-All tools are hosted on the Seep GitHub repository using GitHub Releases — not committed to git history. This eliminates URL rot, provides integrity verification, and gives full control over tool versions.
+All tools are hosted on the Seep GitHub repository using GitHub Releases &mdash; not committed to git history. This eliminates URL rot, provides integrity verification, and gives full control over tool versions.
 
 ```
 tools/
@@ -371,7 +363,7 @@ seep/
 │   │   │   └── agent_wrapper.ps1   # Invoke-Seep entry point
 │   │   └── composer.py         # Assembles checks into single .ps1, identifier randomization
 │   ├── catalog/
-│   │   ├── tools.yaml          # 93 tool definitions (SHA256, categories, MITRE triggers)
+│   │   ├── tools.yaml          # 97 tool definitions (SHA256, categories, MITRE triggers)
 │   │   ├── schemas.py          # ToolEntry, ToolCatalog, CategoryDef
 │   │   ├── loader.py           # YAML loader with validation
 │   │   └── manager.py          # Download, verify, symlinks, update check
@@ -429,7 +421,7 @@ report.html (self-contained, dark theme)           │
 | **Reports** | Self-contained HTML, Markdown, JSON |
 | **Testing** | pytest (391 tests) |
 | **Linting** | ruff (E, F, W rules) |
-| **Encryption** | AES-256-CBC via `cryptography` (agent→server) |
+| **Encryption** | AES-256-CBC via `cryptography` (agent to server) |
 | **CSPRNG** | `secrets` module for identifier randomization and TLS CN selection |
 | **Evasion** | AMSI, ETW, Script Block Logging bypasses |
 
@@ -442,36 +434,36 @@ No framework. No Docker. No build step. Just `pip install` with two dependencies
 | Feature | Description |
 |---------|-------------|
 | **16 enumeration checks** | Modular PowerShell scripts with metadata headers, composable |
-| **93-tool catalog** | YAML-defined with SHA256, categories, upstream URLs, license tracking |
-| **Severity system** | CRITICAL, HIGH, MEDIUM, LOW, INFO — per finding and per recommendation |
+| **97-tool catalog** | YAML-defined with SHA256, categories, upstream URLs, license tracking |
+| **Severity system** | CRITICAL, HIGH, MEDIUM, LOW, INFO &mdash; per finding and per recommendation |
 | **MITRE ATT&CK mapping** | Every recommendation links to a technique (T1134.001, T1574.009, etc.) |
-| **Fileless agent** | IEX cradle, in-memory GZip compression, HTTP upload — zero disk footprint |
+| **Fileless agent** | IEX cradle, in-memory GZip compression, HTTP upload &mdash; zero disk footprint |
 | **Agent composition** | Select/exclude checks, obfuscate strings, strip comments |
 | **Concurrent downloads** | 4-worker thread pool with progress output and hash verification |
-| **Self-hosted tools** | GitHub Releases — no upstream URL rot, version-pinned |
+| **Self-hosted tools** | GitHub Releases &mdash; no upstream URL rot, version-pinned |
 | **Self-signed TLS** | One-command HTTPS with auto-generated cert, path-confined to workdir |
 | **HTML reports** | Dark theme, self-contained, executive summary, recommendations section |
 | **Markdown reports** | Pipe-friendly, includes all findings and MITRE links |
 | **JSON summary** | Machine-readable output for scripted workflows |
 | **Config file** | YAML config with workspace isolation and port validation |
-| **Upload receiver** | Accepts JSON, ZIP, and GZip — 50MB upload limit, 200MB decompression limit |
+| **Upload receiver** | Accepts JSON, ZIP, and GZip &mdash; 50MB upload limit, 200MB decompression limit |
 | **Integrity verification** | `seep catalog verify` checks every tool against catalog SHA256 |
 | **Update checking** | `seep catalog update` queries GitHub API for newer releases |
 | **Symlink organization** | Tools organized into `all/`, `categories/{name}/` via relative symlinks |
 | **Security hardened** | Path traversal guards, zip entry validation, XSS escaping, CSP headers, request timeouts, input validation |
 | **No external deps at runtime** | Reports have zero CDN calls, agent uses only PowerShell builtins |
-| **AMSI bypass** | Reflection-based AMSI patch in cradle and agent — obfuscated format strings |
+| **AMSI bypass** | Reflection-based AMSI patch in cradle and agent &mdash; obfuscated format strings |
 | **ETW bypass** | Disables `PSEtwLogProvider.etwEnabled` to prevent telemetry |
 | **Script Block Logging bypass** | Patches `cachedGroupPolicySettings` to disable SBL |
 | **AES-256-CBC encryption** | Results encrypted with SHA256(auth_token) as key, IV prepended |
 | **Server header spoofing** | HTTP `Server` header reports `Microsoft-IIS/10.0` |
 | **Identifier randomization** | `--obfuscate` uses CSPRNG (`secrets`) to randomize all function names, variables, headers, and check prefixes |
 | **Auth-gated endpoints** | All sensitive endpoints require token auth, return 404 (not 401) on failure |
-| **Benign index page** | Unauthenticated visitors see generic "It works!" — no C2 self-identification |
+| **Benign index page** | Unauthenticated visitors see generic "It works!" &mdash; no C2 self-identification |
 | **URL prefix** | Configurable path prefix for endpoint randomization (e.g. `/app`) |
 | **CLM detection** | Agent warns and exits gracefully if Constrained Language Mode is active |
 | **Random TLS CN** | Self-signed cert uses randomized Common Name from plausible hostname pool |
-| **Auto-invoke** | Agent self-executes when auth token is embedded — cradle needs no explicit function call |
+| **Auto-invoke** | Agent self-executes when auth token is embedded &mdash; cradle needs no explicit function call |
 | **Base64 token encoding** | Auth token stored as Base64 in composed agent for cosmetic obfuscation, decoded at runtime |
 
 ---
@@ -483,8 +475,8 @@ No framework. No Docker. No build step. Just `pip install` with two dependencies
 | **Pre-download** | AMSI bypass in cradle | Format-string obfuscated patch runs before agent download |
 | **Runtime evasion** | ETW + Script Block Logging | `PSEtwLogProvider.etwEnabled` disabled, `cachedGroupPolicySettings` patched |
 | **Language mode** | CLM detection | Agent detects Constrained Language Mode and warns before proceeding |
-| **Network (server)** | Server header spoofing | Returns `Microsoft-IIS/10.0` — no Python/BaseHTTPServer fingerprint |
-| **Network (server)** | Benign index page | Unauthenticated visitors see "It works!" — no C2 indicators |
+| **Network (server)** | Server header spoofing | Returns `Microsoft-IIS/10.0` &mdash; no Python/BaseHTTPServer fingerprint |
+| **Network (server)** | Benign index page | Unauthenticated visitors see "It works!" &mdash; no C2 indicators |
 | **Network (server)** | Auth-gated endpoints | All sensitive routes return 404 without valid token (not 401/403) |
 | **Network (server)** | URL prefix | Configurable path prefix (e.g. `/app`) to avoid default path fingerprinting |
 | **Network (server)** | Random TLS CN | Self-signed cert uses hostname from plausible pool (mail.local, srv01.corp.local, etc.) |
@@ -518,7 +510,7 @@ Single-file, dark-themed, zero external dependencies:
 
 ### Markdown
 
-Structured sections with tables — suitable for paste into wikis, reports, or Obsidian:
+Structured sections with tables &mdash; suitable for paste into wikis, reports, or Obsidian:
 
 - System info table
 - Findings by severity
@@ -628,7 +620,7 @@ Edit `server/report/recommendations.py` and add an entry to the `RECOMMENDATIONS
 | `catalog download` returns 404 | Configure `release_base_url` in `tools.yaml` to your GitHub repo |
 | Agent hangs on upload | Check upload port is open: `ss -tlnp \| grep 8000` |
 | No findings in report | Verify results JSON has `findings` key: `jq '.findings \| length' results.json` |
-| SHA256 mismatch after download | Tool may have been updated upstream — run `seep catalog update` |
+| SHA256 mismatch after download | Tool may have been updated upstream &mdash; run `seep catalog update` |
 | TLS cert errors on target | Use `-SkipCertificateCheck` in PowerShell 7+ or ignore in IEX cradle |
 | `ModuleNotFoundError: yaml` | Install dependency: `pip install pyyaml` |
 
@@ -639,7 +631,7 @@ Edit `server/report/recommendations.py` and add an entry to the `RECOMMENDATIONS
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/new-check`)
 3. Make your changes
-4. Run `python -m pytest tests/` — all 391 tests must pass
+4. Run `python -m pytest tests/` &mdash; all 391 tests must pass
 5. Commit with a descriptive message
 6. Open a Pull Request
 
@@ -655,6 +647,6 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 **Enumerate. Analyze. Recommend. Escalate.**
 
-[GitHub](https://github.com/Real-Fruit-Snacks/Seep) | [License (MIT)](LICENSE) | [Report Issue](https://github.com/Real-Fruit-Snacks/Seep/issues)
+[GitHub](https://github.com/Real-Fruit-Snacks/Seep) &bull; [License (MIT)](LICENSE) &bull; [Report Issue](https://github.com/Real-Fruit-Snacks/Seep/issues)
 
 </div>
