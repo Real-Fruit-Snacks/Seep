@@ -1,107 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 110" fill="none">
   <defs>
-    <!-- Primary gradient: teal to green -->
-    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#94e2d5"/>
-      <stop offset="40%" stop-color="#94e2d5"/>
+      <stop offset="50%" stop-color="#89dceb"/>
       <stop offset="100%" stop-color="#a6e3a1"/>
     </linearGradient>
-
-    <!-- Accent gradient: green to teal -->
-    <linearGradient id="g2" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#a6e3a1"/>
-      <stop offset="100%" stop-color="#94e2d5"/>
-    </linearGradient>
-
-    <!-- Icon gradient: vertical -->
-    <linearGradient id="g3" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#94e2d5"/>
-      <stop offset="50%" stop-color="#94e2d5"/>
-      <stop offset="100%" stop-color="#a6e3a1"/>
-    </linearGradient>
-
-    <!-- Faint outer glow -->
-    <filter id="softglow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur"/>
-      <feFlood flood-color="#94e2d5" flood-opacity="0.15" result="color"/>
-      <feComposite in="color" in2="blur" operator="in" result="shadow"/>
-      <feComposite in="SourceGraphic" in2="shadow" operator="over"/>
+    <radialGradient id="glow" cx="50%" cy="40%" r="40%">
+      <stop offset="0%" stop-color="#94e2d5" stop-opacity="0.1"/>
+      <stop offset="50%" stop-color="#89dceb" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#a6e3a1" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="textglow">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
     </filter>
   </defs>
-
-  <!-- ===================== LOGOMARK ===================== -->
-  <g transform="translate(58, 40)" filter="url(#softglow)">
-
-    <!-- Hexagonal frame -->
-    <path d="M 80 6 L 140 38 L 140 102 L 80 134 L 20 102 L 20 38 Z"
-          fill="none" stroke="url(#g1)" stroke-width="1.5" opacity="0.4"/>
-
-    <!-- Inner hex subtle fill -->
-    <path d="M 80 14 L 134 42 L 134 98 L 80 126 L 26 98 L 26 42 Z"
-          fill="#94e2d5" opacity="0.04"/>
-
-    <!-- === SEEPING THROUGH LAYERS === -->
-
-    <!-- Barrier layer 1 — top -->
-    <line x1="48" y1="44" x2="74" y2="44" stroke="#94e2d5" stroke-width="1.4" stroke-linecap="round" opacity="0.7"/>
-    <line x1="82" y1="44" x2="112" y2="44" stroke="#94e2d5" stroke-width="1.4" stroke-linecap="round" opacity="0.7"/>
-
-    <!-- Barrier layer 2 — middle -->
-    <line x1="50" y1="66" x2="66" y2="66" stroke="url(#g1)" stroke-width="1.3" stroke-linecap="round" opacity="0.6"/>
-    <line x1="74" y1="66" x2="92" y2="66" stroke="url(#g1)" stroke-width="1.3" stroke-linecap="round" opacity="0.6"/>
-    <line x1="100" y1="66" x2="110" y2="66" stroke="url(#g1)" stroke-width="1.3" stroke-linecap="round" opacity="0.6"/>
-
-    <!-- Barrier layer 3 — bottom -->
-    <line x1="52" y1="88" x2="86" y2="88" stroke="#a6e3a1" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
-    <line x1="94" y1="88" x2="108" y2="88" stroke="#a6e3a1" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
-
-    <!-- Fluid path zigzagging through gaps -->
-    <path d="M 78,30 L 78,44 L 70,66 L 96,66 L 90,88 L 90,104"
-          fill="none" stroke="url(#g1)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
-
-    <!-- Droplets collecting at bottom -->
-    <circle cx="90" cy="108" r="2.5" fill="#a6e3a1" opacity="0.6"/>
-    <circle cx="84" cy="114" r="1.8" fill="#94e2d5" opacity="0.5"/>
-    <circle cx="96" cy="112" r="1.5" fill="#a6e3a1" opacity="0.45"/>
-
-    <!-- Small seep drops along path -->
-    <circle cx="78" cy="38" r="1.2" fill="#94e2d5" opacity="0.55"/>
-    <circle cx="74" cy="55" r="1" fill="#a6e3a1" opacity="0.4"/>
-    <circle cx="83" cy="55" r="0.9" fill="#94e2d5" opacity="0.35"/>
-    <circle cx="93" cy="77" r="1" fill="#a6e3a1" opacity="0.4"/>
-
-    <!-- Crack texture on barriers -->
-    <line x1="78" y1="42" x2="78" y2="46" stroke="#94e2d5" stroke-width="0.4" opacity="0.3"/>
-    <line x1="70" y1="64" x2="70" y2="68" stroke="#a6e3a1" stroke-width="0.4" opacity="0.25"/>
-    <line x1="96" y1="64" x2="96" y2="68" stroke="#94e2d5" stroke-width="0.4" opacity="0.25"/>
-    <line x1="90" y1="86" x2="90" y2="90" stroke="#a6e3a1" stroke-width="0.4" opacity="0.25"/>
-
-    <!-- Corner accents on hex -->
-    <circle cx="80" cy="6" r="2" fill="#94e2d5" opacity="0.3"/>
-    <circle cx="80" cy="134" r="2" fill="#a6e3a1" opacity="0.3"/>
-  </g>
-
-  <!-- ===================== TYPOGRAPHY ===================== -->
-
-  <!-- "SEEP" -->
-  <text x="415" y="108"
-        font-family="'SF Pro Display', 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
-        font-size="82" font-weight="800" letter-spacing="18"
-        fill="url(#g1)" text-anchor="middle">SEEP</text>
-
-  <!-- Thin separator line -->
-  <line x1="280" y1="128" x2="550" y2="128"
-        stroke="url(#g1)" stroke-width="0.8" opacity="0.25"/>
-
-  <!-- Tagline -->
-  <text x="415" y="152"
-        font-family="'SF Mono', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace"
-        font-size="11.5" font-weight="400" letter-spacing="5.5"
-        fill="#7f849c" text-anchor="middle">WINDOWS PRIVESC ENUMERATION</text>
-
-  <!-- Descriptor -->
-  <text x="415" y="172"
-        font-family="'SF Mono', 'JetBrains Mono', 'Fira Code', monospace"
-        font-size="9" font-weight="400" letter-spacing="3"
-        fill="#585b70" text-anchor="middle">PYTHON  ·  16 CHECKS  ·  97 TOOLS  ·  ATT&amp;CK</text>
+  <ellipse cx="210" cy="45" rx="160" ry="40" fill="url(#glow)"/>
+  <text x="210" y="52" text-anchor="middle" font-family="'Inter', 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="56" font-weight="800" fill="url(#grad)" letter-spacing="8" filter="url(#textglow)">SEEP</text>
+  <line x1="130" y1="68" x2="290" y2="68" stroke="url(#grad)" stroke-width="0.6" opacity="0.2"/>
+  <text x="210" y="84" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace" font-size="10" font-weight="400" fill="#7f849c" letter-spacing="5">WINDOWS PRIVESC ENUMERATION</text>
+  <text x="210" y="100" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', 'Fira Code', monospace" font-size="7.5" font-weight="400" fill="#585b70" letter-spacing="3">PYTHON · 16 CHECKS · 97 TOOLS · ATT&amp;CK</text>
 </svg>
